@@ -33,6 +33,26 @@ app.get('/api/nhac', (_req, res) => {
   res.json({ url: file ? `nhac/${encodeURIComponent(file)}` : null, file: file || null });
 });
 app.use('/vendor/three', express.static(path.join(__dirname, 'node_modules', 'three', 'build')));
+app.use('/vendor/three-addons', express.static(path.join(__dirname, 'node_modules', 'three', 'examples', 'jsm')));
+
+// ---------- Dữ liệu xóm lưu qua các buổi live (người thuê cũ, cấp xóm, bảng tuần) ----------
+// Màn hình live gửi lên định kỳ; chế độ thử ghi file riêng để người xem giả không lẫn vào dữ liệu thật.
+const DATA_PATH = path.join(__dirname, DEMO ? 'du-lieu-thu.json' : 'du-lieu-xom.json');
+let duLieu = {};
+try { duLieu = JSON.parse(readFileSync(DATA_PATH, 'utf8')); } catch (_) {}
+const isLoopback = (req) => ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress || '');
+app.get('/api/du-lieu', (_req, res) => res.json(duLieu));
+app.post('/api/du-lieu', express.json({ limit: '3mb' }), (req, res) => {
+  if (!isLoopback(req)) return res.status(403).json({ ok: false });
+  const b = req.body;
+  if (!b || typeof b !== 'object' || !b.tenants || typeof b.tenants !== 'object') return res.status(400).json({ ok: false });
+  duLieu = b;
+  try {
+    const tmp = `${DATA_PATH}.tmp`;
+    writeFileSync(tmp, JSON.stringify(b), 'utf8'); renameSync(tmp, DATA_PATH);
+  } catch (e) { return res.status(500).json({ ok: false, error: String(e?.message || e) }); }
+  res.json({ ok: true });
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ---------- Giọng đọc bà chủ trọ (Microsoft Edge TTS, lỗi thì Google Translate) ----------
@@ -253,12 +273,13 @@ adminApi.use(express.json({ limit: '200kb' }));
 // các mục được sửa từ trang quản trị và kiểu của chúng
 const SUA_DUOC = {
   tenXom: 'text', tenChuTro: 'text', xungHo: 'text', tuyenBuyt: 'text', giongDoc: 'text', caoGiong: 'text', fileNhac: 'text',
-  soTang: [2, 8], soPhongMoiTang: [2, 8], phutRoiXom: [1, 60], tocDoDoc: [0.6, 1.4], amLuongNhac: [0, 1], amLuong: [0, 1],
-  timDeCoDien: [20, 5000], phutGiuaCacLanMatDien: [1, 120], phutGiuaCacLanMua: [1, 120], phutGiuaCacLanTrom: [1, 120], phutGiuaCacLanDo: [1, 120], phutNgayDem: [1, 60], giayMoiThongBao: [20, 3600],
-  hienDieuCay: 'bool', docGiong: 'bool', nhacNen: 'bool', amThanh: 'bool', tiengXe: 'bool',
+  soTang: [2, 8], soPhongMoiTang: [2, 5], soPhongToaBen: [2, 7], phutRoiXom: [1, 60], tocDoDoc: [0.6, 1.4], amLuongNhac: [0, 1], amLuong: [0, 1],
+  timDeCoDien: [20, 5000], timDeCoNuoc: [20, 5000], timDeOnThi: [20, 5000], phutThiDua: [3, 60],
+  phutGiuaCacLanCupNuoc: [1, 120], phutGiuaCacLanGio: [1, 120], phutGiuaCacLanMuaThi: [1, 120], phutGiuaCacLanThuTien: [3, 120], phutGiuaCacLanHangRong: [1, 60], phutGiuaCacLanMatDien: [1, 120], phutGiuaCacLanMua: [1, 120], phutGiuaCacLanTrom: [1, 120], phutGiuaCacLanDo: [1, 120], phutNgayDem: [1, 60], giayMoiThongBao: [20, 3600], giayQuaySo: [20, 600],
+  hienDieuCay: 'bool', quaySo: 'bool', bloom: 'bool', tuDongGiamDoHoa: 'bool', trangTriLe: 'text', docGiong: 'bool', nhacNen: 'bool', amThanh: 'bool', tiengXe: 'bool',
   thongBaoChuTro: 'list', tuCam: 'list', cauDo: 'list',
 };
-const CAN_TAI_LAI = ['tenXom', 'soTang', 'soPhongMoiTang', 'tuyenBuyt', 'hienDieuCay']; // dựng lúc mở trang, đổi xong phải tải lại màn hình live
+const CAN_TAI_LAI = ['tenXom', 'soTang', 'soPhongMoiTang', 'soPhongToaBen', 'tuyenBuyt', 'hienDieuCay']; // dựng lúc mở trang, đổi xong phải tải lại màn hình live
 function luuConfig() {
   const tmp = `${CONFIG_PATH}.tmp`;
   writeFileSync(tmp, JSON.stringify({ ...config, tiktokUsername: savedUsername }, null, 2) + '\n', 'utf8');
@@ -301,11 +322,16 @@ adminApi.post('/config', (req, res) => {
 // lệnh gửi thẳng tới màn hình live (nguồn Link trong TikTok LIVE Studio)
 adminApi.post('/control', (req, res) => {
   const { action, text } = req.body || {};
-  const ok = ['speak', 'matdien', 'mua', 'trom', 'do', 'ketThucSuKien', 'thongBao', 'phaoHoa', 'ngayDem', 'reload'];
+  const ok = ['speak', 'matdien', 'mua', 'trom', 'do', 'cupnuoc', 'gio', 'muathi', 'ketThucSuKien', 'thongBao', 'phaoHoa', 'ngayDem', 'reload',
+    'thuTien', 'hangRong', 'meo', 'shipper', 'daCau', 'karaoke', 'lau', 'xeHoa', 'chuyenTro', 'thiDua', 'xoaDuLieu'];
   if (!ok.includes(action)) return res.status(400).json({ ok: false, error: 'Lệnh không hợp lệ' });
   const t = String(text || '').trim().slice(0, 300);
   if (action === 'speak' && !t) return res.status(400).json({ ok: false, error: 'Chưa nhập câu cần đọc' });
   if (!wss.clients.size) return res.json({ ok: false, error: 'Chưa có màn hình live nào mở (TikTok LIVE Studio hoặc tab trình duyệt)' });
+  if (action === 'xoaDuLieu') { // xóa người thuê cũ, cấp xóm, bảng tuần (màn hình live xóa bộ nhớ rồi lưu lại file trống)
+    duLieu = {};
+    try { writeFileSync(DATA_PATH, '{}', 'utf8'); } catch (_) {}
+  }
   send({ type: 'control', action, text: t });
   res.json({ ok: true, screens: wss.clients.size });
 });

@@ -1,1 +1,4 @@
 node_modules/
+du-lieu-xom.json
+du-lieu-thu.json
+*.tmp

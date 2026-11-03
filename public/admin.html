@@ -123,13 +123,29 @@
       <button data-control="mua">🌧 Trời mưa</button>
       <button data-control="trom">🦹 Có trộm</button>
       <button data-control="do">🧠 Đố vui</button>
+      <button data-control="cupnuoc">🚱 Cúp nước</button>
+      <button data-control="gio">🌬 Gió to</button>
+      <button data-control="muathi">📚 Mùa thi</button>
       <button data-control="ketThucSuKien">⏹ Kết thúc sự kiện</button>
       <button data-control="thongBao">📢 Đọc 1 thông báo</button>
       <button data-control="phaoHoa">🎆 Bắn pháo hoa</button>
       <button data-control="ngayDem">🌗 Đổi ngày / đêm</button>
       <button data-control="reload" class="danger">🔄 Tải lại màn hình live</button>
     </div>
-    <p class="note">Lệnh chạy trên màn hình đang mở trong LIVE Studio. Sự kiện cần có ít nhất 1 người thuê phòng.</p>
+    <div class="row">
+      <button data-control="thiDua">🏆 Chốt thi đua tòa ngay</button>
+      <button data-control="thuTien">📒 Chủ trọ đi thu tiền</button>
+      <button data-control="hangRong">🍦 Gọi xe kem chè</button>
+      <button data-control="shipper">🛵 Shipper giao đồ</button>
+      <button data-control="karaoke">🎤 Karaoke sân thượng</button>
+      <button data-control="daCau">🏸 Đá cầu</button>
+      <button data-control="lau">🍲 Lẩu sân thượng</button>
+      <button data-control="xeHoa">💐 Xe hoa</button>
+      <button data-control="chuyenTro">🚚 Ba gác chuyển trọ</button>
+      <button data-control="meo">🐱 Mèo Mướp</button>
+      <button data-control="xoaDuLieu" class="danger" data-confirm="Xóa hết người thuê cũ, cấp xóm và bảng tuần? Không lấy lại được.">🗑 Xóa dữ liệu xóm</button>
+    </div>
+    <p class="note">Lệnh chạy trên màn hình đang mở trong LIVE Studio. Sự kiện và hoạt cảnh cần có ít nhất 1 người thuê phòng.</p>
     <div class="msg" id="msgControl"></div>
   </section>
 
@@ -142,7 +158,8 @@
       <label class="f">Chủ trọ tự xưng<input type="text" data-k="xungHo" maxlength="12" placeholder="chú"></label>
       <label class="f">Tuyến xe buýt<input type="text" data-k="tuyenBuyt" maxlength="6"></label>
       <label class="f">Số tầng (2–8)<input type="number" data-k="soTang" min="2" max="8" step="1"></label>
-      <label class="f">Phòng mỗi tầng (2–8)<input type="number" data-k="soPhongMoiTang" min="2" max="8" step="1"></label>
+      <label class="f">Phòng mỗi tầng tòa giữa B (2–5)<input type="number" data-k="soPhongMoiTang" min="2" max="5" step="1"></label>
+      <label class="f">Phòng mỗi tầng tòa trái A / phải C (2–7)<input type="number" data-k="soPhongToaBen" min="2" max="7" step="1"></label>
       <label class="f">Im lặng bao nhiêu phút thì rời xóm<input type="number" data-k="phutRoiXom" min="1" max="60" step="1"></label>
     </div>
     <label class="check"><input type="checkbox" data-k="hienDieuCay"> Hiện điếu cày ở quán trà đá</label>
@@ -181,9 +198,21 @@
       <label class="f">Phút giữa các lần mưa<input type="number" data-k="phutGiuaCacLanMua" min="1" max="120" step="1"></label>
       <label class="f">Phút giữa các lần có trộm<input type="number" data-k="phutGiuaCacLanTrom" min="1" max="120" step="1"></label>
       <label class="f">Phút giữa các câu đố vui<input type="number" data-k="phutGiuaCacLanDo" min="1" max="120" step="1"></label>
+      <label class="f">Cúp nước: tối đa bao nhiêu tim<input type="number" data-k="timDeCoNuoc" min="20" max="5000" step="10"></label>
+      <label class="f">Mùa thi: tối đa bao nhiêu tim<input type="number" data-k="timDeOnThi" min="20" max="5000" step="10"></label>
+      <label class="f">Phút giữa các lần cúp nước<input type="number" data-k="phutGiuaCacLanCupNuoc" min="1" max="120" step="1"></label>
+      <label class="f">Phút giữa các lần gió to<input type="number" data-k="phutGiuaCacLanGio" min="1" max="120" step="1"></label>
+      <label class="f">Phút giữa các mùa thi<input type="number" data-k="phutGiuaCacLanMuaThi" min="1" max="120" step="1"></label>
+      <label class="f">Phút giữa các lần chủ trọ thu tiền<input type="number" data-k="phutGiuaCacLanThuTien" min="3" max="120" step="1"></label>
+      <label class="f">Phút giữa các lần xe kem chè ghé<input type="number" data-k="phutGiuaCacLanHangRong" min="1" max="60" step="1"></label>
+      <label class="f">Phút mỗi vòng thi đua giữa 3 tòa<input type="number" data-k="phutThiDua" min="3" max="60" step="1"></label>
+      <label class="f">Giây giữa các lần quay số may mắn<input type="number" data-k="giayQuaySo" min="20" max="600" step="5"></label>
       <label class="f">Phút mỗi lần đổi ngày/đêm<input type="number" data-k="phutNgayDem" min="1" max="60" step="1"></label>
       <label class="f">Giây giữa các thông báo chủ trọ<input type="number" data-k="giayMoiThongBao" min="20" max="3600" step="10"></label>
     </div>
+    <label class="check"><input type="checkbox" data-k="quaySo"> Quay số may mắn ở đại lý vé số (comment số 00–99)</label>
+    <label class="check"><input type="checkbox" data-k="bloom"> Đèn tỏa sáng (bloom), tắt nếu máy yếu</label>
+    <label class="check"><input type="checkbox" data-k="tuDongGiamDoHoa"> Tự giảm đồ họa khi máy chạy chậm</label>
     <p class="note">Thời gian mới áp dụng từ lần sự kiện kế tiếp.</p>
     <div class="sticky-save"><span class="msg"></span><button class="primary" data-save>Lưu</button></div>
   </section>
@@ -338,7 +367,7 @@ async function control(action, text) {
     return false;
   }
 }
-for (const b of $$('[data-control]')) b.onclick = () => control(b.dataset.control);
+for (const b of $$('[data-control]')) b.onclick = () => { if (b.dataset.confirm && !confirm(b.dataset.confirm)) return; control(b.dataset.control); };
 $('#btnSpeak').onclick = async () => {
   const t = $('#speakText').value.trim();
   if (!t) return $('#speakText').focus();

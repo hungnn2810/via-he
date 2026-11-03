@@ -3,7 +3,8 @@
   "port": 3002,
   "tenXom": "XÓM TRỌ SINH VIÊN",
   "soTang": 6,
-  "soPhongMoiTang": 6,
+  "soPhongMoiTang": 3,
+  "soPhongToaBen": 5,
   "liaMayQuay": false,
   "hienDieuCay": true,
   "tuyenBuyt": "32",
@@ -22,6 +23,8 @@
   "phutGiuaCacLanMua": 5,
   "phutGiuaCacLanTrom": 6,
   "phutGiuaCacLanDo": 4,
+  "quaySo": true,
+  "giayQuaySo": 60,
   "phutNgayDem": 2,
   "giayMoiThongBao": 150,
   "amThanh": true,
@@ -37,7 +40,7 @@
     "Học bài thì học, đừng thức khuya quá, mai còn đi học.",
     "Tháng này ai đóng tiền điện sớm, chú treo đèn nháy cho phòng đó nhé.",
     "Đói thì comment bánh mì hoặc xôi, cô bán hàng ở cổng có ngay. Ngồi chơi thì comment trà đá nhé.",
-    "Rảnh thì comment hát hoặc quẩy cho xóm vui. Muốn gọi bạn thì comment gõ kèm số phòng, ví dụ gõ 203."
+    "Rảnh thì comment hát hoặc quẩy cho xóm vui."
   ],
   "tuCam": [
     "đm",
@@ -73,5 +76,16 @@
     "Con gì ăn lửa với nước than? | tàu hỏa | tàu hoả",
     "Đồng gì mà ai cũng thích? | đồng tiền | tiền",
     "Thủ đô của Việt Nam là thành phố nào? | hà nội"
-  ]
+  ],
+  "bloom": true,
+  "tuDongGiamDoHoa": true,
+  "phutThiDua": 10,
+  "timDeCoNuoc": 200,
+  "timDeOnThi": 250,
+  "phutGiuaCacLanCupNuoc": 11,
+  "phutGiuaCacLanGio": 9,
+  "phutGiuaCacLanMuaThi": 13,
+  "phutGiuaCacLanThuTien": 15,
+  "phutGiuaCacLanHangRong": 4,
+  "trangTriLe": "tu-dong"
 }

@@ -28,7 +28,7 @@
   #shops b { color: var(--gold); font-weight: 900; }
 
   /* Sự kiện (mất điện, mưa) */
-  #topStack { position: absolute; z-index: 20; top: 384px; left: 40px; right: 40px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  #topStack { position: absolute; z-index: 20; top: 425px; left: 40px; right: 40px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
   /* lời chủ trọ và thông báo nhỏ: góc dưới bên phải, chỗ đường trống, không che xóm trọ và không bị khung comment TikTok che */
   #bottomStack { position: absolute; z-index: 20; right: 26px; width: 640px; bottom: 328px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
   #event { width: 100%; box-sizing: border-box; padding: 18px 26px 20px; border-radius: 26px;
@@ -52,6 +52,8 @@
   .stall { position: absolute; transform: translate(-50%, 0); white-space: nowrap; padding: 5px 12px; border-radius: 12px;
     font-size: 18px; font-weight: 700; background: rgba(120, 20, 10, .85); border: 2px solid var(--gold); }
   .stall b { color: var(--gold); font-weight: 900; }
+  .stall.quayso { transform: translate(-50%, -100%); font-size: 22px; background: rgba(29, 53, 87, .9); }
+  .stall .big { font-size: 1.5em; letter-spacing: 2px; }
   .plate.vip { border-color: var(--gold); box-shadow: 0 0 14px rgba(255,215,106,.7); }
   .bubble { position: absolute; transform: translate(-50%, -100%); max-width: 300px; padding: 9px 14px; border-radius: 18px;
     background: #fffdf4; color: #1d1d2b; font-size: 22px; font-weight: 700; line-height: 1.25; box-shadow: 0 4px 14px rgba(0,0,0,.4);
@@ -80,31 +82,45 @@
   .toast { padding: 7px 18px; border-radius: 999px; background: var(--card); border: 2px solid rgba(255,255,255,.2); font-size: 21px; font-weight: 700; animation: pop .3s ease-out; }
 
   /* Bảng xếp hạng (cột phải, tránh khung comment TikTok) */
-  #board { position: absolute; z-index: 20; right: 26px; top: 1602px; width: 360px; padding: 14px 18px 12px; border-radius: 22px; background: var(--card); border: 2px solid var(--line); }
+  #board { position: absolute; z-index: 20; right: 26px; bottom: 16px; width: 360px; padding: 14px 18px 12px; border-radius: 22px; background: var(--card); border: 2px solid var(--line); }
   #board h3 { margin: 0 0 6px; font-size: 22px; font-weight: 900; color: var(--gold); text-align: center; }
   #board .row { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 700; padding: 3px 0; }
   #board .row .n { width: 22px; color: var(--gold); font-weight: 900; }
-  #board .row .r { color: #9fb0d8; font-size: 16px; width: 44px; }
   #board .row .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   #board .row .v { color: var(--gold); font-weight: 800; }
   #board .empty { color: #9fb0d8; font-size: 18px; text-align: center; padding: 4px 0 8px; }
   #board .sep { height: 1px; background: rgba(255,255,255,.15); margin: 8px 0; }
+  #board .team { display: flex; align-items: center; gap: 8px; font-size: 19px; font-weight: 800; padding: 2px 0; }
+  #board .team .k { width: 26px; color: var(--gold); }
+  #board .team .tb { flex: 1; height: 16px; border-radius: 8px; background: rgba(255,255,255,.12); overflow: hidden; }
+  #board .team .tb i { display: block; height: 100%; background: linear-gradient(90deg, #4cc9f0, #80ff72); transition: width .4s; }
+  #board .team.lead .tb i { background: linear-gradient(90deg, #ffb13b, #fff17a); }
+  #board .team .v { min-width: 44px; text-align: right; color: var(--gold); }
+  #board .sub { text-align: center; font-size: 15px; color: #9fb0d8; font-weight: 700; margin-top: 2px; }
+
+  /* Cấp xóm: mục tiêu chung cả buổi live (và cộng dồn qua các buổi) */
+  #level { display: inline-flex; align-items: center; gap: 12px; margin-top: 8px; padding: 6px 16px; border-radius: 999px;
+    background: var(--card); border: 2px solid var(--line); font-size: 20px; font-weight: 800; }
+  #level .lv { color: var(--gold); font-weight: 900; }
+  #level .lb { width: 260px; height: 16px; border-radius: 8px; background: rgba(255,255,255,.14); overflow: hidden; border: 1px solid rgba(255,255,255,.3); }
+  #level .lb i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ff6b9a, #ffd76a); transition: width .5s; }
+  #level .nx { color: #ffe9b8; font-size: 17px; }
 
   #status { position: fixed; left: 8px; bottom: 6px; font: 13px system-ui, sans-serif; color: rgba(255,255,255,.45); display: none; }
   body.debug #status { display: block; }
   #batTieng { position: fixed; right: 12px; top: 12px; padding: 9px 14px; border: 0; border-radius: 10px; background: #ffd76a;
     color: #3a1a02; font: 700 14px 'Be Vietnam Pro', sans-serif; cursor: pointer; }
 </style>
-<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js" } }</script>
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three-addons/" } }</script>
 </head>
 <body>
 <div id="stage">
   <canvas id="gl" width="1080" height="1920"></canvas>
   <div id="ui">
     <div id="head">
-      <div id="title" class="shadow">XÓM TRỌ SINH VIÊN</div>
       <div><div id="hint">💬 <b>Comment</b> thuê phòng · ❤️ <b>Tim</b> nấu mì · 🎁 <b>Quà</b> đóng tiền điện</div></div>
       <div id="noodles" class="shadow">🍜 Cả xóm đã nấu <span id="noodleCount">0</span> gói mì · 🏠 <span id="tenantCount">0</span>/<span id="roomTotal">25</span> phòng có người</div>
+      <div><div id="level"><span class="lv">🏘️ Xóm cấp 1</span><span class="lb"><i></i></span><span class="nx"></span></div></div>
       <div id="shops" class="shadow">🥖 Comment <b>"bánh mì"</b> hoặc <b>"xôi"</b> để mua · 🍵 <b>"trà đá"</b> để xuống quán ngồi</div>
     </div>
     <div id="labels"></div>
