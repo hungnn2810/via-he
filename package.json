@@ -1,0 +1,17 @@
+{
+  "name": "xom-tro-sinh-vien",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "demo": "node server.js --demo"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "msedge-tts": "2.1.0",
+    "three": "0.186.1",
+    "tiktok-live-connector": "2.5.0",
+    "ws": "^8.18.0"
+  }
+}
