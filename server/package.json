@@ -14,6 +14,9 @@
     "test:fortune": "tsx test/fortune.ts",
     "test:incidents": "tsx test/incidents.ts",
     "test:cafe": "tsx test/cafe.ts",
+    "test:goods": "tsx test/goods.ts",
+    "test:regulars": "tsx test/regulars.ts",
+    "test:season": "tsx test/season.ts",
     "schema-cs": "schema-codegen src/schema.ts --csharp --namespace ViaHeOnline.Schema --output ../client/Assets/Scripts/Schema"
   },
   "dependencies": {

@@ -38,5 +38,8 @@ namespace ViaHeOnline.Schema {
 
 		[global::Colyseus.Schema.Type(8, "string")]
 		public string touristLook = "";
+
+		[global::Colyseus.Schema.Type(9, "string")]
+		public string regularId = "";
 	}
 }

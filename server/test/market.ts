@@ -23,6 +23,7 @@ const a = login('market-a-device', 'An');
 const b = login('market-b-device', 'Bình');
 const c = login('market-c-device', 'Cúc');
 const tea = getProduct('iced_tea')!;
+for (const p of [a, b, c]) p.tutorial = P.TUTORIAL_DONE;
 
 // Daily prices
 const table = M.marketTable(t0);
@@ -90,6 +91,9 @@ M.buyWholesale(b, 'banh_mi', q, true, t0 + 5 * DAY);
 b.store = {};
 const owed = b.market.debt;
 check(owed <= 200_000 && owed > 150_000, 'Credit buys up to the limit');
+b.tutorial = 5;
+refuses(() => M.buyWholesale(b, 'banh_mi', 1, true, t0 + 5 * DAY), 'hướng dẫn', 'Credit needs the tutorial finished');
+b.tutorial = P.TUTORIAL_DONE;
 refuses(() => M.buyWholesale(b, 'banh_mi', q, true, t0 + 5 * DAY), 'hạn mức', 'Debt cannot pass 200,000đ');
 refuses(() => M.buyWholesale(b, 'banh_mi', 5, false, t0 + 5 * DAY), 'Không đủ tiền', 'Cash buying still needs cash');
 
@@ -100,10 +104,10 @@ M.settleDebt(b, old + 2 * DAY);
 check(b.market.debt === owed && b.money === 0, 'A debt waits while it is young and the player has no money');
 M.settleDebt(b, old + 3 * DAY + HOUR);
 check(b.market.debt === 0 && b.money === 0, 'A debt older than 3 days is cancelled');
-check(b.market.creditLockedUntil === old + 3 * DAY + HOUR + DAY, 'Credit is locked for one day after that');
+check(b.market.creditLockedUntil === old + 3 * DAY + HOUR + 3 * DAY, 'Credit is locked for three days after that');
 b.store = {};
-refuses(() => M.buyWholesale(b, 'iced_tea', 5, true, old + 3 * DAY + 2 * HOUR), 'chưa cho nhập chịu', 'Credit is refused while locked');
-M.buyWholesale(b, 'iced_tea', 5, true, old + 4 * DAY + 2 * HOUR);
+refuses(() => M.buyWholesale(b, 'iced_tea', 5, true, old + 4 * DAY + 2 * HOUR), 'chưa cho nhập chịu', 'Credit is refused while locked');
+M.buyWholesale(b, 'iced_tea', 5, true, old + 7 * DAY);
 check(b.market.debt > 0, 'Credit works again after the lock');
 check((P.privateProfile(b, 1, 40) as { market: { debt: number } }).market.debt === b.market.debt, 'The private profile shows the debt');
 b.market.debt = 0;
@@ -130,7 +134,7 @@ check(low.money === 100_000, 'A level 1 refund is at cost');
 // Shared bulk order
 const order = M.currentSharedOrder(t0);
 const orderItem = getProduct(order.item)!;
-check(order.target === 30 && order.reward === Math.round(orderItem.price * 30 * 1.6), 'The order is 30 portions and pays retail * 30 * 1.6');
+check(order.target === 30 && order.reward === Math.round(orderItem.price * 30 * M.MARKET.sharedRewardPct / 100), 'The order is 30 portions and pays retail * 30 * 1.25');
 check(!orderItem.seasonal && M.sharedCandidates().includes(order.item) && order.item !== 'grandma_soup', 'The item is not seasonal');
 check(M.currentSharedOrder(t0 + HOUR).id === order.id, 'The same order lasts all day');
 check(M.sharedOrderView(a, t0).item === order.item, 'The sharedOrder payload shows the current order');

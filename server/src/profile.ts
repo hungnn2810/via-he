@@ -10,6 +10,8 @@ import {
 } from './data.js';
 import type { MarketState } from './market.js';
 import { emptyFortuneDay, type FortuneDay, type FortuneState } from './fortune.js';
+import type { RegularBook } from './regulars.js';
+import type { SeasonState } from './season.js';
 
 export type Outfit = Partial<Record<WearSlot, string>>;
 
@@ -116,6 +118,8 @@ export interface Profile {
   communityClaims: Record<string, number>;  // community event id → reward steps already paid
   communityGiven: Record<string, number>;   // community event id → bunches given
   market: MarketState;       // wholesale credit debt and shared order limits
+  regulars: RegularBook;     // regular customers of this profile's streets, see regulars.ts
+  season: SeasonState | null; // season points, claims and weekly quests, see season.ts
   outfit: Outfit;
   wardrobe: string[];        // ids of owned wearables not being worn
   employees: Employee[];
@@ -220,6 +224,8 @@ function worldDefaults() {
     communityClaims: {} as Record<string, number>, communityGiven: {} as Record<string, number>,
     fortune: null as FortuneState | null, fortuneDay: emptyFortuneDay(),
     market: { debt: 0, borrowedAt: 0, creditLockedUntil: 0, sharedDay: 0, sharedGiven: 0 } as MarketState,
+    regulars: { list: [], giftFameDay: 0, giftFameToday: 0 } as RegularBook, // same as emptyRegularBook() in regulars.ts, inlined to avoid an import cycle
+    season: null as SeasonState | null,
   };
 }
 

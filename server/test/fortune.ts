@@ -121,10 +121,14 @@ const dayWith = (p: ReturnType<typeof mk>, kind: string, from: number) => {
 };
 const sA = mk('Gui'), sB = mk('Nhan'), sC = mk('Nhan2'), sD = mk('Nhan3');
 sA.friends = [sB.id, sC.id, sD.id];
+for (const o of [sB, sC, sD]) o.friends = [sA.id];
 refuses(() => F.shareFortune(sA, sB, ta), 'xem bói cho mình', 'You must draw your own fortune first');
 const day1 = dayWith(sA, 'busy', ta);
 F.drawFortune(sA, day1);
 refuses(() => F.shareFortune(sA, stranger, day1), 'bạn bè', 'Only friends can receive a fortune');
+const oneWay = mk('OneWay');
+sA.friends.push(oneWay.id);
+refuses(() => F.shareFortune(sA, oneWay, day1), 'hai chiều', 'A one-way friendship is not enough');
 refuses(() => F.shareFortune(sA, null, day1), 'Không tìm thấy', 'The receiver must exist');
 refuses(() => F.shareFortune(sA, sA, day1), 'tự tặng', 'Not to yourself');
 F.shareFortune(sA, sB, day1 + 1000);
@@ -137,6 +141,7 @@ refuses(() => F.shareFortune(sA, sC, day1 + 2000), 'đã tặng', 'One share per
 // A receiver takes only one shared fortune per day
 const s2 = mk('Gui2');
 s2.friends = [sB.id];
+sB.friends.push(s2.id);
 F.drawFortune(s2, day1);
 refuses(() => F.shareFortune(s2, sB, day1 + 3000), 'đã nhận', 'A receiver gets at most one shared fortune per day');
 
@@ -144,22 +149,23 @@ refuses(() => F.shareFortune(s2, sB, day1 + 3000), 'đã nhận', 'A receiver ge
 const own = mk('Own');
 const dayX = dayWith(own, 'wise', day1);
 F.drawFortune(own, dayX);
-const givers = ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8'].map(mk);
+const givers = Array.from({ length: 40 }, (_, i) => 'G' + (i + 1)).map(mk);
 const withWise = givers.find((g) => F.fortuneFor(g.id, dayX).id === 'wise');
 const withOther = givers.find((g) => F.fortuneFor(g.id, dayX).id !== 'wise');
 check(!!withWise && !!withOther, 'Test setup: found givers of both kinds');
 if (withWise && withOther) {
-  for (const g of [withWise, withOther]) { g.friends = [own.id]; F.drawFortune(g, dayX); }
+  for (const g of [withWise, withOther]) { g.friends = [own.id]; own.friends.push(g.id); F.drawFortune(g, dayX); }
   refuses(() => F.shareFortune(withOther, own, dayX), 'ra quẻ khác', 'A receiver with a different own fortune refuses');
   F.shareFortune(withWise, own, dayX);
   check(own.fortune?.half === false && F.fortuneXp(own, 100, dayX) === 110, 'The same kind leaves the own full-strength fortune alone');
 }
 
 // A shared fortune cannot be passed on; a shared lucky pays half and your own draw replaces a shared fortune
-refuses(() => { sB.friends = [sD.id]; F.shareFortune(sB, sD, day1 + 4000); }, 'xem bói cho mình', 'A received fortune cannot be shared again');
+refuses(() => { sB.friends = [sD.id]; sD.friends.push(sB.id); F.shareFortune(sB, sD, day1 + 4000); }, 'xem bói cho mình', 'A received fortune cannot be shared again');
 {
   const next = mk('Later'), giver = mk('Giver');
   giver.friends = [next.id];
+  next.friends = [giver.id];
   const d = dayWith(giver, 'lucky', day1);
   F.drawFortune(giver, d);
   const m = next.money;

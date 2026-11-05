@@ -1,7 +1,7 @@
 // Wholesale market (chợ đầu mối), buying on credit and the server-wide shared bulk order.
 // Every function takes `now` so tests can run on a fake clock. Prices are a pure function of the day, so no state is stored.
 import { PRODUCTS, RECIPES, getProduct, type Product } from './data.js';
-import { GameError, gameDb, type Profile } from './profile.js';
+import { GameError, TUTORIAL_DONE, gameDb, type Profile } from './profile.js';
 import { addToStore, dayIndex, storeCapacity, storeUsed, takeFromStore } from './world.js';
 
 const HOUR = 3_600_000;
@@ -18,12 +18,12 @@ export const MARKET = {
   creditLimit: 200_000,      // outstanding debt, interest included
   interestPct: 5,
   debtDays: 3,               // an older debt is cancelled
-  creditLockHours: 24,       // credit is locked this long after a cancelled debt
+  creditLockHours: 72,       // credit is locked this long after a cancelled debt
   sharedLevel: 3,
   sharedTarget: 30,          // portions needed
   sharedHours: 24,
   sharedPerDay: 15,          // portions one player may give per day
-  sharedRewardPct: 160,      // of retail price * target
+  sharedRewardPct: 125,      // of retail price * target
   sharedMaxUnlock: 6,        // the order only asks for items players of this level can make or buy
 };
 
@@ -101,6 +101,7 @@ export function buyWholesale(profile: Profile, itemId: unknown, quantity: unknow
   if (credit) {
     const m = profile.market;
     if (profile.level < MARKET.creditLevel) throw new GameError(`Cần cấp ${MARKET.creditLevel} để nhập chịu`);
+    if (profile.tutorial < TUTORIAL_DONE) throw new GameError('Làm xong phần hướng dẫn đã rồi mới nhập chịu được');
     if (now < m.creditLockedUntil) throw new GameError('Chủ chợ chưa cho nhập chịu, đợi một ngày nữa');
     const owed = Math.ceil(total * (100 + MARKET.interestPct) / 100);
     if (m.debt + owed > MARKET.creditLimit) throw new GameError('Nợ vượt hạn mức nhập chịu');

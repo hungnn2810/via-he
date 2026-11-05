@@ -132,7 +132,8 @@ export function drawFortune(profile: Profile, now = Date.now()) {
 export function shareFortune(sender: Profile, receiver: Profile | null | undefined, now = Date.now()) {
   if (!receiver || receiver.isNpc) throw new GameError('Không tìm thấy người này');
   if (receiver.id === sender.id) throw new GameError('Không thể tự tặng quẻ cho mình');
-  if (!sender.friends.includes(receiver.id)) throw new GameError('Chỉ tặng quẻ cho bạn bè');
+  // Both sides must list each other, which makes throwaway accounts harder to use for farming
+  if (!sender.friends.includes(receiver.id) || !receiver.friends.includes(sender.id)) throw new GameError('Chỉ tặng quẻ cho bạn bè đã kết bạn hai chiều');
   const mine = sender.fortune;
   if (!mine || mine.day !== dayOf(now) || mine.half) throw new GameError('Hãy xem bói cho mình trước đã');
   const sentToday = refreshFortuneDay(sender, now);

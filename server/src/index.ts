@@ -13,6 +13,7 @@ import {
 import { rolloverSeason, seasonIndex } from './world.js';
 import { meeting, startManualEvent } from './events.js';
 import { verifySocialToken } from './social.js';
+import { leaderboard } from './season.js';
 
 const PORT = Number(process.env.PORT) || 2567;
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || '';
@@ -74,10 +75,8 @@ const server = new Server({
     });
 
     // This season's most famous streets
-    app.get('/api/leaderboard', (_req, res) => {
-      const top = allProfiles().filter((p) => !p.isNpc && !p.banned).sort((a, b) => b.fame - a.fame).slice(0, 50)
-        .map((p) => ({ ownerId: p.id, name: p.name, level: p.level, fame: p.fame }));
-      res.json({ season: seasonIndex(), top });
+    app.get('/api/leaderboard', (req, res) => {
+      res.json({ season: seasonIndex(), ...leaderboard(req.query.board) });
     });
 
     // Move an account to this device with its recovery code

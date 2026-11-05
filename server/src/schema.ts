@@ -40,8 +40,9 @@ export class Customer extends Schema {
   @type('int8') targetSlot = -1;      // stall slot being approached, -1 = strolling
   @type('string') status = 'walk';    // walk | queue | buy | leave
   @type('uint8') look = 0;            // appearance index for the client
-  @type('string') group = '';         // customer group: homemaker | student | tourist
+  @type('string') group = '';         // customer group: homemaker | student | kid | shopper | tourist
   @type('string') touristLook = '';   // tourists are drawn from player layers
+  @type('string') regularId = '';     // id of the street's regular this customer is; empty for anonymous customers
 }
 
 export class LotState extends Schema {

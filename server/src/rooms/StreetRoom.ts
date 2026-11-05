@@ -20,6 +20,10 @@ import { FORTUNES, checkEmote, drawFortune, fortuneView, fortuneXp, shareFortune
 import { CafeSeats, regenStamina } from '../cafe.js';
 import { IncidentManager } from '../incidents.js';
 import {
+  markSeen, maybeRecruit, pickAppearingRegular, recordRegularSale, regularById, regularLook, regularSaleView, regularWants, regularsView,
+  rollSecondPortion, tierBonusPct,
+} from '../regulars.js';
+import {
   type Appearance, type Profile, type Outfit, GameError, addLogEntry, addReport, addXp, advanceTutorial, buyWearable, castVote, changeLook,
   claimPlayerOrder, communityProgress, createCharacter, fireEmployee, getProfile, hireEmployee, listPlayerOrders, markDirty, outfitBonus,
   postPlayerOrder, privateProfile, randomLook, takeOff, track, verifyToken, wear,
@@ -27,6 +31,7 @@ import {
 import {
   buyWholesale, claimSharedOrder, contributeSharedOrder, marketPrices, refundStall, settleDebt, sharedOrderView, stockStall, type StallStock,
 } from '../market.js';
+import { claimSeasonGoal, claimSeasonTier, seasonEvent, seasonView, type SeasonKind } from '../season.js';
 
 type Auth = { id: string };
 type StreetClient = Client<{ auth: Auth }>;
@@ -69,6 +74,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
   private stallStock = new Map<number, StallStock>();  // slot → how the stall's stock was obtained (see market.ts)
   private cafe!: CafeSeats;
   private incidents!: IncidentManager;
+  private secondPortions = new Set<string>();      // regulars who already got their second portion this visit
 
   onCreate(options: { ownerId?: string; district?: number }) {
     const owner = options.ownerId && getProfile(options.ownerId);
@@ -113,6 +119,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
 
     this.handle('sitCafe', (pr, c, m: { district: number; lot: number }) => {
       this.cafe.sit(this.owner, pr, this.district, m.district, m.lot);
+      this.trackSeason(pr, 'cafe', 1, this.owner.id);
       markDirty(this.owner);
       this.sendProfile(this.owner.id);
       this.broadcast('cafeSeats', this.cafe.view());
@@ -132,6 +139,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       if (pr.id === this.owner.id) { waterCrop(pr, this.district, m.lot); return; }
       helpWater(pr, this.owner, this.district, m.lot);
       questEvent(pr, 'help', '');
+      this.trackSeason(pr, 'help', 1, this.owner.id);
       addLogEntry(this.owner, { type: 'help', who: pr.name, amount: BALANCE.helpReward });
       markDirty(this.owner);
       this.sendProfile(this.owner.id);
@@ -164,6 +172,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       this.requireOwnStreet(pr);
       const item = collectCooking(pr, this.district, m.lot);
       questEvent(pr, 'cook', item);
+      this.trackSeason(pr, 'cook');
       this.grantXp(pr, 10);
       track(pr.id, 'cook');
     });
@@ -171,6 +180,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.handle('professionHelp', (pr) => {
       professionHelp(pr, this.owner, this.district);
       questEvent(pr, 'help', '');
+      this.trackSeason(pr, 'help', 1, this.owner.id);
       addLogEntry(this.owner, { type: 'help', who: pr.name, amount: 0 });
       markDirty(this.owner);
       this.sendProfile(this.owner.id);
@@ -182,6 +192,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.handle('sendDelivery', (pr, _c, m: { orderId: string }) => {
       const kind = sendDelivery(pr, m.orderId);
       questEvent(pr, 'deliver', kind);
+      this.trackSeason(pr, 'deliver');
       track(pr.id, 'delivery');
     });
     this.handle('collectDeliveries', (pr, c) => c.send('income', { amount: collectDeliveries(pr).total }));
@@ -203,7 +214,15 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.handle('marketBuy', (pr, _c, m: { item: string; quantity: number; credit?: boolean }) => { buyWholesale(pr, m.item, m.quantity, !!m.credit); track(pr.id, 'market_buy', m.quantity); });
     this.handle('marketCredit', (pr, _c, m: { item: string; quantity: number }) => { buyWholesale(pr, m.item, m.quantity, true); track(pr.id, 'market_credit', m.quantity); });
     this.onMessage('sharedOrder', (c: StreetClient) => { const pr = c.auth && getProfile(c.auth.id); return pr ? sharedOrderView(pr) : null; });
-    this.handle('contributeSharedOrder', (pr, c, m: { quantity: number }) => { c.send('sharedOrderGiven', contributeSharedOrder(pr, m.quantity)); track(pr.id, 'shared_order', m.quantity); });
+    this.handle('contributeSharedOrder', (pr, c, m: { quantity: number }) => {
+      const given = contributeSharedOrder(pr, m.quantity);
+      this.trackSeason(pr, 'shared', given.quantity);
+      c.send('sharedOrderGiven', given);
+      track(pr.id, 'shared_order', m.quantity);
+    });
+    this.onMessage('season', (c: StreetClient) => { const pr = c.auth && getProfile(c.auth.id); return pr ? seasonView(pr) : null; });
+    this.handle('claimSeasonGoal', (pr, c) => c.send('season', claimSeasonGoal(pr)));
+    this.handle('claimSeasonTier', (pr, c, m: { tier: number }) => c.send('season', claimSeasonTier(pr, m.tier)));
     this.handle('claimSharedOrder', (pr, c) => c.send('sharedOrderClaimed', claimSharedOrder(pr)));
     this.handle('vote', (pr, _c, m: { choice: string }) => {
       if (!meetingOpen()) throw new GameError('Họp tổ dân phố vào tối Chủ nhật');
@@ -239,6 +258,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.handle('buyDecoration', (pr, _c, m: { id: string }) => { this.requireOwnStreet(pr); buyDecoration(pr, m.id, this.activeRules()); });
     this.handle('giveGift', (pr) => {
       giveGift(pr, this.owner, this.activeRules());
+      this.trackSeason(pr, 'help', 1, this.owner.id);
       addLogEntry(this.owner, { type: 'help', who: pr.name, amount: BALANCE.giftReward });
       markDirty(this.owner);
       this.sendProfile(this.owner.id);
@@ -283,6 +303,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       const { text } = checkEmote(pr, target, m.kind);
       online.get(target!.id)?.client.send('emote', { from: pr.id, fromName: pr.name, kind: m.kind, text });
     });
+    this.onMessage('regulars', () => regularsView(this.owner, this.district));
     this.onMessage('catalog', () => ({ products: PRODUCTS, wearables: WEARABLES, balance: BALANCE, lookOptions: LOOK_OPTIONS, dailyTasks: DAILY_TASKS, decorations: DECORATIONS,
       districts: DISTRICTS, meetingChoices: MEETING_CHOICES,
       crops: Object.entries(CROPS).map(([id, c]) => ({ id, ...c })),
@@ -615,8 +636,22 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     }
     k.wants = [...wants].join(',');
     if (k.group === TOURIST) k.touristLook = randomLook();
+    this.applyRegular(k, possible);
     st.customers.set(k.id, k);
     this.passedStalls.set(k.id, new Set());
+  }
+
+  // Sometimes a regular of this street shows up instead of an anonymous customer
+  private applyRegular(k: Customer, possible: string[]) {
+    const busy = new Set([...this.state.customers.values()].map((c) => c.regularId).filter(Boolean));
+    const regular = pickAppearingRegular(this.owner, this.district, busy);
+    if (!regular) return;
+    markSeen(this.owner, regular);
+    k.regularId = regular.id;
+    k.group = regular.group;
+    k.touristLook = '';
+    k.look = regularLook(regular);
+    k.wants = regularWants(regular, possible).join(',');
   }
 
   private customerMoveOn(k: Customer) {
@@ -632,6 +667,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.state.customers.delete(id);
     this.passedStalls.delete(id);
     this.waitingSince.delete(id);
+    this.secondPortions.delete(id);
   }
 
   private completeSale(s: Stall) {
@@ -643,7 +679,9 @@ export class StreetRoom extends Room<{ state: StreetState }> {
 
     const stats = this.sellerStats(s);
     const touristPct = k?.group === TOURIST ? BALANCE.touristPricePct / 100 : 1;
-    const revenue = Math.round(s.price * touristPct * (1 + (stats.moneyPct + traderBonusPct(profile)) / 100));
+    const regular = k?.regularId ? regularById(this.owner, k.regularId) : undefined;
+    const regularPct = regular ? tierBonusPct(regular.loyalty) : 0;
+    const revenue = Math.round(s.price * touristPct * (1 + (stats.moneyPct + traderBonusPct(profile)) / 100) * (100 + regularPct) / 100);
     const isOwner = profile.id === this.owner.id;
     const feePct = this.activeRules().sidewalkFeePct ?? BALANCE.sidewalkFeePct;
     const fee = isOwner ? 0 : Math.round(revenue * feePct / 100);
@@ -653,6 +691,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.grantXp(profile, Math.round(product.xp * (1 + stats.xpPct / 100)) + progressTask(profile, 'sell'));
     recordStreetSales(this.owner, revenue);
     questEvent(profile, 'sell', product.id);
+    this.trackSeason(profile, 'sell');
     addProfessionWork(profile, 'trader');
     this.state.fame = this.owner.fame;
     this.advanceOrder(profile);
@@ -669,10 +708,29 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     }
     this.broadcast('sale', { slot: s.slot, amount: revenue, ownerId: profile.id });
 
+    let second = false;
+    if (k && regular) {
+      const result = recordRegularSale(this.owner, profile, regular, s.productId, regularPct);
+      if (result.xp) this.grantXp(profile, result.xp);
+      if (result.gift) this.sendProfile(this.owner.id);
+      second = s.remaining >= 1 && !this.secondPortions.has(k.id) && rollSecondPortion(regular);
+      online.get(profile.id)?.client.send('regularSale', regularSaleView(result));
+    } else if (k && !k.regularId) {
+      const recruit = maybeRecruit(this.owner, this.district, k.group, s.productId);
+      if (recruit) k.regularId = recruit.id;
+    }
+
     if (k) {
       k.wants = k.wants.split(',').filter((w) => w !== s.productId).join(',');
-      this.customerMoveOn(k);
-      if (!k.wants) k.status = 'leave';
+      if (second) {
+        // A second portion: the customer stays at the same stall
+        this.secondPortions.add(k.id);
+        k.wants = [s.productId, ...k.wants.split(',').filter(Boolean)].join(',');
+        k.status = 'queue';
+      } else {
+        this.customerMoveOn(k);
+        if (!k.wants) k.status = 'leave';
+      }
     }
     if (s.remaining < 1) this.closeStall(s.slot, s.ownerId);
   }
@@ -895,6 +953,11 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     const st = this.state;
     if (st.shuttleDeadline && st.shuttleTurn === 'npc' && now > st.shuttleDeadline - BALANCE.shuttleSeconds * 500) this.passShuttle();
     else if (st.shuttleDeadline && now >= st.shuttleDeadline) this.endShuttle();
+  }
+
+  // Counts an action for the season (see season.ts) and tells the player when a weekly quest is finished
+  private trackSeason(profile: Profile, kind: SeasonKind, amount = 1, key = '') {
+    for (const done of seasonEvent(profile, kind, amount, Date.now(), key)) online.get(profile.id)?.client.send('seasonQuestDone', done);
   }
 
   private requireOwnStreet(profile: Profile) {

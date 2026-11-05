@@ -15,12 +15,14 @@ the red parasol, and no sprite export means the PNG is absent and Unity logs `Th
 one over the `catalog` message, so editing this array is enough for both sides.
 
 ```ts
-{ id: 'rice_rolls', name: 'Bánh cuốn', unlockLevel: 7, cost: 12000, price: 30000, sellSeconds: 4, xp: 4 },
+{ id: 'rice_rolls', name: 'Bánh cuốn', unlockLevel: 7, cost: 12000, price: 30000, sellSeconds: 4, xp: 4, category: 'snack' },
 ```
 
 - `id`: lowercase snake_case **English** (project rule in `AGENTS.md`). It becomes the sprite
   name and a client lookup key, so a typo in one place silently breaks three.
 - `name`: Vietnamese — it is player-facing text, which the project rule keeps in Vietnamese.
+- `category` (required): `'snack'` (Đồ Ăn Vặt), `'drink'` (Giải Khát), `'toy'` (Đồ Chơi) or `'goods'` (tạp hóa and clothes). The client uses it for the
+  tabs of the product picker; the `catalog` reply sends the whole `PRODUCTS` entry, so no other file needs it.
 - Keep the array sorted by `unlockLevel`; the in-game product picker renders in array order.
 - `sellSeconds` is the time to serve **one** customer, and it is divided by the seller's Skill stat.
 
@@ -40,10 +42,17 @@ Current profit table (`(price - cost) / sellSeconds`):
 | Bún đậu | 8 | 25,000 | 5,000 | 1.00 |
 | Sữa tươi | 10 | 13,000 | 6,500 | 1.50 |
 | Hoa tươi | 6 | 35,000 | 7,000 | 1.20 |
+| Bong bóng xà phòng | 3 | 6,000 | 3,000 | 1.00 |
+| Chong chóng | 5 | 15,000 | 5,000 | 1.00 |
+| Dép nhựa | 7 | 30,000 | 6,000 | 1.00 |
+| Áo thun in hình | 9 | 49,000 | 7,000 | 0.86 |
 
 A product unlocking at level *n* should sit between the one below and the one above it. Also
 check the capital it demands: `cost × 20` (a full stall) has to be affordable at that level —
 `BALANCE.startingMoney` is only 200,000đ.
+
+Wholesale products (neither `homegrown` nor `seasonal`) also follow the market's daily price, so nothing extra is needed for them. The garden test
+(`npm run test:garden`) fails if profit per second of wholesale products drops as the unlock level rises, so check the neighbours before settling a price.
 
 To measure instead of guessing, use the **balance** skill.
 
@@ -98,7 +107,19 @@ nothing about the new product, so add a `check(...)` assertion there if the prod
 (unusual price, very short or very long `sellSeconds`).
 
 Any product with `unlockLevel <= max(3, street owner's level)` shows up in NPC demand
-automatically (the `wants` generator in the room) — nothing else to declare.
+automatically (the `wants` generator in the room) — but a customer only shops for his own group, so also add the id to
+`CUSTOMER_GROUPS` in `data.ts`.
+
+### Customer groups
+
+`CUSTOMER_GROUPS` (`homemaker`, `student`, `kid`, `shopper`) says who buys what. `spawnCustomer` picks a first wanted product, gives the
+customer `groupOfProduct(first)`, and a 35% chance of a second want drawn from the same group. Tourists ignore groups and buy anything.
+
+- `groupOfProduct` returns the **first** group (object order) that lists the product, so a product listed twice belongs to the earlier group.
+  That is deliberate: `popsicle` and `iced_tea` stay `student` (the simulation test relies on it) and are only a second want of `kid`; the
+  homemaker items listed under `shopper` only become a second want of shoppers.
+- A product in no group falls back to `student`. Always list the new id in the group that should lead to it.
+- A new group also needs a look list in `GroupLooks` (`StreetScene.cs`), which is UI work; without it the customer uses a default look.
 
 ## Removing a product
 

@@ -1,6 +1,6 @@
 // Prints the per-product profit table and the levelling curve, read straight from server/src/data.ts.
 //   cd server && npx tsx ../.agents/skills/balance/scripts/profit-table.ts
-import { PRODUCTS, WEARABLES, BALANCE, xpToLevelUp, maxEmployeesForLevel, hireCost } from '../../../../server/src/data.js';
+import { PRODUCTS, RECIPES, WEARABLES, BALANCE, xpToLevelUp, maxEmployeesForLevel, hireCost } from '../../../../server/src/data.js';
 
 const d = (n: number) => n.toLocaleString('vi-VN');
 const l = (s: string | number, w: number) => String(s).padEnd(w);
@@ -19,7 +19,9 @@ for (const p of [...PRODUCTS].sort((a, b) => perSec(a) - perSec(b))) {
 console.log('\nLEVELLING — assuming nonstop sales of the best product unlocked');
 console.log(l('lvl', 5) + r('xp needed', 11) + r('best product', 14) + r('minutes', 9) + r('money/min', 11) + r('employees', 11));
 for (let level = 1; level <= 12; level++) {
-  const best = PRODUCTS.filter((p) => p.unlockLevel <= level).reduce((a, b) => (perSec(b) > perSec(a) ? b : a));
+  // Seasonal items and recipes locked behind a neighbour's friendship are not what a player can sell nonstop
+  const locked = new Set(Object.values(RECIPES).filter((r) => r.needsFriend).map((r) => r.output));
+  const best = PRODUCTS.filter((p) => p.unlockLevel <= level && !p.seasonal && !locked.has(p.id)).reduce((a, b) => (perSec(b) > perSec(a) ? b : a));
   const xp = xpToLevelUp(level);
   console.log(
     l(level, 5) + r(d(xp), 11) + r(best.name, 14) + r((xp / (best.xp / best.sellSeconds) / 60).toFixed(1), 9) +

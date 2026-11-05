@@ -11,6 +11,7 @@ import {
 import { friendship } from './stories.js';
 import type { EventRules } from './events.js';
 import { fortuneTrafficMultiplier, helpRewardFor } from './fortune.js';
+import { awardSeasonBoards, seasonEvent } from './season.js';
 
 const DAY = 86_400_000;
 export const dayIndex = (now = Date.now()) => Math.floor(now / DAY);
@@ -483,6 +484,7 @@ export function claimCommunity(profile: Profile, eventId: string, rules: EventRu
 
 export function addFame(profile: Profile, points: number) {
   profile.fame += points;
+  seasonEvent(profile, 'fame', points);
   markDirty(profile);
 }
 
@@ -520,6 +522,7 @@ export function rolloverSeason(now = Date.now()) {
   lastSeason = current;
   flushNow();
   const ranked = allProfiles().filter((p) => !p.isNpc).sort((a, b) => b.fame - a.fame);
+  awardSeasonBoards(finished, ranked);
   ranked.forEach((p, rank) => {
     if (p.fame > 0 && rank < 10) p.titles.push(`Mùa ${finished}: hạng ${rank + 1}`);
     if (p.fame >= FAME.seasonDecorationAt) p.decorations.push(`season_${finished}`);

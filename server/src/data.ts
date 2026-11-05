@@ -1,6 +1,8 @@
 // Product catalog, wearables, and game balance constants.
 // Money is in dong (đ). The server decides every game rule; the client only displays.
 
+export type ProductCategory = 'snack' | 'drink' | 'toy' | 'goods';
+
 export interface Product {
   id: string;
   name: string;
@@ -11,27 +13,32 @@ export interface Product {
   xp: number;
   homegrown?: boolean; // comes from the garden store instead of being bought as stock
   seasonal?: boolean;  // only sold while an event lists it
+  category: ProductCategory; // UI tab: snack, drink, toy; goods = groceries and clothes
 }
 
 export const PRODUCTS: Product[] = [
-  { id: 'banana',       name: 'Chuối',     unlockLevel: 1,  cost: 0,     price: 12000, sellSeconds: 3, xp: 2, homegrown: true },
-  { id: 'iced_tea',     name: 'Trà đá',    unlockLevel: 1,  cost: 1000,  price: 3000,  sellSeconds: 2, xp: 1 },
-  { id: 'grandma_soup', name: 'Chè gia truyền', unlockLevel: 1, cost: 0, price: 50000, sellSeconds: 3, xp: 6, homegrown: true },
-  { id: 'banh_chung',   name: 'Bánh chưng', unlockLevel: 1, cost: 30000, price: 60000, sellSeconds: 5, xp: 5, seasonal: true },
-  { id: 'sugarcane_juice', name: 'Nước mía', unlockLevel: 1, cost: 5000, price: 12000, sellSeconds: 2, xp: 2, seasonal: true },
-  { id: 'moon_cake',    name: 'Bánh nướng', unlockLevel: 1, cost: 25000, price: 55000, sellSeconds: 5, xp: 5, seasonal: true },
-  { id: 'fried_banana', name: 'Chuối chiên', unlockLevel: 2, cost: 0, price: 20000, sellSeconds: 3, xp: 3, homegrown: true },
-  { id: 'banh_mi',      name: 'Bánh mì',   unlockLevel: 2,  cost: 7000,  price: 15000, sellSeconds: 3, xp: 2 },
-  { id: 'sticky_rice',  name: 'Xôi',       unlockLevel: 2,  cost: 6000,  price: 14000, sellSeconds: 3, xp: 2 },
-  { id: 'banana_soup',  name: 'Chè chuối', unlockLevel: 3, cost: 0, price: 30000, sellSeconds: 3, xp: 4, homegrown: true },
-  { id: 'popsicle',     name: 'Kem que',   unlockLevel: 3,  cost: 4000,  price: 10000, sellSeconds: 2, xp: 2 },
-  { id: 'fresh_cane',   name: 'Nước mía tươi', unlockLevel: 4, cost: 0, price: 18000, sellSeconds: 2, xp: 3, homegrown: true },
-  { id: 'sweet_soup',   name: 'Chè',       unlockLevel: 4,  cost: 8000,  price: 20000, sellSeconds: 3, xp: 3 },
-  { id: 'rambutan',     name: 'Chôm chôm', unlockLevel: 5,  cost: 15000, price: 35000, sellSeconds: 4, xp: 4 },
-  { id: 'banana_cake',  name: 'Bánh chuối nướng', unlockLevel: 6, cost: 0, price: 45000, sellSeconds: 4, xp: 6, homegrown: true },
-  { id: 'tofu_noodles', name: 'Bún đậu',   unlockLevel: 6,  cost: 20000, price: 45000, sellSeconds: 5, xp: 5 },
-  { id: 'fresh_milk',   name: 'Sữa tươi',  unlockLevel: 8,  cost: 9000,  price: 22000, sellSeconds: 2, xp: 3 },
-  { id: 'flowers',      name: 'Hoa tươi',  unlockLevel: 10, cost: 25000, price: 60000, sellSeconds: 5, xp: 6 },
+  { id: 'banana',       name: 'Chuối',     unlockLevel: 1,  cost: 0,     price: 12000, sellSeconds: 3, xp: 2, homegrown: true, category: 'snack' },
+  { id: 'iced_tea',     name: 'Trà đá',    unlockLevel: 1,  cost: 1000,  price: 3000,  sellSeconds: 2, xp: 1, category: 'drink' },
+  { id: 'grandma_soup', name: 'Chè gia truyền', unlockLevel: 1, cost: 0, price: 50000, sellSeconds: 3, xp: 6, homegrown: true, category: 'snack' },
+  { id: 'banh_chung',   name: 'Bánh chưng', unlockLevel: 1, cost: 30000, price: 60000, sellSeconds: 5, xp: 5, seasonal: true, category: 'snack' },
+  { id: 'sugarcane_juice', name: 'Nước mía', unlockLevel: 1, cost: 5000, price: 12000, sellSeconds: 2, xp: 2, seasonal: true, category: 'drink' },
+  { id: 'moon_cake',    name: 'Bánh nướng', unlockLevel: 1, cost: 25000, price: 55000, sellSeconds: 5, xp: 5, seasonal: true, category: 'snack' },
+  { id: 'fried_banana', name: 'Chuối chiên', unlockLevel: 2, cost: 0, price: 20000, sellSeconds: 3, xp: 3, homegrown: true, category: 'snack' },
+  { id: 'banh_mi',      name: 'Bánh mì',   unlockLevel: 2,  cost: 7000,  price: 15000, sellSeconds: 3, xp: 2, category: 'snack' },
+  { id: 'sticky_rice',  name: 'Xôi',       unlockLevel: 2,  cost: 6000,  price: 14000, sellSeconds: 3, xp: 2, category: 'snack' },
+  { id: 'banana_soup',  name: 'Chè chuối', unlockLevel: 3, cost: 0, price: 30000, sellSeconds: 3, xp: 4, homegrown: true, category: 'snack' },
+  { id: 'popsicle',     name: 'Kem que',   unlockLevel: 3,  cost: 4000,  price: 10000, sellSeconds: 2, xp: 2, category: 'snack' },
+  { id: 'soap_bubbles', name: 'Bong bóng xà phòng', unlockLevel: 3, cost: 3000, price: 9000, sellSeconds: 2, xp: 2, category: 'toy' },
+  { id: 'fresh_cane',   name: 'Nước mía tươi', unlockLevel: 4, cost: 0, price: 18000, sellSeconds: 2, xp: 3, homegrown: true, category: 'drink' },
+  { id: 'sweet_soup',   name: 'Chè',       unlockLevel: 4,  cost: 8000,  price: 20000, sellSeconds: 3, xp: 3, category: 'snack' },
+  { id: 'rambutan',     name: 'Chôm chôm', unlockLevel: 5,  cost: 15000, price: 35000, sellSeconds: 4, xp: 4, category: 'snack' },
+  { id: 'pinwheel',     name: 'Chong chóng', unlockLevel: 5, cost: 7000, price: 22000, sellSeconds: 3, xp: 3, category: 'toy' },
+  { id: 'banana_cake',  name: 'Bánh chuối nướng', unlockLevel: 6, cost: 0, price: 45000, sellSeconds: 4, xp: 6, homegrown: true, category: 'snack' },
+  { id: 'tofu_noodles', name: 'Bún đậu',   unlockLevel: 6,  cost: 20000, price: 45000, sellSeconds: 5, xp: 5, category: 'snack' },
+  { id: 'plastic_sandals', name: 'Dép nhựa', unlockLevel: 7, cost: 25000, price: 55000, sellSeconds: 5, xp: 5, category: 'goods' },
+  { id: 'fresh_milk',   name: 'Sữa tươi',  unlockLevel: 8,  cost: 9000,  price: 22000, sellSeconds: 2, xp: 3, category: 'drink' },
+  { id: 't_shirt',      name: 'Áo thun in hình', unlockLevel: 9, cost: 60000, price: 109000, sellSeconds: 7, xp: 6, category: 'goods' },
+  { id: 'flowers',      name: 'Hoa tươi',  unlockLevel: 10, cost: 25000, price: 60000, sellSeconds: 5, xp: 6, category: 'goods' },
 ];
 export const getProduct = (id: string) => PRODUCTS.find((p) => p.id === id);
 
@@ -39,6 +46,10 @@ export const getProduct = (id: string) => PRODUCTS.find((p) => p.id === id);
 export const CUSTOMER_GROUPS: Record<string, string[]> = {
   homemaker: ['banana', 'sticky_rice', 'rambutan', 'tofu_noodles', 'flowers', 'banh_chung', 'moon_cake', 'banana_soup', 'banana_cake', 'grandma_soup'],
   student: ['iced_tea', 'popsicle', 'banh_mi', 'sweet_soup', 'fresh_milk', 'sugarcane_juice', 'fried_banana', 'fresh_cane'],
+  // groupOfProduct returns the first group listing a product, so the order above wins: popsicle and iced tea stay student,
+  // and the homemaker items below only make shopper customers want them as a second item
+  kid: ['soap_bubbles', 'pinwheel', 'popsicle', 'iced_tea'],
+  shopper: ['plastic_sandals', 't_shirt', 'banana', 'sticky_rice', 'rambutan', 'tofu_noodles', 'flowers'],
 };
 export const TOURIST = 'tourist'; // tourists buy anything and pay more; they only come to famous streets
 export const groupOfProduct = (id: string) => Object.keys(CUSTOMER_GROUPS).find((g) => CUSTOMER_GROUPS[g].includes(id)) ?? 'student';
@@ -105,6 +116,7 @@ export const DAILY_TASKS = [
   { id: 'harvest', name: 'Thu hoạch 2 ô đất', target: 2 },
   { id: 'sell', name: 'Bán 10 phần hàng', target: 10 },
   { id: 'visit', name: 'Ghé một phố khác', target: 1 },
+  { id: 'regular', name: 'Đón khách quen', target: 3 },
 ];
 
 // Street decorations are sold only during their event and kept forever
