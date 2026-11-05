@@ -6,7 +6,8 @@ import path from 'node:path';
 
 process.env.DATA_DIR = mkdtempSync(path.join(tmpdir(), 'via-he-test-'));
 const { BALANCE, PRODUCTS } = await import('../src/data.js');
-const { GameError, advanceTutorial, createCharacter, login } = await import('../src/profile.js');
+const { GameError, TUTORIAL_DONE, advanceTutorial, createCharacter, emptyLand, ensureNpcStreets, getProfile, login } = await import('../src/profile.js');
+ensureNpcStreets();
 const W = await import('../src/world.js');
 
 let failures = 0;
@@ -46,15 +47,38 @@ W.harvestCrop(p, 0, 0, t0 + 10_000_000);
 check(p.store.banana === 5 && !lot.crop && p.tutorial === 3, 'Ripe bananas never rot and go to the store');
 
 for (const i of [1, 2, 3]) W.plantCrop(p, 0, i, 'banana', t0);
+check(p.districts[0].lots[1].readyAt === t0 + 180_000, 'Crops planted before the first sale ripen in 3 minutes');
+p.tutorial = 5;
 W.plantCrop(p, 0, 0, 'banana', t0);
-check(p.money === 490000 && lot.readyAt === t0 + 1_800_000, 'Later crops cost 10,000đ and take 30 minutes');
+check(p.money === 490000 && lot.readyAt === t0 + 600_000 && p.tutorial === 6, 'The second crop costs 10,000đ and takes 10 minutes');
+Object.assign(lot, emptyLand());
+p.tutorial = 9;
+p.money += 10000;
+W.plantCrop(p, 0, 0, 'banana', t0);
+check(lot.readyAt === t0 + 1_800_000 && p.tutorial === TUTORIAL_DONE, 'Planting the long crop takes 30 minutes and ends the tutorial');
 
 p.store = { banana: BALANCE.storeCapacity - 2 };
 refuses(() => W.harvestCrop(p, 0, 1, t0 + 200_000), 'Kho đầy', 'A full store blocks the harvest');
 check(p.districts[0].lots[1].crop === 'banana', 'The crop waits when the store is full');
 
 advanceTutorial(p, 2);
-check(p.tutorial === 3, 'The tutorial never goes backwards');
+check(p.tutorial === TUTORIAL_DONE, 'The tutorial never goes backwards');
+
+// Guided first session: a step already done never blocks the next one
+const guided = login('guide-test', 'Hướng dẫn');
+guided.tutorial = 5;
+W.build(guided, 0, 0, 'tea_shop', t0);
+W.plantCrop(guided, 0, 1, 'banana', t0);
+check(guided.tutorial === 7, 'A tea shop built early is counted once the second crop is planted');
+const npc = getProfile('npc-street-1')!;
+W.tendNpcGarden(npc, t0);
+const npcLot = npc.districts[0].lots[0];
+const npcReady = npcLot.readyAt;
+W.helpWater(guided, npc, 0, 0, t0);
+check(guided.tutorial === 8 && !npcLot.watered && npcLot.readyAt === npcReady, 'Watering an NPC street finishes that step and leaves the crop for the next player');
+Object.assign(guided.districts[0].lots[1], emptyLand());
+advanceTutorial(guided, 0);
+check(guided.tutorial === 9, 'With no crop left to harvest the tutorial moves on to replanting');
 
 const byLevel = PRODUCTS.filter((x) => !x.homegrown && !x.seasonal).sort((a, b) => a.unlockLevel - b.unlockLevel);
 const perSecond = (x: { price: number; cost: number; sellSeconds: number }) => (x.price - x.cost) / x.sellSeconds;

@@ -55,7 +55,9 @@ namespace ViaHeOnline
                     var row = UIBuilder.Row(content).transform;
                     bool unlocked = p.level >= c.unlockLevel;
                     bool free = c.id == "banana" && p.freeSeeds > 0;
-                    UIBuilder.Label(row, $"{c.name}   chín sau {c.seconds / 60} phút · {c.yield} sản phẩm" + (unlocked ? "" : $"   (cấp {c.unlockLevel})"), 19, unlocked ? UIBuilder.TextDark : UIBuilder.TextMuted);
+                    // Must match cropSeconds in server/src/world.ts
+                    int minutes = c.id != "banana" ? c.seconds / 60 : p.tutorial < 5 ? 3 : p.tutorial < 9 ? 10 : c.seconds / 60;
+                    UIBuilder.Label(row, $"{c.name}   chín sau {minutes} phút · {c.yield} sản phẩm" + (unlocked ? "" : $"   (cấp {c.unlockLevel})"), 19, unlocked ? UIBuilder.TextDark : UIBuilder.TextMuted);
                     if (!unlocked) continue;
                     UIBuilder.Button(row, free ? "Miễn phí" : Network.Money(c.seedCost), () =>
                     {

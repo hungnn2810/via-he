@@ -10,7 +10,7 @@ import {
 import {
   addFame, addFriend, addProfessionWork, awardFinishedBuildings, build, buyDecoration, buyDistrict, buyVehicle, chooseProfession,
   claimCommunity, clearCrop, collectCooking, collectDeliveries, collectIncome, cook, dayIndex, demolish, donateBananas, footTraffic, giveGift,
-  harvestCrop, hasBuilding, helpWater, maxEmployees, payWages, plantCrop, professionHelp, progressTask, recordStreetSales, recordVisit,
+  harvestCrop, hasBuilding, helpWater, maxEmployees, payWages, plantCrop, professionHelp, progressTask, recordStreetSales, recordVisit, tendNpcGarden,
   refreshDaily, refreshOrders, removeFriend, sendDelivery, storeCapacity, takeFromStore, traderBonusPct, upgrade, useVehicle, waterCrop,
 } from '../world.js';
 import { meetingOpen, mergeRules, pickStreetEvent, scheduledEvent, seasonalEvent, weekIndex, type GameEvent } from '../events.js';
@@ -77,6 +77,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.state.slotCount = BALANCE.slotsPerStreet;
     this.state.ownerSlots = BALANCE.ownerSlots;
     this.nextStreetEventAt = Date.now() + BALANCE.streetEventEverySeconds * 1000 * (0.5 + Math.random());
+    if (owner.isNpc) tendNpcGarden(owner);
     this.syncStreet();
     this.updateMetadata();
     if (owner.isNpc) this.openNpcStalls();
@@ -456,6 +457,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       if (p.speech && now - p.speechAt > 5000) p.speech = '';
     });
 
+    if (this.owner.isNpc && tendNpcGarden(this.owner, now)) this.syncStreet();
     this.runEvents(now);
     this.spawnCustomer(dt * (this.activeRules().spawnFactor ?? 1) * (this.owner.isNpc ? 1 : footTraffic(this.owner, this.district)));
     this.runActivities(now);

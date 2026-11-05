@@ -83,7 +83,8 @@ export interface Profile {
   districts: District[];
   store: Record<string, number>; // shared by all districts
   freeSeeds: number;         // plots of the first crop, free and fast
-  tutorial: number;          // 0 plant, 1 water, 2 harvest, 3 open a stall, 4 first sale, 5 done
+  tutorial: number;          // see advanceTutorial
+  tutorialPaced: boolean;    // false on saves from when step 5 meant the tutorial was finished
   gardenerId: string;        // employee looking after the garden
   lastWageDay: number;
   daily: { day: number; tasks: DailyTask[] };
@@ -216,6 +217,8 @@ export const emptyLand = (): Land => ({
   crop: '', plantedAt: 0, readyAt: 0, watered: false, building: '', level: 0, collectedAt: 0, recipe: '', cookReadyAt: 0,
 });
 
+export const TUTORIAL_DONE = 10;
+
 // Profiles saved before districts existed keep their money, level and bananas, and their first four buildings
 function migrate(profile: Profile): Profile {
   const old = profile as Profile & { bananas?: number; lots?: ({ type: BuildingType; level: number; readyAt: number; collectedAt: number } | null)[] };
@@ -223,6 +226,10 @@ function migrate(profile: Profile): Profile {
   profile.appearance ??= null;
   profile.freeSeeds ??= BALANCE.startingFreeSeeds;
   profile.tutorial ??= 0;
+  if (!profile.tutorialPaced) {
+    if (profile.tutorial >= 5) profile.tutorial = TUTORIAL_DONE;
+    profile.tutorialPaced = true;
+  }
   Object.assign(profile, { ...worldDefaults(), ...profile });
   if (needsLand) {
     (old.lots ?? []).filter(Boolean).slice(0, BALANCE.lotsPerDistrict).forEach((lot, i) => {
@@ -261,6 +268,7 @@ export function login(deviceId: string, name: string): Profile {
     appearance: null,
     freeSeeds: BALANCE.startingFreeSeeds,
     tutorial: 0,
+    tutorialPaced: true,
     ...worldDefaults(),
     outfit: {},
     wardrobe: [],
@@ -301,7 +309,7 @@ export function ensureNpcStreets() {
     if (getProfile(street.id)) continue;
     const profile: Profile = {
       id: street.id, name: street.name, money: 0, level: 5, xp: 0, stamina: 0, appearance: null,
-      freeSeeds: 0, tutorial: 5, ...worldDefaults(), isNpc: true, outfit: {}, wardrobe: [],
+      freeSeeds: 0, tutorial: TUTORIAL_DONE, tutorialPaced: true, ...worldDefaults(), isNpc: true, outfit: {}, wardrobe: [],
       employees: [], candidates: [], log: [], totalSales: 0, createdAt: Date.now(),
     };
     cache.set(profile.id, profile);
@@ -427,7 +435,16 @@ export function addLogEntry(profile: Profile, entry: Omit<LogEntry, 'at'>) {
 // Rule violation; the message is shown to the player, so it stays Vietnamese.
 export class GameError extends Error {}
 
-export const advanceTutorial = (profile: Profile, step: number) => { profile.tutorial = Math.max(profile.tutorial, step); };
+// Steps: 0 plant, 1 water, 2 harvest, 3 open a stall, 4 first sale, 5 plant a second crop, 6 build a tea shop,
+// 7 water on another street, 8 harvest, 9 plant a long crop, 10 done
+export function advanceTutorial(profile: Profile, step: number) {
+  profile.tutorial = Math.max(profile.tutorial, step);
+  // Players may do a step early, so a step that is already satisfied never waits for its action
+  const lots = profile.districts.flatMap((d) => d.lots);
+  if (profile.tutorial === 5 && lots.some((l) => l.crop)) profile.tutorial = 6;
+  if (profile.tutorial === 6 && lots.some((l) => l.building === 'tea_shop')) profile.tutorial = 7;
+  if (profile.tutorial === 8 && !lots.some((l) => l.crop)) profile.tutorial = 9;
+}
 
 // The barber changes a finished character's look
 export function changeLook(profile: Profile, m: Partial<Appearance>) {

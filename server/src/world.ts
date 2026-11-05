@@ -5,7 +5,7 @@ import {
   getProduct, maxEmployeesForLevel, type BuildingType,
 } from './data.js';
 import {
-  GameError, addCommunityProgress, advanceTutorial, allProfiles, communityProgress, emptyLand, flushNow, markDirty,
+  GameError, TUTORIAL_DONE, addCommunityProgress, advanceTutorial, allProfiles, communityProgress, emptyLand, flushNow, markDirty,
   type DeliveryOrder, type Land, type Profile,
 } from './profile.js';
 import { friendship } from './stories.js';
@@ -69,6 +69,14 @@ export function seedCost(profile: Profile, crop: string, now = Date.now()) {
   return Math.round(cost);
 }
 
+// Bananas ripen fast during the guided first session, so a new player always has something to do
+function cropSeconds(profile: Profile, cropId: string) {
+  if (cropId !== 'banana') return CROPS[cropId].seconds;
+  if (profile.tutorial < 5) return BALANCE.firstCropSeconds;
+  if (profile.tutorial < 9) return BALANCE.secondCropSeconds;
+  return CROPS[cropId].seconds;
+}
+
 export function plantCrop(profile: Profile, district: number, index: number, cropId: string, now = Date.now()) {
   const lot = landAt(profile, district, index);
   const crop = CROPS[cropId];
@@ -80,12 +88,12 @@ export function plantCrop(profile: Profile, district: number, index: number, cro
   else pay(profile, seedCost(profile, cropId, now));
   const gardener = profile.employees.find((e) => e.id === profile.gardenerId);
   const faster = (gardener?.trait === 'gardener' ? BALANCE.gardenerCutPct : 0) + (DISTRICTS[district].growPct ?? 0);
-  const seconds = free ? BALANCE.firstCropSeconds : crop.seconds;
+  const seconds = cropSeconds(profile, cropId);
   lot.crop = cropId;
   lot.plantedAt = now;
   lot.readyAt = now + Math.round(seconds * 1000 * (100 - faster) / 100);
   lot.watered = false;
-  advanceTutorial(profile, 1);
+  advanceTutorial(profile, profile.tutorial === 9 ? TUTORIAL_DONE : 1);
 }
 
 export function waterCrop(profile: Profile, district: number, index: number, now = Date.now()) {
@@ -108,7 +116,7 @@ export function harvestCrop(profile: Profile, district: number, index: number, n
   const bonus = profile.profession?.id === 'gardener' ? profile.profession.rank : 0;
   addToStore(profile, crop, CROPS[crop].yield + bonus, now);
   Object.assign(lot, emptyLand());
-  advanceTutorial(profile, 3);
+  advanceTutorial(profile, profile.tutorial === 8 ? 9 : 3);
   addProfessionWork(profile, 'gardener');
   return crop;
 }
@@ -137,6 +145,7 @@ export function build(profile: Profile, district: number, index: number, type: B
   lot.building = type;
   lot.level = 1;
   lot.readyAt = lot.collectedAt = now + b.buildSeconds * 1000;
+  advanceTutorial(profile, 0);
 }
 
 export function upgrade(profile: Profile, district: number, index: number, now = Date.now()) {
@@ -399,12 +408,27 @@ export function helpWater(helper: Profile, owner: Profile, district: number, ind
   if (lot.watered) throw new GameError('Lứa này đã tưới rồi');
   if (helper.stamina < 1) throw new GameError('Hết sức rồi, nghỉ chút đã');
   helper.stamina -= 1;
-  lot.readyAt -= Math.round((lot.readyAt - now) * BALANCE.waterCutPct / 100);
-  lot.watered = true;
+  // An NPC garden is shared by every new player, so watering never uses it up
+  if (!owner.isNpc) {
+    lot.readyAt -= Math.round((lot.readyAt - now) * BALANCE.waterCutPct / 100);
+    lot.watered = true;
+  }
   owner.fameDay.helpers.push(helper.id);
   helper.money += BALANCE.helpReward;
   owner.money += BALANCE.helpReward;
   addFame(owner, FAME.help);
+  if (helper.tutorial === 7) advanceTutorial(helper, 8);
+}
+
+// Keeps bananas growing on an NPC street so visitors always have something to water. Returns true if anything changed.
+export function tendNpcGarden(owner: Profile, now = Date.now()) {
+  let changed = false;
+  for (const lot of owner.districts[0].lots) {
+    if (lot.crop && now < lot.readyAt) continue;
+    Object.assign(lot, emptyLand(), { crop: 'banana', plantedAt: now, readyAt: now + CROPS.banana.seconds * 1000 });
+    changed = true;
+  }
+  return changed;
 }
 
 // ---------- Seasonal extras ----------

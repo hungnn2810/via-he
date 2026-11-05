@@ -28,7 +28,10 @@ namespace ViaHeOnline
         Button _kick;
         Text _kickLabel;
         RectTransform _hud, _window, _avatarLook, _tutorial;
-        int _lastTutorial = -1;
+        int _lastTutorial = -1, _lastMenuLevel = -1;
+        bool _barReady;
+        readonly Dictionary<string, GameObject> _barButtons = new Dictionary<string, GameObject>();
+        readonly HashSet<GameObject> _pulsing = new HashSet<GameObject>();
         string _avatarAppearance = "";
         Action _redrawWindow;        // redraws the open window when the profile changes
         float _toastUntil;
@@ -222,7 +225,7 @@ namespace ViaHeOnline
             _toast = UIBuilder.Text(_hud, "", 26, Color.white, TextAnchor.MiddleCenter, true);
             UIBuilder.Place(_toast.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -150), new Vector2(900, 50), new Vector2(0.5f, 0.5f));
 
-            // Tutorial: the neighbourhood leader's advice sits above the bottom bar until the first sale
+            // Tutorial: the neighbourhood leader's advice sits above the bottom bar through the first session
             _tutorial = UIBuilder.Place(UIBuilder.Image(_hud, "ui_panel").rectTransform, new Vector2(0, 0), new Vector2(14, 112), new Vector2(620, 104), new Vector2(0, 0));
             UIBuilder.Place(UIBuilder.Image(_tutorial, "npc_leader").rectTransform, new Vector2(0, 0.5f), new Vector2(10, 0), new Vector2(86, 86), new Vector2(0, 0.5f));
             _tutorialText = UIBuilder.Text(_tutorial, "", 19, UIBuilder.TextDark);
@@ -236,9 +239,16 @@ namespace ViaHeOnline
             // Bottom bar: square icon buttons
             var buttonBar = UIBuilder.Place(UIBuilder.Box(_hud, "ButtonBar"), new Vector2(0, 0), new Vector2(14, 14), new Vector2(824, 88), new Vector2(0, 0));
             var h = buttonBar.gameObject.AddComponent<HorizontalLayoutGroup>();
-            h.spacing = 10; h.childControlWidth = true; h.childControlHeight = true; h.childForceExpandWidth = true;
-            void BarButton(string label, string icon, UnityEngine.Events.UnityAction onClick, string color = "orange") =>
-                UIBuilder.Button(buttonBar, label, onClick, color, 15, icon).GetComponent<LayoutElement>().minWidth = 92;
+            h.spacing = 10; h.childControlWidth = true; h.childControlHeight = true; h.childForceExpandWidth = false;
+            void BarButton(string label, string icon, UnityEngine.Events.UnityAction onClick, string color = "orange")
+            {
+                var button = UIBuilder.Button(buttonBar, label, onClick, color, 15, icon);
+                var layout = button.GetComponent<LayoutElement>();
+                layout.minWidth = layout.preferredWidth = 92;
+                var go = button.gameObject;
+                button.onClick.AddListener(() => { _pulsing.Remove(go); go.transform.localScale = Vector3.one; });
+                _barButtons[label] = go;
+            }
             BarButton("Dọn hàng", "icon_stall", () => OpenStallWindow(-1));
             BarButton("Nhân viên", "icon_staff", OpenStaff);
             BarButton("Tủ đồ", "icon_wardrobe", OpenWardrobe);
@@ -287,6 +297,7 @@ namespace ViaHeOnline
                 _avatar.gameObject.SetActive(look == "");
                 if (look != "") Character.FillPortrait(_avatarLook, look);
             }
+            RefreshBar(p);
             RefreshTutorial(p);
         }
 
@@ -297,16 +308,92 @@ namespace ViaHeOnline
             "Giờ chờ chuối chín, rồi chạm vào cây để thu hoạch.",
             "Có chuối rồi! Chạm vào ô trống trên vỉa hè, chọn Chuối để dọn hàng.",
             "Chạm vào khách muốn mua chuối để mời họ tới sạp của cháu.",
+            "Bán giỏi lắm! Giờ chạm ô đất trống trồng thêm vụ chuối nữa, vụ này chín sau 10 phút.",
+            "Xây quán cho phố đông vui nào. Chạm ô đất trống, chọn Quán trà đá. Thiếu tiền thì bán thêm nhé.",
+            "Hàng xóm đang cần giúp đấy. Bấm Xe buýt để sang một phố khác nhé.",
+            "Về phố mình thôi. Chuối chín thì chạm vào cây để thu hoạch.",
+            "Trồng một vụ mới trước khi nghỉ nhé. Vụ này lâu hơn, cháu quay lại là vừa chín.",
         };
+        const int TutorialDone = 10;
+
+        // Lines for the steps that change when the player is on someone else's street
+        static string TutorialLine(int step, bool home)
+        {
+            if (!home && step == 7) return "Chạm vào cây chuối trên phố này để tưới giúp, cả hai cùng có thưởng.";
+            if (!home && step == 8) return "Cảm ơn cháu! Bấm Về nhà để quay lại phố mình.";
+            return TutorialLines[step];
+        }
+
+        // Entries under Thêm that open by level; entries not listed open when the tutorial ends
+        static readonly (string label, int level)[] MenuUnlocks =
+        {
+            ("Bảng phố nổi tiếng", 3), ("Hoạt động xóm phố", 4), ("Xe cộ", 4), ("Đơn giao", 4), ("Bản đồ khu phố", 5), ("Nghề", 5),
+        };
+
+        static bool MenuOpen(Profile p, string label)
+        {
+            foreach (var unlock in MenuUnlocks)
+                if (unlock.label == label) return p.level >= unlock.level;
+            return true;
+        }
+
+        bool OnHomeStreet
+        {
+            get
+            {
+                var ownerId = _net.Room?.State?.ownerId;
+                return string.IsNullOrEmpty(ownerId) || ownerId == _net.Account.id;
+            }
+        }
+
+        // Buttons appear as the player reaches them. This only hides UI; the server rules do not change.
+        void RefreshBar(Profile p)
+        {
+            bool done = p.tutorial >= TutorialDone;
+            var opened = new List<string>();
+            void Show(string label, bool visible, bool announce = true)
+            {
+                var button = _barButtons[label];
+                if (visible && !button.activeSelf && announce && _barReady)
+                {
+                    opened.Add(label);
+                    _pulsing.Add(button);
+                }
+                button.SetActive(visible);
+            }
+            Show("Dọn hàng", true);
+            Show("Xe buýt", p.tutorial >= 7);
+            Show("Về nhà", !OnHomeStreet, false);
+            Show("Nhật ký", done);
+            Show("Thêm", done);
+            Show("Tủ đồ", p.level >= 2);
+            Show("Cửa hàng", p.level >= 2);
+            Show("Nhân viên", p.level >= 3);
+            if (_barReady && done)
+                foreach (var unlock in MenuUnlocks)
+                    if (unlock.level > _lastMenuLevel && unlock.level <= p.level)
+                    {
+                        opened.Add(unlock.label);
+                        _pulsing.Add(_barButtons["Thêm"]);
+                    }
+            _lastMenuLevel = p.level;
+            _barReady = true;
+            if (opened.Count > 0) Toast("Trưởng xóm: mở thêm " + string.Join(", ", opened) + " cho cháu rồi đấy!");
+        }
 
         void RefreshTutorial(Profile p)
         {
-            if (p.tutorial == _lastTutorial) return;
-            if (_lastTutorial >= 0 && p.tutorial >= TutorialLines.Length) Toast("Bán được nải đầu tiên rồi, giỏi lắm cháu!");
-            _lastTutorial = p.tutorial;
-            bool show = p.tutorial < TutorialLines.Length;
+            bool home = OnHomeStreet;
+            int key = p.tutorial * 2 + (home ? 1 : 0);
+            if (key == _lastTutorial) return;
+            int previous = _lastTutorial < 0 ? -1 : _lastTutorial / 2;
+            if (previous >= 0 && previous < 5 && p.tutorial >= 5) Toast("Bán được nải đầu tiên rồi, giỏi lắm cháu!");
+            if (previous >= 0 && previous < TutorialDone && p.tutorial >= TutorialDone)
+                Toast("Xong rồi! Nhật ký và Thêm đã mở. Chuối và quán trà sẽ chờ cháu quay lại.");
+            _lastTutorial = key;
+            bool show = p.tutorial < TutorialDone;
             _tutorial.gameObject.SetActive(show);
-            if (show) _tutorialText.text = TutorialLines[p.tutorial];
+            if (show) _tutorialText.text = TutorialLine(p.tutorial, home);
         }
 
         void Toast(string text)
@@ -319,6 +406,8 @@ namespace ViaHeOnline
         void Update()
         {
             if (_toast && _toast.text != "" && Time.time > _toastUntil) _toast.text = "";
+            float pulse = 1f + 0.08f * Mathf.Abs(Mathf.Sin(Time.time * 4f));
+            foreach (var button in _pulsing) button.transform.localScale = new Vector3(pulse, pulse, 1);
             UpdateActivities();
             var state = _net?.Room?.State;
             if (_event && state != null)
@@ -506,7 +595,10 @@ namespace ViaHeOnline
                 var p = _net.Profile;
                 var st = _net.Room.State;
                 bool mine = st.ownerId == _net.Account.id;
-                void Entry(string label, string color, Action action) => this.Entry(content, label, color, action);
+                void Entry(string label, string color, Action action)
+                {
+                    if (MenuOpen(p, label)) this.Entry(content, label, color, action);
+                }
                 Entry("Bản đồ khu phố", "blue", OpenMap);
                 Entry("Kho hàng", "blue", OpenStore);
                 Entry("Hàng xóm", "orange", OpenNeighbours);

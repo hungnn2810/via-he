@@ -19,7 +19,7 @@ Project conventions (code in English, player-facing text in Vietnamese) are in `
 | **Neighbours** | Five fictional neighbours with five quests each. Friendship 5 unlocks a lasting reward, such as the old motorbike |
 | **Activities** | Shuttlecock rally, sidewalk caro, Sunday neighbourhood meeting and neighbourhood weddings. A neighbour plays with you when you are alone. No betting |
 | **Vehicles and deliveries** | Vehicles change speed and capacity. Send a vehicle on an order and collect the money when it returns; players can also post and fill each other's orders |
-| **Tutorial** | The neighbourhood leader walks new players through planting, watering, harvesting, opening a stall and the first sale |
+| **Tutorial** | The neighbourhood leader guides the first 15 minutes: plant, water, harvest, sell, plant a second crop, build a tea shop, water on an NPC street, then harvest and plant a long crop. Banana crops ripen in 3, then 10, then 30 minutes. Bottom-bar buttons and *Thêm* entries appear gradually by tutorial step and level |
 | **Buildings** | Build a store, kitchen, tea shop, grocery, barber or the neighbourhood stage on a lot. Shops earn money for up to 8 hours between collections, buildings upgrade up to level 3, and demolishing refunds 50% |
 | **Daily tasks** | Three tasks a day from the neighbourhood leader, each paying money and XP |
 | **Friends and helping** | Add a friend from their street and water their garden once a day, even when they are away. Both players are rewarded. NPC streets are always open to visit |

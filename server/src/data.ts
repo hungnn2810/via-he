@@ -185,6 +185,7 @@ export const BALANCE = {
   maxTraffic: 1.2,
   demolishRefundPct: 50,
   firstCropSeconds: 180,
+  secondCropSeconds: 600,    // banana crops planted during the guided first session
   waterCutPct: 20,           // watering removes this % of the remaining growing time
   storeCapacity: 40,         // items of all kinds the store holds
   harvestXp: 5,

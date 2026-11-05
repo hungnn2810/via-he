@@ -57,6 +57,7 @@ W.buyDistrict(p);
 check(p.districts.length === 2 && p.money === 500000 && p.districts[1].lots.length === 4, 'Buying a district adds 4 lots');
 check(W.maxEmployees(p) === staff + 1, 'Each district adds a staff place');
 p.freeSeeds = 0;
+p.tutorial = 10;
 W.plantCrop(p, 1, 0, 'banana', t0);
 check(lotsOf(1)[0].readyAt === t0 + 1800 * 900, 'The river district grows crops 10% faster');
 W.clearCrop(p, 1, 0);
