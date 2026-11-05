@@ -20,6 +20,13 @@ http.createServer((req, res) => {
     });
     return;
   }
+  if (u.pathname === '/done') {
+    const count = u.searchParams.get('count') || '?';
+    console.log(`Exported ${count} sprites successfully into Assets/Resources/Sprites.`);
+    res.end('ok');
+    setTimeout(() => process.exit(0), 100);
+    return;
+  }
   const file = u.pathname === '/' ? 'export.html' : path.basename(u.pathname);
   try {
     res.setHeader('content-type', file.endsWith('.js') ? 'text/javascript; charset=utf-8' : 'text/html; charset=utf-8');

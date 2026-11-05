@@ -10,26 +10,54 @@ namespace ViaHeOnline
     public class StreetObject : MonoBehaviour
     {
         const float BubbleSeconds = 3f, BubbleMaxY = 3f, BounceSeconds = 0.3f;
+        public static System.Func<string> GetActiveEvent;
 
         class Info
         {
             public string Name;
             public string[] Lines;
+            public Dictionary<string, string[]> EventLines;
             public StreetAction Action;
             public bool Building;   // too large to bounce; the bubble appears where it was tapped
         }
 
         static Info Person(string name, params string[] lines) => new Info { Name = name, Lines = lines };
+        static Info PersonWithEvents(string name, string[] lines, Dictionary<string, string[]> eventLines) => new Info { Name = name, Lines = lines, EventLines = eventLines };
         static Info Building(string name, StreetAction action, params string[] lines) => new Info { Name = name, Lines = lines, Action = action, Building = true };
 
         // Keyed by sprite name
         static readonly Dictionary<string, Info> Catalog = new Dictionary<string, Info>
         {
-            ["npc_cap_man"] = Person("Anh Tư", "Hôm nay phố đông ghê!", "Bán đắt hàng nha!"),
-            ["npc_girl"] = Person("Bé Na", "Nóng quá, thèm ly trà đá!", "Có gì ngon không anh chị ơi?"),
-            ["npc_firefighter"] = Person("Lính cứu hỏa", "Dọn hàng nhớ tắt bếp nha!", "Phố này an toàn lắm!"),
-            ["npc_worker"] = Person("Chú thợ hồ", "Đường này đào hoài chưa xong!", "Nghỉ tay chút đã."),
-            ["npc_old_man"] = Person("Ông Sáu", "Ngày xưa phố này vắng lắm...", "Ông còn miếng đất, mua không?"),
+            ["npc_cap_man"] = PersonWithEvents("Anh Tư",
+                new[] { "Hôm nay phố đông ghê!", "Bán đắt hàng nha bà con!", "Cà phê sáng chưa anh em?", "Đang đợi nổ đơn đây...", "Phố mình dạo này làm ăn xôm tụ hẳn!" },
+                new Dictionary<string, string[]>
+                {
+                    ["rain"] = new[] { "Mưa ngập hết đường rồi, chạy xe cẩn thận nhé!", "Mưa gió ế ẩm quá bác chủ ơi...", "Tạt vào trú mưa làm ấm trà đá đã!" },
+                    ["hot_sun"] = new[] { "Nắng chảy mỡ thế này, cho cốc trà đá giải nhiệt nào!", "Đội mũ vào em ơi, nắng rát hết cả mặt!" },
+                    ["rush_hour"] = new[] { "Giờ tan tầm kẹt xe từ đầu ngõ tới đây!", "Tranh thủ bán đi, người ta đi làm về đông lắm!" }
+                }),
+            ["npc_girl"] = PersonWithEvents("Bé Na",
+                new[] { "Nóng quá, thèm ly trà đá!", "Có gì ngon không anh chị ơi?", "Món xôi ở đây thơm nức mũi!", "Hôm nay học xong sớm ra phố chơi!", "Cuối tuần phố mình nhộn nhịp ghê!" },
+                new Dictionary<string, string[]>
+                {
+                    ["rain"] = new[] { "Trời mưa lạnh thế này ăn chè chuối nóng là đỉnh nhất!", "Mưa rơi ướt hết cả tập vở rồi!" },
+                    ["night_market"] = new[] { "Chợ đêm lung linh quá, đi dạo một vòng sắm đồ thôi!", "Tối nay đông vui như trẩy hội ấy!" }
+                }),
+            ["npc_firefighter"] = Person("Lính cứu hỏa", "Dọn hàng nhớ tắt bếp than nha!", "Phố này an toàn là trên hết!", "Bình chữa cháy để ngay ngắn nhé các bác!", "Vỉa hè gọn gàng thế này xe dễ vào!"),
+            ["npc_worker"] = PersonWithEvents("Chú thợ hồ",
+                new[] { "Đường này đào hoài chưa xong!", "Nghỉ tay chút đã.", "Làm từ sáng tới giờ đói mờ mắt.", "Bác chủ quầy xới cho bát xôi đầy đặn tí nhé!", "Lao động là vinh quang, mà mệt quá anh em ơi!" },
+                new Dictionary<string, string[]>
+                {
+                    ["hot_sun"] = new[] { "Nắng chang chang thế này xây trát mệt đứt hơi.", "Cho ca trà đá to nhiều đá em ơi!" },
+                    ["rain"] = new[] { "Mưa to thế này thợ hồ được nghỉ sớm rồi!" }
+                }),
+            ["npc_old_man"] = PersonWithEvents("Ông Sáu",
+                new[] { "Ngày xưa phố này vắng lắm, toàn đầm chuối...", "Ông còn miếng đất, chăm chỉ gom tiền mà mua!", "Người trẻ bây giờ buôn bán chịu khó ghê.", "Sáng nào ông cũng phải làm ấm trà ngắm phố xá." },
+                new Dictionary<string, string[]>
+                {
+                    ["tet"] = new[] { "Tết đến nơi rồi, hoa đào hoa mai nở rực cả xóm!" },
+                    ["rain"] = new[] { "Trời mưa lại nhớ ngày xưa ngập đường lội nước..." }
+                }),
             ["bike_delivery"] = Person("Xe giao hàng", "Thùng đầy hàng rồi!"),
             ["bike_sport"] = Person("Xe thể thao", "Xe đẹp đó, đừng đụng trầy nha!"),
             ["bike_cub"] = Person("Xe cub", "Xe cũ mà chạy còn êm."),
@@ -80,7 +108,7 @@ namespace ViaHeOnline
         void Speak(float x)
         {
             if (_bubble) Destroy(_bubble);
-            var line = _info.Lines[Random.Range(0, _info.Lines.Length)];
+            var line = PickLine();
             _bubble = new GameObject("Bubble");
             var t = _bubble.transform;
             t.SetParent(transform.parent, false);
@@ -89,6 +117,21 @@ namespace ViaHeOnline
             Draw.Text(t, line, new Vector2(0, 0.28f), 0.17f, Draw.Hex("#3b2414"), 2001);
             Draw.Outlined(t, _info.Name, new Vector2(0, 0.72f), 0.17f, Draw.Hex("#ffe066"), 2001);
             _bubbleUntil = Time.time + BubbleSeconds;
+        }
+
+        string PickLine()
+        {
+            string active = GetActiveEvent?.Invoke() ?? "";
+            if (!string.IsNullOrEmpty(active) && _info.EventLines != null && Random.value < 0.65f)
+            {
+                foreach (var ev in active.Split(','))
+                {
+                    var key = ev.Trim();
+                    if (_info.EventLines.TryGetValue(key, out var pool) && pool.Length > 0)
+                        return pool[Random.Range(0, pool.Length)];
+                }
+            }
+            return _info.Lines[Random.Range(0, _info.Lines.Length)];
         }
 
         void Update()

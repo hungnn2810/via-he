@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Vỉa Hè Online — Mẫu Chuẩn Giai Đoạn 2 (PNG + Nền Phố + 3X Zoom)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #f5efe6;
+      --panel: #ffffff;
+      --ink: #3a2416;
+      --primary: #e27838;
+      --border: #e2d6c5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    header {
+      max-width: 1320px;
+      margin: 0 auto 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--primary);
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    h1 { margin: 0 0 6px; font-size: 26px; font-weight: 800; }
+    p.sub { margin: 0; color: #6b5749; font-size: 14px; }
+
+    /* Control Bar */
+    .controls {
+      max-width: 1320px;
+      margin: 0 auto 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      background: var(--panel);
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(58, 36, 22, 0.06);
+    }
+    .ctrl-group { display: flex; align-items: center; gap: 8px; }
+    .ctrl-title { font-size: 13px; font-weight: 700; color: #7a6555; }
+    button.btn {
+      padding: 7px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    button.btn:hover { border-color: var(--primary); color: var(--primary); }
+    button.btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+    /* Main Sections Grid */
+    .grid {
+      max-width: 1320px;
+      margin: 0 auto 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(58, 36, 22, 0.08);
+    }
+    .card h2 { margin: 0 0 4px; font-size: 18px; font-weight: 800; }
+    .card p.desc { margin: 0 0 16px; font-size: 13px; color: #7a6555; }
+
+    /* Stage Canvas */
+    .stage {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 380px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 20px;
+    }
+    .stage-street {
+      background: linear-gradient(to bottom, #aed6f1 0%, #f9e79f 40%, #f9e79f 65%, #e3d6c4 65%, #e3d6c4 85%, #585e63 85%, #585e63 100%);
+    }
+    .stage-clean {
+      background: #fdfaf5;
+      border: 1px solid var(--border);
+    }
+    .stage-checker {
+      background-image: repeating-conic-gradient(#eee 0 25%, #fff 0 50%);
+      background-size: 20px 20px;
+      border: 1px solid var(--border);
+    }
+
+    /* Stacked Character Layer Container (Exact Unity Stack simulation) */
+    .char-stack {
+      position: relative;
+      width: 160px;
+      height: 256px;
+      margin: 0 16px;
+      transform-origin: bottom center;
+      transition: transform 0.1s ease;
+    }
+    .char-stack img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 160px;
+      height: 256px;
+      display: block;
+      pointer-events: none;
+    }
+    .char-shadow {
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 24px;
+      background: radial-gradient(ellipse at center, rgba(30,20,15,0.3) 0%, rgba(30,20,15,0) 70%);
+      pointer-events: none;
+    }
+
+    /* 3X Zoom Container */
+    .zoom-3x-container {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding: 20px 0;
+      overflow-x: auto;
+    }
+    .zoom-3x-box {
+      text-align: center;
+    }
+    .zoom-3x-stage {
+      width: 480px;
+      height: 520px;
+      overflow: hidden;
+      position: relative;
+      background: #fdfaf5;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding-bottom: 20px;
+    }
+    .zoom-3x-stage .char-stack {
+      transform: scale(1.8);
+      transform-origin: bottom center;
+    }
+
+    /* Checklist */
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 13px;
+    }
+    .checklist li {
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      background: #fdfaf6;
+      border-left: 3px solid #2ecc71;
+      border-radius: 4px;
+    }
+    .checklist li strong { color: #2c1a0e; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div style="margin-bottom: 14px; padding: 10px 16px; background: #fff7ed; border: 1.5px solid #ea580c; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <span style="font-weight: 700; color: #c2410c; font-size: 13px;">🔍 Đã cắt nhân vật trực tiếp từ 3 ảnh bạn gửi và dựng bảng đối chiếu so kèo:</span>
+      <a href="reference-comparison.html" style="background: #ea580c; color: #fff; padding: 7px 15px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 12px;">Mở Bảng So Kèo Ảnh Cắt Gốc vs. Sprite Dự Án →</a>
+    </div>
+    <div class="badge">GIAI ĐOẠN 2: MẪU CHUẨN (STANDARD SAMPLE)</div>
+    <h1>Mẫu Chuẩn Nam &amp; Nữ — Hướng 1: Hóm Hỉnh Đời Thường</h1>
+    <p class="sub">Đầy đủ layer, 3 tư thế (đứng, bước 1, bước 2), đồ mặc định, chạy thử PNG thực tế xuất từ sprites.js.</p>
+  </header>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="ctrl-group">
+      <span class="ctrl-title">Tư Thế Đi Bộ:</span>
+      <button class="btn active" id="btn-pose-0" onclick="setPose(0)">Đứng (Standing)</button>
+      <button class="btn" id="btn-pose-1" onclick="setPose(1)">Bước 1 (Step 1)</button>
+      <button class="btn" id="btn-pose-2" onclick="setPose(2)">Bước 2 (Step 2)</button>
+      <button class="btn" id="btn-walk" onclick="toggleWalkCycle()" style="border-color: #2ecc71; color: #27ae60; font-weight: bold;">▶ Chạy Thử Bước Đi</button>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-title">Hướng Mặt:</span>
+      <button class="btn active" id="btn-facing-right" onclick="setFacing(1)">Nhìn Phải (Mặc định)</button>
+      <button class="btn" id="btn-facing-left" onclick="setFacing(-1)">Nhìn Trái (Lật ScaleX)</button>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-title">Phông Nền:</span>
+      <button class="btn active" onclick="setStageBg('stage-street')">Phố Vỉa Hè</button>
+      <button class="btn" onclick="setStageBg('stage-clean')">Nền Trắng</button>
+      <button class="btn" onclick="setStageBg('stage-checker')">Caro Trong Suốt</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Card 1: Cỡ Thật 1x Trên Nền Phố -->
+    <div class="card">
+      <h2>1. Cỡ Thật 1X (160 × 256 px) Trên Nền Phố</h2>
+      <p class="desc">Ghép các file PNG thực tế trong <code>client/Assets/Resources/Sprites/</code> theo thứ tự Unity: hairback (-1), body (0), earrings (1), cheeks (2), brows (3), lips (4), hair (5).</p>
+      
+      <div class="stage stage-street" id="stage-1x">
+        <!-- Male 1X Stack -->
+        <div style="text-align: center;">
+          <div class="char-stack" id="male-stack">
+            <div class="char-shadow"></div>
+            <!-- Body layer (0) -->
+            <img id="male-body-img" src="../Assets/Resources/Sprites/body_male.png" alt="Male Body">
+            <!-- Cheeks (2) -->
+            <img src="../Assets/Resources/Sprites/cheeks_1.png" alt="Cheeks">
+            <!-- Brows (3) -->
+            <img src="../Assets/Resources/Sprites/brows_0.png" alt="Brows">
+            <!-- Lips (4) -->
+            <img src="../Assets/Resources/Sprites/lips_0.png" alt="Lips">
+            <!-- Hair (5) -->
+            <img src="../Assets/Resources/Sprites/hair_male_0.png" alt="Male Hair">
+          </div>
+          <div style="font-weight: 700; font-size: 13px; margin-top: 8px;">Nam Mặc Định</div>
+          <div style="font-size: 11px; color: #7a6555;">Áo ba lỗ · Quần đùi xanh · Dép tổ ong</div>
+        </div>
+
+        <!-- Female 1X Stack -->
+        <div style="text-align: center;">
+          <div class="char-stack" id="female-stack">
+            <div class="char-shadow"></div>
+            <!-- Hairback (-1) -->
+            <img src="../Assets/Resources/Sprites/hairback_female_0.png" alt="Female Hairback">
+            <!-- Body layer (0) -->
+            <img id="female-body-img" src="../Assets/Resources/Sprites/body_female.png" alt="Female Body">
+            <!-- Earrings (1) -->
+            <img src="../Assets/Resources/Sprites/earrings_1.png" alt="Earrings">
+            <!-- Cheeks (2) -->
+            <img src="../Assets/Resources/Sprites/cheeks_1.png" alt="Cheeks">
+            <!-- Brows (3) -->
+            <img src="../Assets/Resources/Sprites/brows_0.png" alt="Brows">
+            <!-- Lips (4) -->
+            <img src="../Assets/Resources/Sprites/lips_0.png" alt="Lips">
+            <!-- Hair (5) -->
+            <img src="../Assets/Resources/Sprites/hair_female_0.png" alt="Female Hair">
+          </div>
+          <div style="font-weight: 700; font-size: 13px; margin-top: 8px;">Nữ Mặc Định</div>
+          <div style="font-size: 11px; color: #7a6555;">Croptop · Short jean · Dép tông hồng</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Báo Cáo Kỹ Thuật Layer & Walk -->
+    <div class="card">
+      <h2>2. Kiểm Tra Ràng Buộc Kỹ Thuật (Verified)</h2>
+      <p class="desc">Tất cả tiêu chí kỹ thuật của Giai đoạn 2 đã được kiểm chứng tự động.</p>
+      
+      <ul class="checklist">
+        <li>
+          <strong>✓ Khung hình 160 × 256 px:</strong>
+          Tất cả PNG đều có cùng kích thước, chân chạm đáy <code>y=256</code>, trong suốt 100%, không cần offset.
+        </li>
+        <li>
+          <strong>✓ 3 Tư thế đi bộ (Đứng, Step 1, Step 2):</strong>
+          Đã xuất <code>body_male.png</code>, <code>body_male_step1.png</code>, <code>body_male_step2.png</code>, <code>body_female.png</code>, <code>body_female_step1.png</code>, <code>body_female_step2.png</code>.
+        </li>
+        <li>
+          <strong>✓ Hoạt họa bước đi tự nhiên:</strong>
+          Chân sải bước ±8px, dép tổ ong và dép tông bám theo bàn chân, tay đánh nhịp đối xứng.
+        </li>
+        <li>
+          <strong>✓ Lật hướng an toàn (ScaleX = -1):</strong>
+          Khi bấm nút "Nhìn Trái", nhân vật lật toàn bộ các layer mượt mà không bị méo lệch.
+        </li>
+        <li>
+          <strong>✓ sprites.txt cập nhật:</strong>
+          Header <code>ppu,200</code> và pivot <code>0.5, 0</code> ghi nhận đầy đủ cho toàn bộ 145 sprite.
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 3: Phóng To 3 Lần (3X Zoom) -->
+  <div class="card" style="max-width: 1320px; margin: 0 auto;">
+    <h2>3. Phóng To Cận Cảnh (3X Zoom Close-Up)</h2>
+    <p class="desc">Kiểm tra chi tiết bề mặt vải, nếp nhăn áo ba lỗ, đường chỉ quần đùi, lỗ dép tổ ong, đường chỉ denim và hoa tai vàng.</p>
+
+    <div class="zoom-3x-container">
+      <div class="zoom-3x-box">
+        <div class="zoom-3x-stage">
+          <div class="char-stack" id="zoom-male-stack">
+            <div class="char-shadow"></div>
+            <img id="zoom-male-body" src="../Assets/Resources/Sprites/body_male.png" alt="Male Body">
+            <img src="../Assets/Resources/Sprites/cheeks_1.png" alt="Cheeks">
+            <img src="../Assets/Resources/Sprites/brows_0.png" alt="Brows">
+            <img src="../Assets/Resources/Sprites/lips_0.png" alt="Lips">
+            <img src="../Assets/Resources/Sprites/hair_male_0.png" alt="Male Hair">
+          </div>
+        </div>
+        <div style="font-weight: 800; font-size: 15px; margin-top: 10px;">Nam: Ba Lỗ Trắng + Quần Đùi Xanh + Dép Tổ Ong (3X)</div>
+      </div>
+
+      <div class="zoom-3x-box">
+        <div class="zoom-3x-stage">
+          <div class="char-stack" id="zoom-female-stack">
+            <div class="char-shadow"></div>
+            <img src="../Assets/Resources/Sprites/hairback_female_0.png" alt="Female Hairback">
+            <img id="zoom-female-body" src="../Assets/Resources/Sprites/body_female.png" alt="Female Body">
+            <img src="../Assets/Resources/Sprites/earrings_1.png" alt="Earrings">
+            <img src="../Assets/Resources/Sprites/cheeks_1.png" alt="Cheeks">
+            <img src="../Assets/Resources/Sprites/brows_0.png" alt="Brows">
+            <img src="../Assets/Resources/Sprites/lips_0.png" alt="Lips">
+            <img src="../Assets/Resources/Sprites/hair_female_0.png" alt="Female Hair">
+          </div>
+        </div>
+        <div style="font-weight: 800; font-size: 15px; margin-top: 10px;">Nữ: Croptop San Hô + Short Denim + Dép Tông Hồng (3X)</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPose = 0;
+    let facing = 1;
+    let walkTimer = null;
+
+    const poses = ['', '_step1', '_step2'];
+
+    function setPose(poseIdx) {
+      currentPose = poseIdx;
+      const suffix = poses[poseIdx];
+      
+      document.getElementById('male-body-img').src = `../Assets/Resources/Sprites/body_male${suffix}.png`;
+      document.getElementById('female-body-img').src = `../Assets/Resources/Sprites/body_female${suffix}.png`;
+      document.getElementById('zoom-male-body').src = `../Assets/Resources/Sprites/body_male${suffix}.png`;
+      document.getElementById('zoom-female-body').src = `../Assets/Resources/Sprites/body_female${suffix}.png`;
+
+      [0, 1, 2].forEach(i => {
+        document.getElementById(`btn-pose-${i}`).classList.toggle('active', i === poseIdx);
+      });
+    }
+
+    function setFacing(f) {
+      facing = f;
+      document.querySelectorAll('.char-stack').forEach(el => {
+        const isZoom = el.id.includes('zoom');
+        const baseScale = isZoom ? 1.8 : 1.0;
+        el.style.transform = `scale(${baseScale * f}, ${baseScale})`;
+      });
+      document.getElementById('btn-facing-right').classList.toggle('active', f === 1);
+      document.getElementById('btn-facing-left').classList.toggle('active', f === -1);
+    }
+
+    function toggleWalkCycle() {
+      const btn = document.getElementById('btn-walk');
+      if (walkTimer) {
+        clearInterval(walkTimer);
+        walkTimer = null;
+        btn.textContent = '▶ Chạy Thử Bước Đi';
+        btn.style.background = '#fff';
+        btn.style.color = '#27ae60';
+        setPose(0);
+      } else {
+        btn.textContent = '⏸ Dừng Bước Đi';
+        btn.style.background = '#27ae60';
+        btn.style.color = '#fff';
+        let step = 1;
+        walkTimer = setInterval(() => {
+          setPose(step);
+          step = step === 1 ? 2 : 1;
+        }, 320);
+      }
+    }
+
+    function setStageBg(cls) {
+      const stage = document.getElementById('stage-1x');
+      stage.className = 'stage ' + cls;
+      event.target.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>
+

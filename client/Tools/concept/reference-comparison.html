@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Vỉa Hè Online — Đối Chiếu Nhân Vật Cắt Từ Ảnh & Bản Vẽ Lại Trong Project</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #f5efe6;
+      --panel: #ffffff;
+      --ink: #2b1a10;
+      --primary: #e27838;
+      --accent: #0284c7;
+      --green: #16a34a;
+      --border: #e2d6c5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    header {
+      max-width: 1360px;
+      margin: 0 auto 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--primary);
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    h1 { margin: 0 0 6px; font-size: 26px; font-weight: 800; }
+    p.lead { margin: 0; color: #6b5749; font-size: 14px; }
+
+    /* Controls Bar */
+    .controls {
+      max-width: 1360px;
+      margin: 0 auto 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      background: var(--panel);
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(43, 26, 16, 0.06);
+    }
+    .ctrl-group { display: flex; align-items: center; gap: 8px; }
+    .ctrl-title { font-size: 13px; font-weight: 700; color: #7a6555; }
+    button.btn {
+      padding: 7px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    button.btn:hover { background: #fdfaf6; border-color: var(--primary); }
+    button.btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Main Container */
+    .container { max-width: 1360px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+
+    /* Section Cards */
+    .card {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(43, 26, 16, 0.06);
+    }
+    h2 { margin: 0 0 6px; font-size: 20px; font-weight: 800; color: #1c1109; }
+    p.desc { margin: 0 0 16px; font-size: 13px; color: #755f4f; }
+
+    /* Comparison Arena */
+    .arena {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 12px;
+    }
+    @media (max-width: 900px) { .arena { grid-template-columns: 1fr; } }
+
+    .arena-panel {
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      background: #faf6f0;
+      text-align: center;
+    }
+    .arena-title {
+      font-weight: 800;
+      font-size: 16px;
+      color: #9a3412;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .split-view {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      align-items: flex-end;
+      padding: 16px;
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      min-height: 290px;
+    }
+    .char-column { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .char-label { font-size: 12px; font-weight: 700; color: #574436; }
+
+    /* Character Display */
+    .char-frame {
+      position: relative;
+      width: 160px;
+      height: 256px;
+      background: radial-gradient(circle at 50% 90%, rgba(226, 120, 56, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .char-frame.zoom-2x { transform: scale(1.4); transform-origin: bottom center; margin-bottom: 30px; }
+    .char-frame img.layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 160px;
+      height: 256px;
+      pointer-events: none;
+    }
+    .char-frame img.raw-crop {
+      max-width: 150px;
+      max-height: 240px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    /* Overlay Slider Box */
+    .overlay-box {
+      margin-top: 16px;
+      background: #f1ede6;
+      padding: 12px 16px;
+      border-radius: 8px;
+      text-align: left;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #554133;
+    }
+    .slider-row input[type="range"] { flex: 1; cursor: pointer; }
+
+    /* Features Grid */
+    .features-list {
+      margin-top: 14px;
+      text-align: left;
+      font-size: 12px;
+      line-height: 1.6;
+      list-style: none;
+      padding: 0;
+    }
+    .features-list li {
+      padding: 4px 0;
+      border-bottom: 1px dashed #e7dfd5;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .features-list li strong { color: #1c1109; }
+
+    /* Gallery Grid */
+    .crops-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+    }
+    .crop-card {
+      background: #faf6f0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      transition: transform 0.15s ease;
+    }
+    .crop-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+    .crop-card img {
+      max-width: 100%;
+      height: 140px;
+      object-fit: contain;
+      background: #fff;
+      border-radius: 6px;
+      padding: 6px;
+      border: 1px solid #e8dfd2;
+      image-rendering: pixelated;
+    }
+    .crop-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: #e27838;
+      margin: 8px 0 2px;
+      text-transform: uppercase;
+    }
+    .crop-name { font-size: 12px; font-weight: 800; color: #2b1a10; margin-bottom: 4px; }
+    .crop-src { font-size: 11px; color: #8c7665; }
+
+    /* Street Stage */
+    .stage-street {
+      background: linear-gradient(180deg, #bae6fd 0%, #fef08a 55%, #e7ded3 56%, #e7ded3 78%, #475569 79%, #334155 100%);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      align-items: flex-end;
+      min-height: 320px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge">VỈA HÈ ONLINE • ART DIRECTION &amp; TECHNICAL ART</div>
+    <h1>Đối Chiếu Nhân Vật Cắt Từ Ảnh Hàng Rong &amp; Bản Vẽ Lại Trong Project</h1>
+    <p class="lead">Cắt trực tiếp các nhân vật từ 3 ảnh người dùng cung cấp (Ảnh 1: Hun hít, Đá đít, Chọc phá, An ủi; Ảnh 2: Ikaros; Ảnh 3: Bán dưa hấu) và đối chiếu chi tiết với bản vẽ lại bằng Canvas 2D trong project.</p>
+  </header>
+
+  <!-- Control Bar -->
+  <div class="controls">
+    <div class="ctrl-group">
+      <span class="ctrl-title">Nguồn Ảnh Gốc Tham Chiếu:</span>
+      <button class="btn active" id="btn-mode-sharpened" onclick="setRefMode('sharpened')">✨ Đã Làm Nét 4X (Khuyên Dùng)</button>
+      <button class="btn" id="btn-mode-hd" onclick="setRefMode('hd')">💎 Vector Art HD</button>
+      <button class="btn" id="btn-mode-raw" onclick="setRefMode('raw')">📷 Ảnh Mờ Ban Đầu</button>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-title">Tư Thế Đi Bộ:</span>
+      <button class="btn active" id="btn-pose-0" onclick="setPose(0)">Đứng (Standing)</button>
+      <button class="btn" id="btn-pose-1" onclick="setPose(1)">Bước 1 (Step 1)</button>
+      <button class="btn" id="btn-pose-2" onclick="setPose(2)">Bước 2 (Step 2)</button>
+      <button class="btn" id="btn-walk" onclick="toggleWalkCycle()" style="border-color: #16a34a; color: #16a34a; font-weight: bold;">▶ Chạy Thử Bước Đi</button>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-title">Hướng Mặt:</span>
+      <button class="btn active" id="btn-face-right" onclick="setFacing(1)">Nhìn Phải (ScaleX = 1)</button>
+      <button class="btn" id="btn-face-left" onclick="setFacing(-1)">Nhìn Trái (ScaleX = -1)</button>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-title">Phóng To:</span>
+      <button class="btn active" id="btn-zoom-1" onclick="setZoom(1)">1X (Cỡ Thật)</button>
+      <button class="btn" id="btn-zoom-2" onclick="setZoom(2)">1.4X (Phóng To)</button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- PHẦN 1: SO KÈO TRỰC DIỆN NAM & NỮ -->
+    <div class="card">
+      <h2>1. So Kèo Trực Diện: Ảnh Cắt Gốc vs. Sprite Tái Hiện Trong Project</h2>
+      <p class="desc">Đặt song song nhân vật cắt từ ảnh gốc và sprite ghép đầy đủ layer trong <code>client/Assets/Resources/Sprites/</code>. Dùng thanh trượt Overlay để lồng đè kiểm tra độ khớp giải phẫu.</p>
+
+      <div class="arena">
+        
+        <!-- PANEL NAM -->
+        <div class="arena-panel">
+          <div class="arena-title">
+            <span>♂ NHÂN VẬT NAM: ÁO BA LỖ, QUẦN ĐÙI, DÉP TỔ ONG</span>
+          </div>
+
+          <div class="split-view">
+            <!-- Ảnh cắt gốc -->
+            <div class="char-column">
+              <div class="char-frame" id="frame-male-crop">
+                <img class="raw-crop" src="crops/sharpened_char_da_dit_kicker.png" alt="Ảnh cắt nam Hàng Rong làm nét" id="male-crop-img">
+              </div>
+              <div class="char-label" id="male-ref-label">Ảnh Gốc Đã Làm Nét 4X (Unsharp Mask)</div>
+            </div>
+
+            <!-- Sprite vẽ lại -->
+            <div class="char-column">
+              <div class="char-frame" id="frame-male-sprite">
+                <img class="layer" id="male-body-img" src="../../Assets/Resources/Sprites/body_male.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/cheeks_2.png"> <!-- Băng dán cá nhân -->
+                <img class="layer" src="../../Assets/Resources/Sprites/brows_0.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/lips_0.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/hair_male_0.png">
+              </div>
+              <div class="char-label">Sprite Vẽ Lại Trong Project</div>
+            </div>
+          </div>
+
+          <!-- Overlay Slider -->
+          <div class="overlay-box">
+            <div class="slider-row">
+              <span>Độ mờ so khớp Overlay:</span>
+              <input type="range" min="0" max="100" value="0" id="male-overlay-slider" oninput="updateMaleOverlay(this.value)">
+              <span id="male-overlay-val">0%</span>
+            </div>
+          </div>
+
+          <ul class="features-list">
+            <li><span>✓</span> <div><strong>Tỷ lệ đầu/thân 2.0 heads:</strong> Đầu chiếm ~50% chiều cao, chiều ngang đầu gấp 2.8 lần eo đúng theo ảnh Hàng Rong.</div></li>
+            <li><span>✓</span> <div><strong>Mắt hạt cườm 2 chấm sáng:</strong> Tròng mắt đen có 1 chấm sáng lớn trên và 1 chấm nhỏ dưới phản chiếu ánh sáng.</div></li>
+            <li><span>✓</span> <div><strong>Băng keo cá nhân trên má (cheeks_2):</strong> Tái hiện đúng miếng băng cá nhân của anh bán dưa hấu trong Ảnh 3.</div></li>
+            <li><span>✓</span> <div><strong>Trang phục mặc định:</strong> Áo ba lỗ trắng gân nẹp, quần đùi thể thao xanh viền sọc trắng dây rút, dép tổ ong vàng.</div></li>
+          </ul>
+        </div>
+
+        <!-- PANEL NỮ -->
+        <div class="arena-panel">
+          <div class="arena-title">
+            <span>♀ NHÂN VẬT NỮ: CROPTOP, DENIM SHORT, KẸP CỎ 4 LÁ</span>
+          </div>
+
+          <div class="split-view">
+            <!-- Ảnh cắt gốc -->
+            <div class="char-column">
+              <div class="char-frame" id="frame-female-crop">
+                <img class="raw-crop" src="crops/sharpened_char_hun_hit_girl.png" alt="Ảnh cắt nữ Hàng Rong làm nét" id="female-crop-img">
+              </div>
+              <div class="char-label" id="female-ref-label">Ảnh Gốc Đã Làm Nét 4X (Unsharp Mask)</div>
+            </div>
+
+            <!-- Sprite vẽ lại -->
+            <div class="char-column">
+              <div class="char-frame" id="frame-female-sprite">
+                <img class="layer" src="../../Assets/Resources/Sprites/hairback_female_0.png">
+                <img class="layer" id="female-body-img" src="../../Assets/Resources/Sprites/body_female.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/earrings_1.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/cheeks_1.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/brows_0.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/lips_0.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/hair_female_0.png"> <!-- Kẹp cỏ 4 lá xanh -->
+              </div>
+              <div class="char-label">Sprite Vẽ Lại Trong Project</div>
+            </div>
+          </div>
+
+          <!-- Overlay Slider -->
+          <div class="overlay-box">
+            <div class="slider-row">
+              <span>Độ mờ so khớp Overlay:</span>
+              <input type="range" min="0" max="100" value="0" id="female-overlay-slider" oninput="updateFemaleOverlay(this.value)">
+              <span id="female-overlay-val">0%</span>
+            </div>
+          </div>
+
+          <ul class="features-list">
+            <li><span>✓</span> <div><strong>Kẹp tóc cỏ 4 lá xanh (hair_female_0):</strong> Chi tiết nhận diện độc quyền của bạn nữ trong Ảnh 1 (xuất hiện cả ở cảnh "Hun hít" và "An ủi").</div></li>
+            <li><span>✓</span> <div><strong>Mắt tròn to có mi cong:</strong> Mí mắt cong hóm hỉnh với nét đuôi mi nhẹ đặc trưng truyện tranh.</div></li>
+            <li><span>✓</span> <div><strong>Trang phục mặc định:</strong> Áo croptop cam đào khoe eo, quần short denim chỉ vàng đinh tán, dép tông kẹp hồng.</div></li>
+            <li><span>✓</span> <div><strong>Má ửng hồng cam đào (cheeks_1):</strong> Tạo vẻ dễ thương, hoạt bát chuẩn tinh thần vỉa hè Việt Nam.</div></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PHẦN 2: BỘ SƯU TẬP TẤT CẢ CÁC NHÂN VẬT ĐÃ CẮT TỪ 3 ẢNH -->
+    <div class="card">
+      <h2>2. Bộ Sưu Tập Toàn Bộ Nhân Vật Đã Cắt Từ 3 Ảnh Người Dùng Gửi</h2>
+      <p class="desc">Các trích đoạn nhân vật và phụ kiện được bóc tách từ <code>media_1793902089004_904edfa0.jpg</code> (Ảnh 1), <code>media_1793902119662_926e1b53.jpg</code> (Ảnh 2), và <code>media_1793902130290_bfc4afb2.jpg</code> (Ảnh 3).</p>
+
+      <div class="crops-gallery">
+        <!-- HD 1 -->
+        <div class="crop-card" style="border: 2px solid #0284c7; background: #f0f9ff;">
+          <img src="crops/hang_rong_male_character_enhanced_1793903410521.jpg" alt="HD Enhanced Male">
+          <div class="crop-tag" style="color: #0284c7;">Vector Art HD</div>
+          <div class="crop-name">Nam Chuẩn Nâng Cấp</div>
+          <div class="crop-src">Đầu to 2.0 heads, ba lỗ, dép tổ ong</div>
+        </div>
+
+        <!-- HD 2 -->
+        <div class="crop-card" style="border: 2px solid #e11d48; background: #fff1f2;">
+          <img src="crops/hang_rong_female_character_enhanced_1793903434620.jpg" alt="HD Enhanced Female">
+          <div class="crop-tag" style="color: #e11d48;">Vector Art HD</div>
+          <div class="crop-name">Nữ Chuẩn Nâng Cấp</div>
+          <div class="crop-src">Tóc bob, kẹp cỏ 4 lá, croptop</div>
+        </div>
+
+        <!-- HD 3 -->
+        <div class="crop-card" style="border: 2px solid #16a34a; background: #f0fdf4;">
+          <img src="crops/hang_rong_duo_characters_enhanced_1793903455295.jpg" alt="HD Enhanced Duo">
+          <div class="crop-tag" style="color: #16a34a;">Vector Art HD</div>
+          <div class="crop-name">Cặp Đôi Nam &amp; Nữ HD</div>
+          <div class="crop-src">Đứng chung tỷ lệ chuẩn Hàng Rong</div>
+        </div>
+
+        <!-- Sharpened 1 -->
+        <div class="crop-card" style="border: 1.5px solid #ea580c;">
+          <img src="crops/sharpened_char_da_dit_kicker.png" alt="Sharpened Kicker">
+          <div class="crop-tag" style="color: #ea580c;">Ảnh Làm Nét 4X</div>
+          <div class="crop-name">Nam Đá Đít (Nét 4X)</div>
+          <div class="crop-src">Khử mờ, nổi bật viền đen &amp; mắt</div>
+        </div>
+
+        <!-- Sharpened 2 -->
+        <div class="crop-card" style="border: 1.5px solid #ea580c;">
+          <img src="crops/sharpened_char_hun_hit_girl.png" alt="Sharpened Girl">
+          <div class="crop-tag" style="color: #ea580c;">Ảnh Làm Nét 4X</div>
+          <div class="crop-name">Nữ Cỏ 4 Lá (Nét 4X)</div>
+          <div class="crop-src">Khử mờ, rõ kẹp tóc &amp; nét cằm</div>
+        </div>
+
+        <!-- Sharpened 3 -->
+        <div class="crop-card" style="border: 1.5px solid #ea580c;">
+          <img src="crops/sharpened_img3_vendor_lower.png" alt="Sharpened Vendor">
+          <div class="crop-tag" style="color: #ea580c;">Ảnh Làm Nét 4X</div>
+          <div class="crop-name">Bán Dưa Hấu (Nét 4X)</div>
+          <div class="crop-src">Rõ miếng băng dán má trái</div>
+        </div>
+
+        <!-- 1 -->
+        <div class="crop-card">
+          <img src="crops/char_hun_hit_boy.png" alt="Hun Hít Boy">
+          <div class="crop-tag">Ảnh 1: Hun Hít</div>
+          <div class="crop-name">Nam Áo Tím Mũ Noel</div>
+          <div class="crop-src">Mặt nghiêng 3/4 nhắm mắt</div>
+        </div>
+
+        <!-- 2 -->
+        <div class="crop-card">
+          <img src="crops/char_hun_hit_girl.png" alt="Hun Hít Girl">
+          <div class="crop-tag">Ảnh 1: Hun Hít</div>
+          <div class="crop-name">Nữ Đầm Đỏ Kẹp Cỏ 4 Lá</div>
+          <div class="crop-src">Tóc bob, kẹp cỏ xanh</div>
+        </div>
+
+        <!-- 3 -->
+        <div class="crop-card">
+          <img src="crops/char_da_dit_kicker.png" alt="Đá Đít Kicker">
+          <div class="crop-tag">Ảnh 1: Đá Đít</div>
+          <div class="crop-name">Nam Đá Đít Cười Răng</div>
+          <div class="crop-src">Dáng đá co chân bước đi</div>
+        </div>
+
+        <!-- 4 -->
+        <div class="crop-card">
+          <img src="crops/char_da_dit_screaming.png" alt="Đá Đít Screaming">
+          <div class="crop-tag">Ảnh 1: Đá Đít</div>
+          <div class="crop-name">Nam Noel La Hét</div>
+          <div class="crop-src">Miệng há to la ó biếm họa</div>
+        </div>
+
+        <!-- 5 -->
+        <div class="crop-card">
+          <img src="crops/char_comforting_boy.png" alt="An Ủi Boy">
+          <div class="crop-tag">Ảnh 1: An Ủi</div>
+          <div class="crop-name">Nam Mũ Vành Rằn Ri</div>
+          <div class="crop-src">Áo phông xanh, nụ cười an ủi</div>
+        </div>
+
+        <!-- 6 -->
+        <div class="crop-card">
+          <img src="crops/char_crying_girl.png" alt="An Ủi Girl">
+          <div class="crop-tag">Ảnh 1: An Ủi</div>
+          <div class="crop-name">Nữ Khóc Chảy Nước Mắt</div>
+          <div class="crop-src">Áo tím, quần jean, kẹp cỏ 4 lá</div>
+        </div>
+
+        <!-- 7 -->
+        <div class="crop-card">
+          <img src="crops/char_boxer_boy.png" alt="Boxer Boy">
+          <div class="crop-tag">Ảnh 1: Chọc Phá</div>
+          <div class="crop-name">Nam Đeo Găng Boxing</div>
+          <div class="crop-src">Mũ kết xanh, nhe răng đấm</div>
+        </div>
+
+        <!-- 8 -->
+        <div class="crop-card">
+          <img src="crops/img3_vendor_lower.png" alt="Vendor Dưa Hấu">
+          <div class="crop-tag">Ảnh 3: Vỉa Hè</div>
+          <div class="crop-name">Anh Bán Dưa Hấu</div>
+          <div class="crop-src">Băng keo cá nhân trên má</div>
+        </div>
+
+        <!-- 9 -->
+        <div class="crop-card">
+          <img src="crops/img2_ikaros_doll.png" alt="Ikaros Doll">
+          <div class="crop-tag">Ảnh 2: Tủ Đồ</div>
+          <div class="crop-name">Búp Bê Thử Đồ Ikaros</div>
+          <div class="crop-src">Mũ kết xanh, áo phông</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHẦN 3: ĐỨNG TRÊN NỀN PHỐ VỈA HÈ ONLINE -->
+    <div class="card">
+      <h2>3. Nhân Vật Vẽ Lại Đứng Trên Nền Phố Vỉa Hè Online</h2>
+      <p class="desc">Kiểm tra hòa sắc, độ tương phản và bóng đổ mặt đất trên đường phố thực tế của game.</p>
+
+      <div class="stage-street">
+        <!-- Nam đứng -->
+        <div style="text-align: center;">
+          <div class="char-frame">
+            <img class="layer" id="street-male-body" src="../../Assets/Resources/Sprites/body_male.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/cheeks_2.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/brows_0.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/lips_0.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/hair_male_0.png">
+          </div>
+          <div style="font-weight: 800; font-size: 13px; margin-top: 8px;">Nam Mặc Định</div>
+          <div style="font-size: 11px; color: #574436;">Áo ba lỗ · Quần đùi xanh · Dép tổ ong</div>
+        </div>
+
+        <!-- Nữ đứng -->
+        <div style="text-align: center;">
+          <div class="char-frame">
+            <img class="layer" src="../../Assets/Resources/Sprites/hairback_female_0.png">
+            <img class="layer" id="street-female-body" src="../../Assets/Resources/Sprites/body_female.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/earrings_1.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/cheeks_1.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/brows_0.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/lips_0.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/hair_female_0.png">
+          </div>
+          <div style="font-weight: 800; font-size: 13px; margin-top: 8px;">Nữ Mặc Định</div>
+          <div style="font-size: 11px; color: #574436;">Croptop cam đào · Denim short · Kẹp cỏ 4 lá</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentPose = 0;
+    let facing = 1;
+    let walkTimer = null;
+    let refMode = 'sharpened';
+    const poses = ['', '_step1', '_step2'];
+
+    function setRefMode(mode) {
+      refMode = mode;
+      const maleImg = document.getElementById('male-crop-img');
+      const femaleImg = document.getElementById('female-crop-img');
+      const maleLabel = document.getElementById('male-ref-label');
+      const femaleLabel = document.getElementById('female-ref-label');
+      
+      if (mode === 'sharpened') {
+        maleImg.src = 'crops/sharpened_char_da_dit_kicker.png';
+        femaleImg.src = 'crops/sharpened_char_hun_hit_girl.png';
+        if (maleLabel) maleLabel.textContent = 'Ảnh Gốc Đã Làm Nét 4X (Unsharp Mask)';
+        if (femaleLabel) femaleLabel.textContent = 'Ảnh Gốc Đã Làm Nét 4X (Unsharp Mask)';
+      } else if (mode === 'hd') {
+        maleImg.src = 'crops/hang_rong_male_character_enhanced_1793903410521.jpg';
+        femaleImg.src = 'crops/hang_rong_female_character_enhanced_1793903434620.jpg';
+        if (maleLabel) maleLabel.textContent = 'Vector Art HD Nâng Cấp';
+        if (femaleLabel) femaleLabel.textContent = 'Vector Art HD Nâng Cấp';
+      } else {
+        maleImg.src = 'crops/char_da_dit_kicker.png';
+        femaleImg.src = 'crops/char_hun_hit_girl.png';
+        if (maleLabel) maleLabel.textContent = 'Ảnh Mờ Ban Đầu Cắt Từ JPG';
+        if (femaleLabel) femaleLabel.textContent = 'Ảnh Mờ Ban Đầu Cắt Từ JPG';
+      }
+      ['sharpened', 'hd', 'raw'].forEach(m => {
+        const btn = document.getElementById(`btn-mode-${m}`);
+        if (btn) btn.classList.toggle('active', m === mode);
+      });
+    }
+
+    function setPose(poseIdx) {
+      currentPose = poseIdx;
+      const suffix = poses[poseIdx];
+      document.getElementById('male-body-img').src = `../../Assets/Resources/Sprites/body_male${suffix}.png`;
+      document.getElementById('female-body-img').src = `../../Assets/Resources/Sprites/body_female${suffix}.png`;
+      document.getElementById('street-male-body').src = `../../Assets/Resources/Sprites/body_male${suffix}.png`;
+      document.getElementById('street-female-body').src = `../../Assets/Resources/Sprites/body_female${suffix}.png`;
+
+      [0, 1, 2].forEach(i => {
+        document.getElementById(`btn-pose-${i}`).classList.toggle('active', i === poseIdx);
+      });
+    }
+
+    function setFacing(f) {
+      facing = f;
+      document.querySelectorAll('.char-frame').forEach(el => {
+        el.style.transform = (el.classList.contains('zoom-2x') ? 'scale(1.4) ' : '') + `scaleX(${f})`;
+      });
+      document.getElementById('btn-face-right').classList.toggle('active', f === 1);
+      document.getElementById('btn-face-left').classList.toggle('active', f === -1);
+    }
+
+    function setZoom(z) {
+      document.querySelectorAll('.char-frame').forEach(el => {
+        el.classList.toggle('zoom-2x', z === 2);
+        el.style.transform = (z === 2 ? 'scale(1.4) ' : '') + `scaleX(${facing})`;
+      });
+      document.getElementById('btn-zoom-1').classList.toggle('active', z === 1);
+      document.getElementById('btn-zoom-2').classList.toggle('active', z === 2);
+    }
+
+    function toggleWalkCycle() {
+      const btn = document.getElementById('btn-walk');
+      if (walkTimer) {
+        clearInterval(walkTimer);
+        walkTimer = null;
+        btn.textContent = '▶ Chạy Thử Bước Đi';
+        btn.style.background = '#fff';
+        btn.style.color = '#16a34a';
+        setPose(0);
+      } else {
+        btn.textContent = '⏹ Dừng Bước Đi';
+        btn.style.background = '#16a34a';
+        btn.style.color = '#fff';
+        const walkSequence = [1, 0, 2, 0];
+        let seqIdx = 0;
+        walkTimer = setInterval(() => {
+          seqIdx = (seqIdx + 1) % walkSequence.length;
+          setPose(walkSequence[seqIdx]);
+        }, 180);
+      }
+    }
+
+    function updateMaleOverlay(val) {
+      document.getElementById('male-overlay-val').textContent = val + '%';
+      const opacity = val / 100;
+      document.getElementById('male-crop-img').style.opacity = (1 - opacity * 0.7);
+      document.getElementById('frame-male-sprite').style.opacity = (0.3 + opacity * 0.7);
+    }
+
+    function updateFemaleOverlay(val) {
+      document.getElementById('female-overlay-val').textContent = val + '%';
+      const opacity = val / 100;
+      document.getElementById('female-crop-img').style.opacity = (1 - opacity * 0.7);
+      document.getElementById('frame-female-sprite').style.opacity = (0.3 + opacity * 0.7);
+    }
+  </script>
+</body>
+</html>

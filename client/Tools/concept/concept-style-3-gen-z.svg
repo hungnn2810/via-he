@@ -1,0 +1,310 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<defs>
+  <filter id="soft3" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+  <filter id="drop3" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#1b120c" flood-opacity="0.12"/></filter>
+  
+  <!-- Skin Tone: Fresh Rosy Warmth -->
+  <radialGradient id="skin3" cx=".60" cy=".38" r=".72">
+    <stop offset="0%" stop-color="#fff5ea"/>
+    <stop offset="55%" stop-color="#f8c69d"/>
+    <stop offset="100%" stop-color="#c47a50"/>
+  </radialGradient>
+  <linearGradient id="limb3" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#db9768"/>
+    <stop offset="55%" stop-color="#fdcfa8"/>
+    <stop offset="100%" stop-color="#eaaf84"/>
+  </linearGradient>
+
+  <!-- Hair Gradients: Rich Warm Chestnut Black -->
+  <linearGradient id="hairM3" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#4a3022"/>
+    <stop offset="100%" stop-color="#1c110a"/>
+  </linearGradient>
+  <linearGradient id="hairF3" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#6e3924"/>
+    <stop offset="100%" stop-color="#241008"/>
+  </linearGradient>
+
+  <!-- Modern Pop Clothes Gradients -->
+  <linearGradient id="popTank3" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="100%" stop-color="#dce6f2"/>
+  </linearGradient>
+  <linearGradient id="cobaltShorts3" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#3498db"/>
+    <stop offset="100%" stop-color="#095fa8"/>
+  </linearGradient>
+  <linearGradient id="mustardSlide3" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#fed330"/>
+    <stop offset="100%" stop-color="#d49700"/>
+  </linearGradient>
+
+  <linearGradient id="lavenderTop3" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#c4b5fd"/>
+    <stop offset="100%" stop-color="#8b5cf6"/>
+  </linearGradient>
+  <linearGradient id="bikerShorts3" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#4b5563"/>
+    <stop offset="100%" stop-color="#1f2937"/>
+  </linearGradient>
+  <linearGradient id="mintSandals3" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#a7f3d0"/>
+    <stop offset="100%" stop-color="#10b981"/>
+  </linearGradient>
+
+  <linearGradient id="cardBg3" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="100%" stop-color="#faf8fc"/>
+  </linearGradient>
+</defs>
+
+<!-- Outer Container -->
+<rect width="960" height="600" fill="#ebe6f2" rx="16"/>
+
+<!-- Header -->
+<g transform="translate(40, 36)">
+  <rect x="0" y="0" width="168" height="26" rx="6" fill="#7c3aed"/>
+  <text x="84" y="17" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" letter-spacing="1">HƯỚNG 3 (HIỆN ĐẠI)</text>
+  <text x="0" y="52" fill="#201133" font-size="24" font-weight="800">Sắc Màu Gen Z (Vibrant Pop Cartoon)</text>
+  <text x="0" y="74" fill="#5c4d6f" font-size="13">Phong cách hoạt hình hiện đại, đầu to tròn căng nảy, nét mặt biểu cảm meme bùng nổ, màu sắc bắt mắt tối đa trên màn hình di động.</text>
+</g>
+
+<!-- Stage Floor Plate -->
+<g transform="translate(40, 130)">
+  <rect width="520" height="430" rx="16" fill="url(#cardBg3)" filter="url(#drop3)"/>
+  <rect x="16" y="16" width="488" height="344" rx="12" fill="#f0edf9"/>
+  
+  <!-- Modern Clean Paved Sidewalk -->
+  <path d="M16 320H504V360H16Z" fill="#d2cbe3"/>
+  <line x1="16" y1="320" x2="504" y2="320" stroke="#aba0c4" stroke-width="2"/>
+  <path d="M70 320V360M140 320V360M210 320V360M280 320V360M350 320V360M420 320V360M490 320V360" stroke="#aba0c4" stroke-width="1.4" opacity=".5"/>
+
+  <!-- Character Ground Shadows -->
+  <ellipse cx="145" cy="336" rx="62" ry="11" fill="#1b1226" opacity=".18"/>
+  <ellipse cx="365" cy="336" rx="60" ry="11" fill="#1b1226" opacity=".18"/>
+
+  <!-- Character 1: NAM (Áo ba lỗ khoét nách sâu viền cyan, Quần bóng rổ coban, Dép bánh mì vàng) -->
+  <g id="char-male-3" transform="translate(62, 20) scale(0.82)" stroke="#381e14" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Back Arm -->
+    <path d="M118 205Q142 216 138 246" fill="none" stroke-width="13"/>
+    <path d="M118 205Q142 216 138 246" fill="none" stroke="url(#limb3)" stroke-width="8.5"/>
+    <circle cx="138" cy="250" r="7.5" fill="url(#skin3)"/>
+
+    <!-- Chubby Short Legs & Chunky Mustard Slides (Dép bánh mì vàng mù tạt) -->
+    <!-- Back Leg -->
+    <path d="M102 272L104 306H116L114 272Z" fill="url(#limb3)"/>
+    <!-- Chunky Slide -->
+    <path d="M96 304Q112 296 126 304L126 315H96Z" fill="url(#mustardSlide3)"/>
+    <path d="M98 307Q112 301 124 307" stroke="#946300" stroke-width="2"/>
+
+    <!-- Front Leg -->
+    <path d="M80 272L76 306H88L92 272Z" fill="url(#limb3)"/>
+    <path d="M64 304Q80 296 94 304L94 315H64Z" fill="url(#mustardSlide3)"/>
+    <path d="M66 307Q80 301 92 307" stroke="#946300" stroke-width="2"/>
+
+    <!-- Cobalt Blue Basketball Shorts (Quần bóng rổ rộng ống) -->
+    <path d="M68 240Q92 250 116 240L122 276L99 278L93 260L87 278L64 276Z" fill="url(#cobaltShorts3)"/>
+    <path d="M64 272H87M99 274H122" stroke="#ffffff" stroke-width="2"/>
+    <!-- Drawstring -->
+    <circle cx="93" cy="248" r="2.5" fill="#fed330" stroke="none"/>
+
+    <!-- Short Stubby Neck -->
+    <path d="M85 174H103V196H85Z" fill="url(#limb3)"/>
+
+    <!-- Deep-cut Street Tank Top with Cyan Neckline -->
+    <path d="M78 192L68 218Q66 236 70 244Q93 254 116 244Q118 232 116 216L108 192L100 192Q93 208 86 192Z" fill="url(#popTank3)"/>
+    <!-- Cyan trim -->
+    <path d="M86 192Q93 208 100 192" stroke="#00cec9" stroke-width="2.6" fill="none"/>
+
+    <!-- Front Arm -->
+    <path d="M74 200Q50 216 58 252" fill="none" stroke-width="14"/>
+    <path d="M74 200Q50 216 58 252" fill="none" stroke="url(#limb3)" stroke-width="9.5"/>
+    <circle cx="58" cy="256" r="7.5" fill="url(#skin3)"/>
+
+    <!-- Ear -->
+    <ellipse cx="40" cy="116" rx="14" ry="18" fill="url(#skin3)"/>
+    <circle cx="40" cy="120" r="2.5" fill="#0984e3" stroke="none"/>
+
+    <!-- Huge Chubby Chibi Head (1:1.85 proportion) -->
+    <path d="M104 20C158 20 186 60 184 106C183 138 164 162 138 174C120 182 98 183 82 176C46 166 24 136 24 98C24 50 56 20 104 20Z" fill="url(#skin3)"/>
+    <!-- Cute Chubby Cheeks Blush (Giant circular blush) -->
+    <circle cx="92" cy="146" r="13" fill="#ff7675" opacity=".4" stroke="none" filter="url(#soft3)"/>
+    <circle cx="150" cy="142" r="10" fill="#ff7675" opacity=".35" stroke="none" filter="url(#soft3)"/>
+
+    <!-- Trendy Undercut Messy Hair -->
+    <path d="M22 110C10 52 50 10 104 10C158 12 194 52 186 98L174 92L176 80L160 84L156 68L140 76L134 58L116 70L108 52L90 68L78 58L64 78L50 82C44 94 38 104 22 110Z" fill="url(#hairM3)"/>
+    <path d="M80 34L110 32M100 48L130 46M120 62L150 60" stroke="#8d5940" stroke-width="2.6" opacity=".6"/>
+
+    <!-- Playful Expressive Meme Face (Mắt to tròn tinh quái) -->
+    <path d="M96 104Q116 96 132 104" stroke="#261208" stroke-width="3.5" fill="none"/>
+    <path d="M148 102Q162 96 172 104" stroke="#261208" stroke-width="3.5" fill="none"/>
+
+    <!-- Big Sparkly Eyes -->
+    <ellipse cx="118" cy="125" rx="12" ry="13" fill="#ffffff" stroke-width="1.8"/>
+    <ellipse cx="158" cy="123" rx="10" ry="12" fill="#ffffff" stroke-width="1.8"/>
+    <circle cx="122" cy="126" r="6.2" fill="#1d0e07" stroke="none"/>
+    <circle cx="161" cy="124" r="5.2" fill="#1d0e07" stroke="none"/>
+    <!-- Double Anime Highlights -->
+    <circle cx="124" cy="122" r="2.2" fill="#ffffff" stroke="none"/>
+    <circle cx="163" cy="120" r="1.8" fill="#ffffff" stroke="none"/>
+    <circle cx="119" cy="128" r="1.2" fill="#ffffff" stroke="none"/>
+    <circle cx="159" cy="126" r="1.0" fill="#ffffff" stroke="none"/>
+
+    <!-- Nose & Mischievous Cat Smile (Khuôn miệng mèo lém lỉnh) -->
+    <circle cx="143" cy="133" r="2.2" fill="#b06437" stroke="none"/>
+    <path d="M126 152Q136 158 143 152Q150 158 160 152" fill="none" stroke="#681f18" stroke-width="3"/>
+  </g>
+
+  <!-- Character 2: NỮ (Áo baby-tee sọc tím lavender, Quần biker xám đen, Dép quai chéo xanh mint) -->
+  <g id="char-female-3" transform="translate(282, 20) scale(0.82)" stroke="#381e14" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Hair Back: Trendy Twin Low Buns or Wavy Fluff -->
+    <path d="M30 106C18 44 60 12 106 14C154 16 190 54 184 108C182 136 174 162 160 178C140 190 128 174 122 158L54 158C46 174 34 186 20 172C14 152 24 128 30 106Z" fill="url(#hairF3)"/>
+
+    <!-- Back Arm -->
+    <path d="M112 205Q136 216 132 244" fill="none" stroke-width="13"/>
+    <path d="M112 205Q136 216 132 244" fill="none" stroke="url(#limb3)" stroke-width="8.5"/>
+    <circle cx="132" cy="248" r="7" fill="url(#skin3)"/>
+
+    <!-- Legs & Pastel Mint Cross-Strap Slides (Dép bánh mì xanh mint) -->
+    <!-- Back Leg -->
+    <path d="M102 270L104 306H116L114 270Z" fill="url(#limb3)"/>
+    <path d="M98 304Q112 296 126 304L126 315H98Z" fill="url(#mintSandals3)"/>
+    <!-- Cross straps -->
+    <path d="M102 305L120 314M120 305L102 314" stroke="#047857" stroke-width="1.8"/>
+
+    <!-- Front Leg -->
+    <path d="M82 270L78 306H90L94 270Z" fill="url(#limb3)"/>
+    <path d="M66 304Q80 296 94 304L94 315H66Z" fill="url(#mintSandals3)"/>
+    <path d="M70 305L88 314M88 305L70 314" stroke="#047857" stroke-width="1.8"/>
+
+    <!-- Neck & Bare Midriff -->
+    <path d="M86 174H104V196H86Z" fill="url(#limb3)"/>
+    <path d="M80 214Q76 228 78 240H114Q116 228 112 214Z" fill="url(#limb3)"/>
+
+    <!-- Sporty Dark Gray Biker Shorts -->
+    <path d="M74 238Q96 246 118 238L122 268L102 270L97 256L92 270L70 268Z" fill="url(#bikerShorts3)"/>
+    <path d="M74 246H118" stroke="#6b7280" stroke-width="1.5"/>
+
+    <!-- Lavender Striped Baby-Tee Croptop -->
+    <path d="M80 190L72 218Q96 228 120 218L112 190L103 190Q96 204 89 190Z" fill="url(#lavenderTop3)"/>
+    <!-- White Baby-Tee Stripes -->
+    <path d="M75 200Q96 208 117 200M73 210Q96 218 119 210" stroke="#ffffff" stroke-width="2.2" fill="none"/>
+
+    <!-- Front Arm -->
+    <path d="M76 200Q52 216 70 240" fill="none" stroke-width="13"/>
+    <path d="M76 200Q52 216 70 240" fill="none" stroke="url(#limb3)" stroke-width="8.5"/>
+    <circle cx="72" cy="242" r="7" fill="url(#skin3)"/>
+
+    <!-- Ear & Neon Pink Acrylic Ring Earring -->
+    <ellipse cx="44" cy="118" rx="12" ry="16" fill="url(#skin3)"/>
+    <circle cx="44" cy="140" r="7.5" fill="none" stroke="#ec4899" stroke-width="3"/>
+
+    <!-- Female Head -->
+    <path d="M104 22C154 22 182 60 180 106C179 136 162 160 136 172C118 180 98 181 82 174C48 164 28 134 28 98C28 52 58 22 104 22Z" fill="url(#skin3)"/>
+    <circle cx="94" cy="146" r="14" fill="#fb7185" opacity=".4" stroke="none" filter="url(#soft3)"/>
+    <circle cx="152" cy="142" r="10" fill="#fb7185" opacity=".35" stroke="none" filter="url(#soft3)"/>
+
+    <!-- Hair Front: Curtain Fringe with Butterfly Clips (Kẹp tóc bướm Gen Z) -->
+    <path d="M30 110C24 56 60 18 104 18C150 20 184 56 178 106C174 92 162 80 144 74C122 84 94 82 70 78C62 88 56 102 54 112C46 104 38 104 30 110Z" fill="url(#hairF3)"/>
+    <!-- Cute Butterfly Clips -->
+    <g transform="translate(64, 68) rotate(-15)">
+      <polygon points="0,0 -6,-6 -8,0 -2,4" fill="#a855f7"/>
+      <polygon points="0,0 6,-6 8,0 2,4" fill="#a855f7"/>
+      <circle cx="0" cy="0" r="1.5" fill="#fde047"/>
+    </g>
+    <g transform="translate(136, 68) rotate(15)">
+      <polygon points="0,0 -6,-6 -8,0 -2,4" fill="#06b6d4"/>
+      <polygon points="0,0 6,-6 8,0 2,4" fill="#06b6d4"/>
+      <circle cx="0" cy="0" r="1.5" fill="#fde047"/>
+    </g>
+
+    <!-- Playful Pop Eyes & Brows -->
+    <path d="M102 102Q118 94 132 102" fill="none" stroke="#2d1309" stroke-width="3"/>
+    <path d="M150 100Q162 94 172 102" fill="none" stroke="#2d1309" stroke-width="3"/>
+
+    <!-- Big Anime-Pop Eyes -->
+    <ellipse cx="118" cy="125" rx="12" ry="14" fill="#ffffff" stroke-width="1.8"/>
+    <ellipse cx="158" cy="123" rx="10" ry="12.5" fill="#ffffff" stroke-width="1.8"/>
+    <circle cx="122" cy="126" r="6.5" fill="#2d1309" stroke="none"/>
+    <circle cx="161" cy="124" r="5.5" fill="#2d1309" stroke="none"/>
+    <!-- Big highlights -->
+    <circle cx="124" cy="121" r="2.5" fill="#ffffff" stroke="none"/>
+    <circle cx="163" cy="119" r="2.0" fill="#ffffff" stroke="none"/>
+    <circle cx="120" cy="128" r="1.3" fill="#ffffff" stroke="none"/>
+    <circle cx="159" cy="126" r="1.1" fill="#ffffff" stroke="none"/>
+    <!-- Eyelash flicks -->
+    <path d="M106 120Q116 110 130 116L135 112M148 114Q158 108 168 114L172 110" fill="none" stroke="#2d1309" stroke-width="3.2"/>
+
+    <!-- Nose & Sweet Coral Smile -->
+    <circle cx="142" cy="134" r="2.2" fill="#c47a50" stroke="none"/>
+    <path d="M130 152Q142 162 154 152" fill="none" stroke="#be123c" stroke-width="3.2"/>
+  </g>
+
+  <!-- Labels under characters -->
+  <text x="145" y="390" fill="#2c1a0e" font-size="15" font-weight="bold" text-anchor="middle">Nam Gen Z</text>
+  <text x="145" y="408" fill="#755a47" font-size="12" text-anchor="middle">Áo khoét nách · Quần bóng rổ · Dép bánh mì</text>
+
+  <text x="365" y="390" fill="#2c1a0e" font-size="15" font-weight="bold" text-anchor="middle">Nữ Gen Z</text>
+  <text x="365" y="408" fill="#755a47" font-size="12" text-anchor="middle">Baby-tee sọc tím · Quần biker · Dép mint</text>
+</g>
+
+<!-- Right Specs Panel -->
+<g transform="translate(580, 130)">
+  <!-- Box 1: Tỷ lệ đầu/thân -->
+  <rect width="340" height="110" rx="12" fill="#ffffff" filter="url(#drop3)"/>
+  <text x="20" y="28" fill="#7c3aed" font-size="12" font-weight="bold" letter-spacing="0.5">TỶ LỆ ĐẦU / THÂN</text>
+  <text x="20" y="56" fill="#201133" font-size="22" font-weight="800">1 : 1.85 (Super Chibi)</text>
+  <text x="20" y="78" fill="#5c4d6f" font-size="12">• Đầu: ~148px (58% chiều cao) — Khổng lồ, má tròn căng</text>
+  <text x="20" y="96" fill="#5c4d6f" font-size="12">• Thân + Chân: ~108px (42%) — Tí hon, tay chân múp míp</text>
+
+  <!-- Box 2: Bảng màu -->
+  <g transform="translate(0, 126)">
+    <rect width="340" height="172" rx="12" fill="#ffffff" filter="url(#drop3)"/>
+    <text x="20" y="26" fill="#7c3aed" font-size="12" font-weight="bold" letter-spacing="0.5">BẢNG MÀU POP HIỆN ĐẠI</text>
+    
+    <g transform="translate(20, 36)">
+      <circle cx="14" cy="14" r="14" fill="#381e14"/>
+      <text x="36" y="12" fill="#201133" font-size="11" font-weight="bold">#381e14</text>
+      <text x="36" y="24" fill="#7d6756" font-size="10">Viền socola đậm</text>
+
+      <circle cx="170" cy="14" r="14" fill="#0984e3"/>
+      <text x="192" y="12" fill="#201133" font-size="11" font-weight="bold">#0984e3</text>
+      <text x="192" y="24" fill="#7d6756" font-size="10">Xanh Coban pop</text>
+    </g>
+
+    <g transform="translate(20, 78)">
+      <circle cx="14" cy="14" r="14" fill="#fed330"/>
+      <text x="36" y="12" fill="#201133" font-size="11" font-weight="bold">#fed330</text>
+      <text x="36" y="24" fill="#7d6756" font-size="10">Vàng mù tạt slide</text>
+
+      <circle cx="170" cy="14" r="14" fill="#8b5cf6"/>
+      <text x="192" y="12" fill="#201133" font-size="11" font-weight="bold">#8b5cf6</text>
+      <text x="192" y="24" fill="#7d6756" font-size="10">Tím lavender baby-tee</text>
+    </g>
+
+    <g transform="translate(20, 120)">
+      <circle cx="14" cy="14" r="14" fill="#10b981"/>
+      <text x="36" y="12" fill="#201133" font-size="11" font-weight="bold">#10b981</text>
+      <text x="36" y="24" fill="#7d6756" font-size="10">Xanh mint dép kẹp</text>
+
+      <circle cx="170" cy="14" r="14" fill="#ec4899"/>
+      <text x="192" y="12" fill="#201133" font-size="11" font-weight="bold">#ec4899</text>
+      <text x="192" y="24" fill="#7d6756" font-size="10">Hồng neon phụ kiện</text>
+    </g>
+  </g>
+
+  <!-- Box 3: Lý do phù hợp -->
+  <g transform="translate(0, 310)">
+    <rect width="340" height="120" rx="12" fill="#ffffff" filter="url(#drop3)"/>
+    <text x="20" y="26" fill="#7c3aed" font-size="12" font-weight="bold" letter-spacing="0.5">LÝ DO PHÙ HỢP VỚI GAME</text>
+    <text x="20" y="50" fill="#3b2055" font-size="12" font-weight="600">✓ Biểu cảm Meme:</text>
+    <text x="110" y="50" fill="#5c4d6f" font-size="12">Gương mặt hài hước, dễ chụp ảnh chia sẻ.</text>
+    <text x="20" y="70" fill="#3b2055" font-size="12" font-weight="600">✓ Mobile First:</text>
+    <text x="110" y="70" fill="#5c4d6f" font-size="12">Mắt to, mảng màu pop, nhìn cực rõ ở màn 5".</text>
+    <text x="20" y="90" fill="#3b2055" font-size="12" font-weight="600">✓ Trẻ trung:</text>
+    <text x="110" y="90" fill="#5c4d6f" font-size="12">Hợp thị hiếu thời trang đường phố Gen Z.</text>
+    <text x="20" y="110" fill="#3b2055" font-size="12" font-weight="600">✓ Dễ thương:</text>
+    <text x="110" y="110" fill="#5c4d6f" font-size="12">Hình thể tròn trịa, hoạt hình nảy vui nhộn.</text>
+  </g>
+</g>
+</svg>

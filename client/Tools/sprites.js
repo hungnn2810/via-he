@@ -288,51 +288,170 @@ function stroke(g, d, color, width) {
 function limb(g, d, width) { stroke(g, d, INK, width + 4.4); stroke(g, d, '#e9b283', width); }
 function dot(g, x, y, r, color, line = 2.2) { ellipse(g, x, y, r, r); g.fillStyle = color; g.fill(); if (line) { g.lineWidth = line; g.strokeStyle = INK; g.stroke(); } }
 const layer = (name, draw) => add(name, 160, 256, (g) => { g.scale(0.8, 0.8); g.translate(0, 6); draw(g); });
-const skinFill = (g) => { const r = g.createRadialGradient(124, 96, 10, 124, 96, 165); r.addColorStop(0, '#ffe0bd'); r.addColorStop(0.55, '#efb684'); r.addColorStop(1, '#b8723f'); return r; };
+const skinFill = (g) => { const r = g.createRadialGradient(100, 96, 10, 100, 96, 150); r.addColorStop(0, '#fff0df'); r.addColorStop(0.6, '#f8c89b'); r.addColorStop(1, '#c67b45'); return r; };
 
-function face(g, head, earX) {
-  ellipse(g, earX, 116, 13, 17); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.2; g.strokeStyle = INK; g.stroke();
-  shape(g, head, skinFill(g));
-  ellipse(g, 118, 125, 10, 12); g.fillStyle = '#fbf7ef'; g.fill(); g.lineWidth = 1.6; g.strokeStyle = INK; g.stroke();
-  ellipse(g, 157, 123, 8, 11); g.fillStyle = '#fbf7ef'; g.fill(); g.stroke();
-  dot(g, 122, 126, 5, '#2a1810', 0); dot(g, 160, 124, 4.4, '#2a1810', 0);
-  dot(g, 124, 123, 1.5, '#fff', 0); dot(g, 162, 121, 1.3, '#fff', 0);
-  stroke(g, 'M107 119Q118 112 129 119M149 117Q157 112 166 118', '#20140e', 3);
-  stroke(g, 'M142 130Q149 139 141 143', '#a9683c', 2);
+function maleFace(g) {
+  // Ear on the left (3/4 perspective)
+  ellipse(g, 46, 116, 11, 15); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.2; g.strokeStyle = INK; g.stroke();
+  stroke(g, 'M44 110Q50 116 46 124', '#a9683c', 1.8);
+  ellipse(g, 152, 114, 8, 12); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
+
+  // Head contour: Compact rounded anime chibi head with soft jawline (matches Vector Art HD)
+  shape(g, 'M100 32C140 32 154 64 152 108C151 138 140 156 122 165C110 170 90 170 78 165C60 156 48 138 48 108C46 64 60 32 100 32Z', skinFill(g), 2.4);
+
+  // Soft jawline/neck shadow
+  const sh = new Path2D('M54 122C60 144 78 162 100 166C76 168 56 150 48 128Z');
+  g.fillStyle = 'rgba(168,104,63,0.3)'; g.fill(sh);
+
+  // Signature anime comic eyes (Large black pupils with dual gleam)
+  // Left eye
+  ellipse(g, 78, 120, 13, 15); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
+  // Right eye
+  ellipse(g, 122, 118, 11, 14); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
+
+  // Dominant glossy dark pupils (fills ~70% of eye)
+  dot(g, 80, 121, 8.2, '#140c08', 0);
+  dot(g, 124, 119, 7.2, '#140c08', 0);
+
+  // Primary highlight (crisp white circle at top-right)
+  dot(g, 83, 117, 3.0, '#ffffff', 0);
+  dot(g, 126, 115, 2.6, '#ffffff', 0);
+
+  // Secondary highlight (subtle white speckle at bottom-left)
+  dot(g, 76, 125, 1.5, '#ffffff', 0);
+  dot(g, 120, 123, 1.3, '#ffffff', 0);
+
+  // Thick crisp upper eyeliner arch with sharp anime taper
+  stroke(g, 'M64 112Q78 100 92 112', '#140c08', 3.6);
+  stroke(g, 'M110 110Q122 100 134 110', '#140c08', 3.6);
+
+  // Minimalist comic nose hook
+  stroke(g, 'M98 125Q104 134 98 138', '#a9683c', 2.2);
 }
-const MALE_HEAD = 'M104 26C154 26 182 64 180 108C179 136 162 160 136 172C120 179 100 180 84 174C50 164 28 136 28 100C28 56 58 26 104 26Z';
-const FEMALE_HEAD = 'M104 30C150 30 176 66 174 108C173 134 158 156 134 168C120 175 102 176 88 170C56 160 36 134 36 102C36 60 62 30 104 30Z';
+
+function femaleFace(g) {
+  // Ears
+  ellipse(g, 48, 118, 10, 14); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.2; g.strokeStyle = INK; g.stroke();
+  stroke(g, 'M46 112Q51 118 48 124', '#a9683c', 1.6);
+  ellipse(g, 150, 116, 7, 11); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
+
+  // Cute rounded anime chibi jaw
+  shape(g, 'M100 34C138 34 152 64 150 106C149 134 138 154 120 164C110 168 90 168 80 164C62 154 50 134 50 106C48 64 62 34 100 34Z', skinFill(g), 2.4);
+
+  // Soft jaw shadow
+  const sh = new Path2D('M56 122C62 142 80 160 100 164C78 166 60 148 52 128Z');
+  g.fillStyle = 'rgba(168,104,63,0.3)'; g.fill(sh);
+
+  // Big sparkling anime-comic eyes
+  ellipse(g, 78, 120, 13, 15); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
+  ellipse(g, 122, 118, 11, 14); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
+
+  // Glossy dark pupils
+  dot(g, 80, 121, 8.4, '#1c100a', 0);
+  dot(g, 124, 119, 7.4, '#1c100a', 0);
+
+  // Double highlight gleam
+  dot(g, 83, 117, 3.2, '#ffffff', 0);
+  dot(g, 126, 115, 2.7, '#ffffff', 0);
+  dot(g, 76, 125, 1.6, '#ffffff', 0);
+  dot(g, 120, 123, 1.4, '#ffffff', 0);
+
+  // Winged upper eyeliner with delicate double eyelash flicks
+  stroke(g, 'M64 113Q77 101 92 111L96 107M88 107L93 103', '#140c08', 3.6);
+  stroke(g, 'M110 111Q121 101 134 110L138 106M130 106L135 102', '#140c08', 3.6);
+
+  // Cute nose dot
+  stroke(g, 'M99 127Q103 133 99 136', '#a9683c', 2.0);
+}
 
 function maleBody(g, step) {
-  const a = step === 1 ? -7 : step === 2 ? 7 : 0;
-  limb(g, 'M112 200Q128 214 128 246', 8); dot(g, 128, 252, 7, '#efb684');
-  shape(g, `M${80 + a} 270L${77 + a} 306H${88 + a}L92 270Z`, '#e9b283');
-  shape(g, `M100 270L${102 - a} 306H${113 - a}L112 270Z`, '#e9b283');
-  shape(g, `M${66 + a} 306Q${78 + a} 300 ${90 + a} 306L${90 + a} 313H${66 + a}Z`, '#d9a42e');
-  shape(g, `M${98 - a} 306Q${112 - a} 300 ${124 - a} 306L${124 - a} 313H${98 - a}Z`, '#d9a42e');
-  shape(g, 'M70 238Q92 246 116 238L120 274L98 276L93 258L88 276L66 274Z', gradient(g, 0, 238, 0, 276, [[0, '#58b2f5'], [1, '#155aa8']]));
-  stroke(g, 'M112 240L116 274', '#fff', 3);
-  shape(g, 'M85 172H104V194H85Z', '#e9b283');
-  shape(g, 'M76 190L70 216Q68 232 70 242Q93 250 116 242Q118 230 116 214L110 190L101 190Q93 206 85 190Z', gradient(g, 70, 190, 116, 248, [[0, '#ffffff'], [1, '#bfc8d2']]));
-  stroke(g, 'M84 226Q92 232 102 224M88 236Q98 240 108 232', '#9aa3ae', 1.5);
-  limb(g, 'M75 198Q56 214 60 250', 9); dot(g, 60, 255, 7, '#efb684');
-  face(g, MALE_HEAD, 42);
+  const a = step === 1 ? -8 : step === 2 ? 8 : 0;
+
+  // Back arm (swings with walk stride)
+  const backArmX = step === 1 ? 142 : step === 2 ? 128 : 138;
+  const backArmY = step === 1 ? 236 : step === 2 ? 248 : 242;
+  limb(g, `M128 194Q142 214 ${backArmX} ${backArmY}`, 9);
+  dot(g, backArmX, backArmY, 7.5, '#efb684');
+
+  // Back leg
+  shape(g, `M${108 - a} 272L${109 - a} 306H${120 - a}L120 - a 272Z`, '#e9b283');
+  // Back honeycomb sandal (dép tổ ong)
+  shape(g, `M${104 - a} 306Q${118 - a} 298 ${130 - a} 306L130 - a 314H${104 - a}Z`, gradient(g, 0, 304, 0, 314, [[0, '#fbbf24'], [1, '#d97706']]));
+  [110, 116, 122].forEach((hx) => { g.fillStyle = '#92400e'; g.beginPath(); g.arc(hx - a, 310, 1.3, 0, Math.PI * 2); g.fill(); });
+
+  // Front leg
+  shape(g, `M${80 + a} 272L${78 + a} 306H${89 + a}L92 + a 272Z`, '#e9b283');
+  // Front honeycomb sandal (dép tổ ong)
+  shape(g, `M${72 + a} 306Q${84 + a} 298 ${96 + a} 306L96 + a 314H${72 + a}Z`, gradient(g, 0, 304, 0, 314, [[0, '#fbbf24'], [1, '#d97706']]));
+  [78, 84, 90].forEach((hx) => { g.fillStyle = '#92400e'; g.beginPath(); g.arc(hx + a, 310, 1.3, 0, Math.PI * 2); g.fill(); });
+
+  // Blue sports shorts with white side stripe and drawstring
+  shape(g, 'M68 242Q100 248 132 242L136 278L108 280L100 262L92 280L64 278Z', gradient(g, 0, 242, 0, 280, [[0, '#3b82f6'], [1, '#1d4ed8']]), 2.4);
+  stroke(g, 'M128 244L132 278', '#ffffff', 3.0);
+  // White drawstring bow and dangling cords
+  dot(g, 100, 248, 2.4, '#ffffff', 0);
+  stroke(g, 'M97 250Q91 258 95 264M103 250Q109 258 105 264', '#ffffff', 2.0);
+
+  // Neck
+  shape(g, 'M90 164H110V190H90Z', '#e9b283');
+  stroke(g, 'M88 188Q100 196 112 188', '#c67b45', 1.8);
+
+  // White ribbed tank top (Athletic cut matching Vector Art HD)
+  shape(g, 'M74 186L64 212Q62 232 66 244Q100 252 134 244Q138 232 136 212L126 186L114 186Q100 200 86 186Z', gradient(g, 64, 186, 136, 246, [[0, '#ffffff'], [0.7, '#edf2f7'], [1, '#cbd5e1']]), 2.4);
+  stroke(g, 'M86 218Q100 226 114 218M88 230Q100 236 112 230', '#94a3b8', 1.8);
+
+  // Front arm & hand (swings with walk stride)
+  const frontArmX = step === 1 ? 52 : step === 2 ? 68 : 60;
+  const frontArmY = step === 1 ? 236 : step === 2 ? 248 : 242;
+  limb(g, `M72 194Q56 214 ${frontArmX} ${frontArmY}`, 9.5);
+  // Clenched chibi fist with thumb
+  shape(g, `M${frontArmX - 6} ${frontArmY - 6}C${frontArmX - 12} ${frontArmY - 4} ${frontArmX - 10} ${frontArmY + 8} ${frontArmX - 2} ${frontArmY + 10}C${frontArmX + 6} ${frontArmY + 12} ${frontArmX + 10} ${frontArmY + 4} ${frontArmX + 6} ${frontArmY - 4}Z`, '#efb684', 1.8);
+
+  maleFace(g);
 }
+
 function femaleBody(g, step) {
-  const a = step === 1 ? -7 : step === 2 ? 7 : 0;
-  limb(g, 'M112 200Q128 214 126 244', 8); dot(g, 126, 250, 7, '#efb684');
-  shape(g, `M${84 + a} 268L${80 + a} 306H${91 + a}L96 268Z`, '#e9b283');
-  shape(g, `M102 268L${104 - a} 306H${115 - a}L114 268Z`, '#e9b283');
-  shape(g, `M${70 + a} 306Q${82 + a} 300 ${92 + a} 306L${92 + a} 313H${70 + a}Z`, '#c8456f');
-  shape(g, `M${100 - a} 306Q${114 - a} 300 ${124 - a} 306L${124 - a} 313H${100 - a}Z`, '#c8456f');
-  shape(g, 'M87 172H105V194H87Z', '#e9b283');
-  shape(g, 'M80 212Q76 228 78 244H114Q116 228 112 212Z', '#e9b283');
-  shape(g, 'M74 240Q96 248 118 240L122 270L102 272L97 256L92 272L70 270Z', gradient(g, 0, 240, 0, 272, [[0, '#8fb6dc'], [1, '#3f6d9f']]));
-  stroke(g, 'M76 250H118M92 243V256', '#2f5680', 1.5);
-  shape(g, 'M80 188L72 218Q96 228 120 218L112 188L103 188Q96 202 89 188Z', gradient(g, 72, 188, 120, 228, [[0, '#ffa184'], [1, '#d94f35']]));
-  stroke(g, 'M76 208Q96 216 116 208', '#ffe3c8', 2.6);
-  limb(g, 'M78 198Q60 214 62 248', 9); dot(g, 62, 253, 7, '#efb684');
-  face(g, FEMALE_HEAD, 48);
+  const a = step === 1 ? -8 : step === 2 ? 8 : 0;
+
+  // Back arm
+  const backArmX = step === 1 ? 138 : step === 2 ? 126 : 134;
+  const backArmY = step === 1 ? 236 : step === 2 ? 248 : 242;
+  limb(g, `M126 194Q138 214 ${backArmX} ${backArmY}`, 8.5);
+  dot(g, backArmX, backArmY, 6.8, '#efb684');
+
+  // Back leg
+  shape(g, `M${106 - a} 270L${108 - a} 306H${118 - a}L118 - a 270Z`, '#e9b283');
+  // Back pink slipper
+  shape(g, `M${102 - a} 306Q${114 - a} 298 ${126 - a} 306L126 - a 313H${102 - a}Z`, gradient(g, 0, 306, 0, 313, [[0, '#f472b6'], [1, '#db2777']]));
+  stroke(g, `M${110 - a} 304L${115 - a} 309M${119 - a} 304L${115 - a} 309`, '#ffffff', 1.8);
+
+  // Front leg
+  shape(g, `M${82 + a} 270L${80 + a} 306H${90 + a}L92 + a 270Z`, '#e9b283');
+  // Front pink slipper
+  shape(g, `M${74 + a} 306Q${86 + a} 298 ${96 + a} 306L96 + a 313H${74 + a}Z`, gradient(g, 0, 306, 0, 313, [[0, '#f472b6'], [1, '#db2777']]));
+  stroke(g, `M${82 + a} 304L${87 + a} 309M${91 + a} 304L${87 + a} 309`, '#ffffff', 1.8);
+
+  // Neck & Bare midriff waist
+  shape(g, 'M91 164H109V190H91Z', '#e9b283');
+  shape(g, 'M82 210Q78 226 80 244H120Q122 226 118 210Z', '#e9b283');
+  dot(g, 100, 228, 1.5, '#a9683c', 0); // Belly button
+
+  // Denim shorts with yellow stitching and copper rivet
+  shape(g, 'M74 240Q100 246 126 240L130 272L108 274L100 256L92 274L70 272Z', gradient(g, 0, 240, 0, 274, [[0, '#60a5fa'], [1, '#2563eb']]), 2.4);
+  stroke(g, 'M76 250H124M100 242V256', '#1e3a8a', 1.6);
+  dot(g, 100, 246, 1.6, '#eab308', 0);
+
+  // Coral peach crop top with cap sleeves
+  shape(g, 'M76 186L66 214Q100 224 134 214L124 186L112 186Q100 198 88 186Z', gradient(g, 66, 186, 134, 224, [[0, '#fb7185'], [1, '#e11d48']]), 2.4);
+  stroke(g, 'M74 206Q100 214 126 206', '#ffe4e6', 2.4);
+
+  // Front arm & hand
+  const frontArmX = step === 1 ? 58 : step === 2 ? 72 : 66;
+  const frontArmY = step === 1 ? 236 : step === 2 ? 248 : 242;
+  limb(g, `M74 194Q60 214 ${frontArmX} ${frontArmY}`, 8.5);
+  dot(g, frontArmX, frontArmY, 6.8, '#efb684');
+
+  femaleFace(g);
 }
 [0, 1, 2].forEach((step) => {
   const suffix = step ? `_step${step}` : '';
@@ -370,11 +489,19 @@ HAIR_FEMALE.forEach((d, i) => {
   layer(`hair_female_${i}`, (g) => {
     shape(g, d, brownHair(g));
     stroke(g, 'M62 62Q84 36 118 36M90 74Q112 52 146 58', 'rgba(192,138,96,.6)', 2.4);
+    if (i === 0) {
+      // Iconic green 4-leaf clover hair clip from Image 1 ("Hun hít" & "An ủi")
+      const cx = 68, cy = 84;
+      [[0, -4.5], [4.5, 0], [0, 4.5], [-4.5, 0]].forEach(([dx, dy]) => {
+        dot(g, cx + dx, cy + dy, 3.4, '#22c55e', 1.4);
+      });
+      dot(g, cx, cy, 1.6, '#fef08a', 0); // Gold center stud
+    }
   });
 });
 
 const BROWS = [
-  (g) => { shape(g, 'M100 106L132 100L132 106L102 114Z', '#20140e', 1); shape(g, 'M148 100L172 102L172 107L150 106Z', '#20140e', 1); },
+  (g) => { shape(g, 'M98 106L130 101L130 107L100 114Z', '#20140e', 1); shape(g, 'M148 101L172 103L172 108L150 107Z', '#20140e', 1); },
   (g) => stroke(g, 'M104 106Q118 97 132 106M150 104Q160 98 170 106', '#3a2015', 3.2),
   (g) => stroke(g, 'M102 98L132 110M172 98L148 110', '#20140e', 5),
   (g) => stroke(g, 'M106 104Q118 100 130 104M152 102Q160 99 168 103', '#3a2015', 2),
@@ -382,7 +509,13 @@ const BROWS = [
 BROWS.forEach((draw, i) => layer(`brows_${i}`, draw));
 
 const LIPS = [
-  (g) => { stroke(g, 'M128 157Q142 162 156 152', '#6d2b23', 3); stroke(g, 'M152 149Q158 152 157 156', '#6d2b23', 1.8); },
+  (g) => {
+    // Signature Hàng Rong wry smirk with tooth highlight
+    shape(g, 'M126 154Q142 163 158 151Q152 165 138 165Q128 165 126 154Z', '#7a221a');
+    stroke(g, 'M126 154Q142 163 158 151', '#2c140e', 2.4);
+    stroke(g, 'M153 148Q160 152 158 156', '#2c140e', 1.8);
+    stroke(g, 'M130 156Q142 160 154 153', '#ffffff', 2.6);
+  },
   (g) => { shape(g, 'M124 150Q142 160 160 148Q154 168 140 168Q128 168 124 150Z', '#8b2f2f'); shape(g, 'M129 153Q142 158 156 151L153 156Q142 161 131 158Z', '#fff', 1); },
   (g) => { ellipse(g, 142, 154, 6, 7); g.fillStyle = '#8b2f2f'; g.fill(); g.lineWidth = 2; g.strokeStyle = INK; g.stroke(); },
   (g) => shape(g, 'M130 153Q140 150 144 152Q148 150 154 152Q146 162 140 161Q134 160 130 153Z', '#c9374f', 1.5),
@@ -391,8 +524,24 @@ LIPS.forEach((draw, i) => layer(`lips_${i}`, draw));
 
 // Index 0 of cheeks and earrings means none, so it has no sprite
 layer('cheeks_1', (g) => { [[100, 146, 11], [150, 141, 7]].forEach(([x, y, r]) => dot(g, x, y, r, 'rgba(240,119,111,.35)', 0)); });
-layer('cheeks_2', (g) => { [[94, 140], [102, 146], [108, 139], [146, 138], [152, 143]].forEach(([x, y]) => dot(g, x, y, 1.8, '#a06a44', 0)); });
-layer('earrings_1', (g) => { ellipse(g, 44, 142, 7, 7); g.lineWidth = 3; g.strokeStyle = '#e0ab3a'; g.stroke(); });
+// Iconic cheek bandage patch from Image 3 (Watermelon vendor) & Image 1
+layer('cheeks_2', (g) => {
+  g.save();
+  g.translate(96, 144);
+  g.rotate(-0.16);
+  roundRect(g, -13, -8, 26, 16, 4);
+  g.fillStyle = '#fef3c7'; g.fill();
+  g.lineWidth = 1.8; g.strokeStyle = '#b45309'; g.stroke();
+  // Center white gauze pad
+  roundRect(g, -5, -5, 10, 10, 2);
+  g.fillStyle = '#ffffff'; g.fill();
+  g.lineWidth = 1.0; g.strokeStyle = '#d97706'; g.stroke();
+  // Tiny air holes
+  dot(g, -9, 0, 0.8, '#b45309', 0);
+  dot(g, 9, 0, 0.8, '#b45309', 0);
+  g.restore();
+});
+layer('earrings_1', (g) => { ellipse(g, 46, 142, 7, 7); g.lineWidth = 3; g.strokeStyle = '#e0ab3a'; g.stroke(); });
 layer('earrings_2', (g) => dot(g, 44, 134, 4, '#f1f3f5', 1.6));
 layer('earrings_3', (g) => { stroke(g, 'M44 132V144', '#e0ab3a', 2); shape(g, 'M44 144L50 152L44 160L38 152Z', '#e0ab3a', 1.6); });
 
@@ -573,10 +722,14 @@ landStrip('bg_land_2', [[0, '#d8cdb7'], [1, '#b8a98d']], (g) => {
 landStrip('bg_land_3', [[0, '#e5d8b8'], [1, '#c6b58d']], (g) => {
   for (let i = 0; i < 5; i++) { const x = 20 + i * 200; shape(g, `M${x} 150V50H${x + 160}V150Z`, '#e8c766', 3); shape(g, `M${x - 12} 50L${x + 80} 8L${x + 172} 50Z`, '#8f4a32', 3); roundRect(g, x + 60, 88, 40, 62, 18); fill(g, '#5b4636', 3); }
 });
-add('lot_soil', 420, 140, (g) => {
-  ellipse(g, 210, 76, 200, 58); g.fillStyle = gradient(g, 0, 18, 0, 134, [[0, '#94673f'], [1, '#553620']]); g.fill(); g.lineWidth = 3; g.strokeStyle = INK; g.stroke();
-  stroke(g, 'M80 70Q130 58 180 70M230 88Q280 76 330 88M120 104Q170 94 220 104', '#3f2715', 2.6);
-}, [0.5, 0.35]);
+// One build lot: a plain rectangle that exactly fills its cell (900 x 200 px = 4.5 x 1.0 units) so neighbouring lots touch.
+// The outline is inset by half its width, so two lots side by side share one divider line. Furrows run vertically.
+add('lot_soil', 900, 200, (g) => {
+  g.fillStyle = gradient(g, 0, 0, 0, 200, [[0, '#94673f'], [1, '#6b4528']]); g.fillRect(0, 0, 900, 200);
+  for (let x = 75; x < 900; x += 75) stroke(g, `M${x} 14V186`, '#4a2f1a', 3.2);
+  [[150, 60], [380, 140], [610, 70], [790, 150], [260, 160]].forEach(([x, y]) => dot(g, x, y, 5, '#b08a60', 1.4));
+  g.lineWidth = 4; g.strokeStyle = INK; g.strokeRect(2, 2, 896, 196);
+}, [0.5, 0.5]);
 
 // ---------- Crops ----------
 function lowPlant(g, stem, leaves) {

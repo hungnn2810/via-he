@@ -17,7 +17,7 @@ Hence: measure, change one group of numbers, measure again.
 ## Step 1 — Measure what you have
 
 ```bash
-cd server && npx tsx ../.Codex/skills/balance/scripts/profit-table.ts
+cd server && npx tsx ../.agents/skills/balance/scripts/profit-table.ts
 ```
 
 The script imports `data.ts` directly, so it can never drift from the code. It prints:

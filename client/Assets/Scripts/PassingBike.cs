@@ -12,11 +12,23 @@ namespace ViaHeOnline
         const float Bounce = 0.012f, Pitch = 0.5f, PuffSeconds = 0.22f;
         const float SpokeRadius = 68f;      // wheel_spin pixels that match a wheel radius; keeps the spokes inside the tyre
 
+        static readonly string[] VendorShouts =
+        {
+            "Ai bánh mì Sài Gòn đặc ruột thơm bơ nào...",
+            "Bắp xào bơ, bắp luộc ngô nướng nóng hổi đê!",
+            "Tào phớ đây, nước đường hoa bưởi thanh mát!",
+            "Ve chai đồng nát bán đê...",
+            "Giao hàng nhanh đây cô bác ơi!",
+            "Tránh đường em ship đơn hỏa tốc nào!"
+        };
+
         static Dictionary<string, List<Vector3>> _wheels;
 
         readonly List<Transform> _spins = new List<Transform>();
         Vector3 _start;
-        float _speed, _phase, _nextPuff, _halfWidth;
+        float _speed, _phase, _nextPuff, _halfWidth, _bubbleUntil;
+        string _shout;
+        GameObject _bubble;
 
         public static PassingBike Create(Transform parent, string sprite, Vector2 position, float scale, int order, float speed)
         {
@@ -28,6 +40,7 @@ namespace ViaHeOnline
             bike._speed = speed;
             bike._phase = Random.Range(0f, 6f);
             bike._halfWidth = sr.bounds.size.x / 2f;
+            if (Random.value < 0.45f) bike._shout = VendorShouts[Random.Range(0, VendorShouts.Length)];
             foreach (var wheel in Wheels(sprite))
             {
                 var spin = Draw.Put(sr.transform, "wheel_spin", new Vector2(wheel.x, wheel.y) / SpriteLibrary.PPU, 1, order + 1);
@@ -74,6 +87,44 @@ namespace ViaHeOnline
                 float behind = _speed > 0 ? -_halfWidth : _halfWidth;
                 ExhaustPuff.Create(transform.parent, _start + new Vector3(behind, 0.22f, 0), Mathf.Sign(_speed));
             }
+
+            if (!string.IsNullOrEmpty(_shout) && _bubble == null && _bubbleUntil == 0 && Camera.main)
+            {
+                if (Mathf.Abs(transform.position.x - Camera.main.transform.position.x) < 3.2f)
+                {
+                    ShowShout(_shout);
+                    SoundFx.Horn();
+                }
+            }
+
+            if (_bubble)
+            {
+                if (Time.time > _bubbleUntil)
+                {
+                    Destroy(_bubble);
+                    _bubble = null;
+                }
+                else
+                {
+                    _bubble.transform.position = transform.position + Vector3.up * 1.55f;
+                }
+            }
+        }
+
+        void ShowShout(string line)
+        {
+            _bubble = new GameObject("BikeBubble");
+            var t = _bubble.transform;
+            t.SetParent(transform.parent, false);
+            t.position = transform.position + Vector3.up * 1.55f;
+            Draw.Sized(t, "ui_speech_bubble", Vector2.zero, new Vector2(Mathf.Clamp(line.Length * 0.095f + 0.35f, 0.7f, 5f), 0.62f), 2000, SpriteDrawMode.Sliced);
+            Draw.Text(t, line, new Vector2(0, 0.28f), 0.17f, Draw.Hex("#3b2414"), 2001);
+            _bubbleUntil = Time.time + 3.2f;
+        }
+
+        void OnDestroy()
+        {
+            if (_bubble) Destroy(_bubble);
         }
     }
 

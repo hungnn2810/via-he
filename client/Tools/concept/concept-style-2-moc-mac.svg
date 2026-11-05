@@ -1,0 +1,306 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<defs>
+  <filter id="soft2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+  <filter id="drop2" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#1b120c" flood-opacity="0.12"/></filter>
+  
+  <!-- Skin Tone: Honey Sun-baked Warmth -->
+  <radialGradient id="skin2" cx=".60" cy=".38" r=".72">
+    <stop offset="0%" stop-color="#fff0dc"/>
+    <stop offset="55%" stop-color="#f5c292"/>
+    <stop offset="100%" stop-color="#be7945"/>
+  </radialGradient>
+  <linearGradient id="limb2" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#d69562"/>
+    <stop offset="55%" stop-color="#facba1"/>
+    <stop offset="100%" stop-color="#e8ad7e"/>
+  </linearGradient>
+
+  <!-- Hair Gradients: Ink Ash Black -->
+  <linearGradient id="hairM2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#46362c"/>
+    <stop offset="100%" stop-color="#191310"/>
+  </linearGradient>
+  <linearGradient id="hairF2" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#5a3d2c"/>
+    <stop offset="100%" stop-color="#21140e"/>
+  </linearGradient>
+
+  <!-- Retro Clothes Gradients -->
+  <linearGradient id="creamTank2" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#faf5ea"/>
+    <stop offset="100%" stop-color="#d6c7ab"/>
+  </linearGradient>
+  <linearGradient id="oliveShorts2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#648858"/>
+    <stop offset="100%" stop-color="#375530"/>
+  </linearGradient>
+  <linearGradient id="tireRubberSandals2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#4a535a"/>
+    <stop offset="100%" stop-color="#1e2226"/>
+  </linearGradient>
+
+  <linearGradient id="butterTop2" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#ffeaa7"/>
+    <stop offset="100%" stop-color="#e2b43b"/>
+  </linearGradient>
+  <linearGradient id="kakiShorts2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#b6895d"/>
+    <stop offset="100%" stop-color="#734e2c"/>
+  </linearGradient>
+  <linearGradient id="beigeSandals2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#f5e8d3"/>
+    <stop offset="100%" stop-color="#c9b191"/>
+  </linearGradient>
+
+  <linearGradient id="cardBg2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="100%" stop-color="#fdfbf7"/>
+  </linearGradient>
+</defs>
+
+<!-- Outer Container -->
+<rect width="960" height="600" fill="#ede4d5" rx="16"/>
+
+<!-- Header -->
+<g transform="translate(40, 36)">
+  <rect x="0" y="0" width="168" height="26" rx="6" fill="#8c6239"/>
+  <text x="84" y="17" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" letter-spacing="1">HƯỚNG 2 (HOÀI NIỆM)</text>
+  <text x="0" y="52" fill="#2c1a0e" font-size="24" font-weight="800">Phố Cổ Mộc Mạc (Retro Saigon / Hà Nội 90s)</text>
+  <text x="0" y="74" fill="#695747" font-size="13">Phong cách minh họa bút sắt mộc mạc, hoài cổ. Nét vẽ nhẹ nhàng, chất phác, gợi nhớ không khí những góc phố xưa bình yên.</text>
+</g>
+
+<!-- Stage Floor Plate -->
+<g transform="translate(40, 130)">
+  <rect width="520" height="430" rx="16" fill="url(#cardBg2)" filter="url(#drop2)"/>
+  <rect x="16" y="16" width="488" height="344" rx="12" fill="#f4eee3"/>
+  
+  <!-- Classic Red Brick Sidewalk -->
+  <path d="M16 320H504V360H16Z" fill="#c47a5b"/>
+  <line x1="16" y1="320" x2="504" y2="320" stroke="#9e563a" stroke-width="2"/>
+  <path d="M50 320V360M100 320V360M150 320V360M200 320V360M250 320V360M300 320V360M350 320V360M400 320V360M450 320V360" stroke="#9e563a" stroke-width="1.2" opacity=".6"/>
+
+  <!-- Character Ground Shadows -->
+  <ellipse cx="145" cy="336" rx="54" ry="9" fill="#26170d" opacity=".18"/>
+  <ellipse cx="365" cy="336" rx="52" ry="9" fill="#26170d" opacity=".18"/>
+
+  <!-- Character 1: NAM (Áo may ô ngà cháo lòng, Quần đùi xanh rêu túi hộp, Dép cao su đen) -->
+  <g id="char-male-2" transform="translate(68, 26) scale(0.78)" stroke="#342014" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Back Arm -->
+    <path d="M112 195Q134 208 132 242" fill="none" stroke-width="11"/>
+    <path d="M112 195Q134 208 132 242" fill="none" stroke="url(#limb2)" stroke-width="7.5"/>
+    <circle cx="132" cy="246" r="6.5" fill="url(#skin2)"/>
+
+    <!-- Legs & Tire Rubber Sandals (Dép lốp / Dép lào đen) -->
+    <!-- Back Leg -->
+    <path d="M100 266L102 308H113L111 266Z" fill="url(#limb2)"/>
+    <path d="M96 308Q110 302 122 308L122 315H96Z" fill="url(#tireRubberSandals2)"/>
+    <path d="M104 306L109 311M114 306L109 311" fill="none" stroke="#68737d" stroke-width="1.6"/>
+
+    <!-- Front Leg -->
+    <path d="M80 266L77 308H88L92 266Z" fill="url(#limb2)"/>
+    <path d="M68 308Q80 302 92 308L92 315H68Z" fill="url(#tireRubberSandals2)"/>
+    <path d="M76 306L81 311M86 306L81 311" fill="none" stroke="#68737d" stroke-width="1.6"/>
+
+    <!-- Olive Drab Army Shorts (Quần đùi xanh rêu có túi nắp) -->
+    <path d="M70 236Q92 244 116 236L120 270L100 272L94 256L88 272L66 270Z" fill="url(#oliveShorts2)"/>
+    <!-- Flap pocket on right hip -->
+    <path d="M68 248H80V262H68Z" fill="none" stroke="#253a20" stroke-width="1.4"/>
+    <path d="M67 248L74 253L81 248" fill="none" stroke="#253a20" stroke-width="1.4"/>
+
+    <!-- Neck -->
+    <path d="M86 170H104V192H86Z" fill="url(#limb2)"/>
+
+    <!-- Cream Off-White Ribbed Tank (Áo may ô ngà dệt kim) -->
+    <path d="M77 188L70 214Q68 230 70 240Q93 248 116 240Q118 228 116 212L110 188L102 188Q93 202 85 188Z" fill="url(#creamTank2)"/>
+    <!-- Subtle knitted vertical ribs -->
+    <g stroke="#baa889" stroke-width="1.2" opacity=".6">
+      <line x1="84" y1="202" x2="84" y2="238"/>
+      <line x1="92" y1="206" x2="92" y2="242"/>
+      <line x1="100" y1="204" x2="100" y2="240"/>
+      <line x1="108" y1="200" x2="108" y2="236"/>
+    </g>
+
+    <!-- Front Arm -->
+    <path d="M75 194Q55 210 61 246" fill="none" stroke-width="12"/>
+    <path d="M75 194Q55 210 61 246" fill="none" stroke="url(#limb2)" stroke-width="8"/>
+    <circle cx="61" cy="250" r="6.5" fill="url(#skin2)"/>
+
+    <!-- Ear -->
+    <ellipse cx="44" cy="116" rx="12" ry="16" fill="url(#skin2)"/>
+    <path d="M42 110Q48 116 43 124" fill="none" stroke="#a3663a" stroke-width="1.6"/>
+
+    <!-- Head: Slightly slimmer classic 1:2.35 proportions -->
+    <path d="M102 28C148 28 174 62 172 104C171 130 156 152 132 164C118 172 100 173 84 167C52 157 32 130 32 98C32 56 60 28 102 28Z" fill="url(#skin2)"/>
+    <!-- Shading -->
+    <path d="M46 118C52 142 72 160 102 164C76 166 52 148 44 124Z" fill="#a8683f" opacity=".45" stroke="none" filter="url(#soft2)"/>
+
+    <!-- Classic 90s Side Parting Hair (Tóc rẽ ngôi 7/3 hoài niệm) -->
+    <path d="M28 110C16 54 56 18 104 18C152 20 184 56 176 100C166 84 148 68 116 62C108 72 82 80 62 86C58 96 56 106 50 110C44 102 34 102 28 110Z" fill="url(#hairM2)"/>
+    <g fill="none" stroke="#877061" stroke-width="2" opacity=".6">
+      <path d="M68 56Q86 36 112 34"/>
+      <path d="M96 60Q114 42 142 46"/>
+      <path d="M44 82Q46 66 58 54"/>
+    </g>
+
+    <!-- Warm Smiling Crescent Eyes & Gentle Brows -->
+    <path d="M96 104Q114 98 128 104" fill="none" stroke="#25160d" stroke-width="3.2"/>
+    <path d="M146 102Q158 97 170 104" fill="none" stroke="#25160d" stroke-width="3.2"/>
+    <!-- Crescent squint smile -->
+    <path d="M108 122Q120 114 130 122" fill="none" stroke="#25160d" stroke-width="3"/>
+    <path d="M148 120Q158 114 168 120" fill="none" stroke="#25160d" stroke-width="3"/>
+    <!-- Laugh lines -->
+    <path d="M130 120L134 117M168 118L172 115" fill="none" stroke="#25160d" stroke-width="1.5"/>
+
+    <!-- Nose & Warm Kind Smile -->
+    <path d="M140 126Q148 134 140 138" fill="none" stroke="#a3663a" stroke-width="1.8"/>
+    <path d="M126 150Q140 160 156 148" fill="none" stroke="#682921" stroke-width="2.8"/>
+    <!-- Nostalgic beauty mark (Nốt ruồi duyên gần miệng) -->
+    <circle cx="162" cy="154" r="1.8" fill="#25160d" stroke="none"/>
+  </g>
+
+  <!-- Character 2: NỮ (Áo croptop vàng bơ, Quần short kaki xắn gấu, Dép rọ quai da be) -->
+  <g id="char-female-2" transform="translate(288, 26) scale(0.78)" stroke="#342014" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Hair Back: Classic Bob under curls -->
+    <path d="M36 104C24 46 64 16 106 18C152 20 186 58 178 110C176 136 166 156 154 168L54 168C42 156 38 132 36 104Z" fill="url(#hairF2)"/>
+
+    <!-- Back Arm -->
+    <path d="M110 195Q132 208 128 238" fill="none" stroke-width="11"/>
+    <path d="M110 195Q132 208 128 238" fill="none" stroke="url(#limb2)" stroke-width="7.5"/>
+    <circle cx="128" cy="242" r="6" fill="url(#skin2)"/>
+
+    <!-- Legs & Woven Beige Sandal (Dép rọ đan dây be mộc) -->
+    <!-- Back Leg -->
+    <path d="M102 266L104 308H115L113 266Z" fill="url(#limb2)"/>
+    <path d="M98 308Q112 302 122 308L122 315H98Z" fill="url(#beigeSandals2)"/>
+    <path d="M102 308V314M108 308V314M114 308V314" stroke="#876847" stroke-width="1.2"/>
+
+    <!-- Front Leg -->
+    <path d="M84 266L80 308H91L96 266Z" fill="url(#limb2)"/>
+    <path d="M70 308Q82 302 92 308L92 315H70Z" fill="url(#beigeSandals2)"/>
+    <path d="M74 308V314M80 308V314M86 308V314" stroke="#876847" stroke-width="1.2"/>
+
+    <!-- Bare Waist & Neck -->
+    <path d="M86 170H104V192H86Z" fill="url(#limb2)"/>
+    <path d="M80 208Q76 224 78 238H114Q116 224 112 208Z" fill="url(#limb2)"/>
+
+    <!-- Kaki Brown Shorts with Rolled Cuff -->
+    <path d="M74 236Q96 244 118 236L122 266L102 268L97 254L92 268L70 266Z" fill="url(#kakiShorts2)"/>
+    <!-- Rolled cuff highlight & vintage button -->
+    <path d="M70 260H92M98 262H122" stroke="#54371d" stroke-width="1.4"/>
+    <circle cx="96" cy="242" r="2" fill="#faf5ea" stroke="#54371d" stroke-width="1"/>
+
+    <!-- Butter-Yellow Vintage Crop Top (Áo thun lửng vàng bơ) -->
+    <path d="M80 186L72 214Q96 224 120 214L112 186L103 186Q96 200 89 186Z" fill="url(#butterTop2)"/>
+    <path d="M76 204Q96 212 116 204" fill="none" stroke="#fff5d1" stroke-width="2.2"/>
+
+    <!-- Front Arm -->
+    <path d="M78 194Q56 210 72 232" fill="none" stroke-width="12"/>
+    <path d="M78 194Q56 210 72 232" fill="none" stroke="url(#limb2)" stroke-width="8"/>
+    <circle cx="74" cy="234" r="6" fill="url(#skin2)"/>
+
+    <!-- Ear & Delicate Flower Stud Earring -->
+    <ellipse cx="48" cy="118" rx="10" ry="14" fill="url(#skin2)"/>
+    <circle cx="48" cy="126" r="3.5" fill="#faf5ea" stroke="#b8934a" stroke-width="1.5"/>
+
+    <!-- Female Head -->
+    <path d="M102 30C146 30 172 64 170 104C169 128 155 150 132 162C118 169 100 170 86 164C56 154 36 128 36 98C36 58 60 30 102 30Z" fill="url(#skin2)"/>
+    <path d="M50 120C56 142 74 158 102 160C78 164 56 146 46 124Z" fill="#a8683f" opacity=".45" stroke="none" filter="url(#soft2)"/>
+
+    <!-- Hair Front: Vintage Bob with Straight Wispy Bangs & Hairpins (Mái ngố kẹp tăm) -->
+    <path d="M34 110C26 58 62 22 104 22C148 24 180 58 174 104C168 88 152 74 126 72L60 74C56 90 52 102 46 108C40 100 36 102 34 110Z" fill="url(#hairF2)"/>
+    <!-- Wispy Bangs -->
+    <path d="M62 74L64 88M74 73L76 89M86 73L87 90M98 73L99 90M110 73L111 89M122 74L121 87" stroke="#3d2516" stroke-width="2"/>
+    <!-- Colorful Retro Hairpins (Kẹp tăm đỏ & xanh) -->
+    <line x1="50" y1="84" x2="62" y2="80" stroke="#d63031" stroke-width="2.6"/>
+    <line x1="52" y1="90" x2="64" y2="86" stroke="#0984e3" stroke-width="2.6"/>
+
+    <!-- Gentle Kind Eyes & Freckles -->
+    <ellipse cx="116" cy="123" rx="9" ry="11" fill="#fcf9f2" stroke-width="1.5"/>
+    <ellipse cx="155" cy="121" rx="7.5" ry="10" fill="#fcf9f2" stroke-width="1.5"/>
+    <circle cx="120" cy="124" r="4.2" fill="#2d1a10" stroke="none"/>
+    <circle cx="158" cy="122" r="3.8" fill="#2d1a10" stroke="none"/>
+    <circle cx="122" cy="122" r="1.3" fill="#ffffff" stroke="none"/>
+    <circle cx="160" cy="120" r="1.2" fill="#ffffff" stroke="none"/>
+    <path d="M106 118Q116 110 128 116M148 114Q156 109 165 116" fill="none" stroke="#25160d" stroke-width="2.4"/>
+    <!-- Soft Freckles on Cheeks -->
+    <circle cx="98" cy="142" r="1.5" fill="#a06842" opacity=".7"/>
+    <circle cx="104" cy="146" r="1.5" fill="#a06842" opacity=".7"/>
+    <circle cx="110" cy="141" r="1.5" fill="#a06842" opacity=".7"/>
+    <circle cx="150" cy="138" r="1.5" fill="#a06842" opacity=".7"/>
+    <circle cx="156" cy="142" r="1.5" fill="#a06842" opacity=".7"/>
+
+    <!-- Eyebrows & Soft Peach Lips -->
+    <path d="M104 102Q116 96 128 102" fill="none" stroke="#362215" stroke-width="2.4"/>
+    <path d="M148 100Q158 96 167 102" fill="none" stroke="#362215" stroke-width="2.4"/>
+    <path d="M138 130Q144 136 138 138" fill="none" stroke="#a3663a" stroke-width="1.6"/>
+    <path d="M128 150Q138 147 142 149Q146 147 152 149Q144 159 138 158Q132 157 128 150Z" fill="#c45a4a" stroke-width="1.4"/>
+  </g>
+
+  <!-- Labels under characters -->
+  <text x="145" y="390" fill="#2c1a0e" font-size="15" font-weight="bold" text-anchor="middle">Nam Mộc Mạc</text>
+  <text x="145" y="408" fill="#755a47" font-size="12" text-anchor="middle">Áo may ô ngà · Quần xanh rêu · Dép lốp</text>
+
+  <text x="365" y="390" fill="#2c1a0e" font-size="15" font-weight="bold" text-anchor="middle">Nữ Hoài Niệm</text>
+  <text x="365" y="408" fill="#755a47" font-size="12" text-anchor="middle">Áo vàng bơ · Quần kaki nâu · Dép rọ be</text>
+</g>
+
+<!-- Right Specs Panel -->
+<g transform="translate(580, 130)">
+  <!-- Box 1: Tỷ lệ đầu/thân -->
+  <rect width="340" height="110" rx="12" fill="#ffffff" filter="url(#drop2)"/>
+  <text x="20" y="28" fill="#8c6239" font-size="12" font-weight="bold" letter-spacing="0.5">TỶ LỆ ĐẦU / THÂN</text>
+  <text x="20" y="56" fill="#2c1a0e" font-size="22" font-weight="800">1 : 2.35 (Thanh mảnh hoài cổ)</text>
+  <text x="20" y="78" fill="#665345" font-size="12">• Đầu: ~124px (48% chiều cao) — Thon gọn, cằm nhẹ</text>
+  <text x="20" y="96" fill="#665345" font-size="12">• Thân + Chân: ~132px (52%) — Tứ chi dài mảnh, dẻo dai</text>
+
+  <!-- Box 2: Bảng màu -->
+  <g transform="translate(0, 126)">
+    <rect width="340" height="172" rx="12" fill="#ffffff" filter="url(#drop2)"/>
+    <text x="20" y="26" fill="#8c6239" font-size="12" font-weight="bold" letter-spacing="0.5">BẢNG MÀU RETRO VINTAGE</text>
+    
+    <g transform="translate(20, 36)">
+      <circle cx="14" cy="14" r="14" fill="#342014"/>
+      <text x="36" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#342014</text>
+      <text x="36" y="24" fill="#7d6756" font-size="10">Viền nâu cà phê</text>
+
+      <circle cx="170" cy="14" r="14" fill="#faf5ea" stroke="#d4c5a9" stroke-width="1.5"/>
+      <text x="192" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#faf5ea</text>
+      <text x="192" y="24" fill="#7d6756" font-size="10">May ô ngà dệt kim</text>
+    </g>
+
+    <g transform="translate(20, 78)">
+      <circle cx="14" cy="14" r="14" fill="#375530"/>
+      <text x="36" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#375530</text>
+      <text x="36" y="24" fill="#7d6756" font-size="10">Xanh rêu bộ đội</text>
+
+      <circle cx="170" cy="14" r="14" fill="#ffeaa7"/>
+      <text x="192" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#ffeaa7</text>
+      <text x="192" y="24" fill="#7d6756" font-size="10">Vàng bơ hoài niệm</text>
+    </g>
+
+    <g transform="translate(20, 120)">
+      <circle cx="14" cy="14" r="14" fill="#b6895d"/>
+      <text x="36" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#b6895d</text>
+      <text x="36" y="24" fill="#7d6756" font-size="10">Nâu kaki xắn gấu</text>
+
+      <circle cx="170" cy="14" r="14" fill="#1e2226"/>
+      <text x="192" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#1e2226</text>
+      <text x="192" y="24" fill="#7d6756" font-size="10">Cao su dép lốp đen</text>
+    </g>
+  </g>
+
+  <!-- Box 3: Lý do phù hợp -->
+  <g transform="translate(0, 310)">
+    <rect width="340" height="120" rx="12" fill="#ffffff" filter="url(#drop2)"/>
+    <text x="20" y="26" fill="#8c6239" font-size="12" font-weight="bold" letter-spacing="0.5">LÝ DO PHÙ HỢP VỚI GAME</text>
+    <text x="20" y="50" fill="#443224" font-size="12" font-weight="600">✓ Hoài niệm:</text>
+    <text x="96" y="50" fill="#5c483a" font-size="12">Đúng trào lưu retro hoài cổ đang hot ở giới trẻ.</text>
+    <text x="20" y="70" fill="#443224" font-size="12" font-weight="600">✓ Mộc mạc:</text>
+    <text x="96" y="70" fill="#5c483a" font-size="12">Dáng người chất phác, cảm giác vỉa hè bình dị.</text>
+    <text x="20" y="90" fill="#443224" font-size="12" font-weight="600">✓ Đồ truyền thống:</text>
+    <text x="136" y="90" fill="#5c483a" font-size="12">Áo dài, Nón lá khi mặc vào cực kỳ tôn dáng.</text>
+    <text x="20" y="110" fill="#443224" font-size="12" font-weight="600">✓ Khác biệt:</text>
+    <text x="96" y="110" fill="#5c483a" font-size="12">Tránh hoàn toàn cảm giác hoạt hình anime công nghiệp.</text>
+  </g>
+</g>
+</svg>

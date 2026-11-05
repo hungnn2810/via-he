@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<defs>
+  <filter id="softC" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+  <filter id="dropC" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#1b120c" flood-opacity="0.12"/></filter>
+  <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fdfbf7"/><stop offset="100%" stop-color="#eee6d8"/></linearGradient>
+</defs>
+
+<rect width="1280" height="720" fill="url(#bgGrad)"/>
+
+<!-- Header -->
+<g transform="translate(60, 40)">
+  <rect x="0" y="0" width="170" height="28" rx="6" fill="#2d3436"/>
+  <text x="85" y="19" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" letter-spacing="1">GIAI ĐOẠN 1: KHÁI NIỆM</text>
+  <text x="0" y="66" fill="#2c1a0e" font-size="30" font-weight="800">So Sánh 3 Hướng Phong Cách Nhân Vật Vỉa Hè Online</text>
+  <text x="0" y="92" fill="#695648" font-size="14">Mọi hướng đều tuân thủ khung 160 x 256 px, góc nhìn 3/4, viền nâu #3a2416, không anime, nét mặt nhỏ hài hước.</text>
+</g>
+
+<!-- 3 Comparison Columns -->
+<!-- COLUMN 1: HƯỚNG 1 (ĐỀ XUẤT CHÍNH) -->
+<g transform="translate(60, 150)">
+  <!-- Card Background -->
+  <rect width="360" height="520" rx="16" fill="#ffffff" filter="url(#dropC)"/>
+  <!-- Top Banner -->
+  <path d="M0 16C0 7.16 7.16 0 16 0H344C352.84 0 360 7.16 360 16V60H0Z" fill="#e27838"/>
+  <text x="180" y="26" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" letter-spacing="1">HƯỚNG 1 (ĐỀ XUẤT CHÍNH)</text>
+  <text x="180" y="48" fill="#ffffff" font-size="18" font-weight="800" text-anchor="middle">Hóm Hỉnh Đời Thường</text>
+
+  <!-- Stage Box -->
+  <rect x="16" y="74" width="328" height="230" rx="10" fill="#eaf4f8"/>
+  <path d="M16 264H344V304H16Z" fill="#d9cbba"/>
+  <ellipse cx="100" cy="272" rx="42" ry="7" fill="#000" opacity=".16"/>
+  <ellipse cx="230" cy="272" rx="42" ry="7" fill="#000" opacity=".16"/>
+
+  <!-- Male 1 Thumbnail -->
+  <g transform="translate(42, 66) scale(0.68)">
+    <use href="concept-style-1-hom-hinh.svg#char-male-1"/>
+  </g>
+  <!-- Female 1 Thumbnail -->
+  <g transform="translate(38, 66) scale(0.68)">
+    <use href="concept-style-1-hom-hinh.svg#char-female-1"/>
+  </g>
+
+  <!-- Specs -->
+  <g transform="translate(20, 318)" font-size="12">
+    <!-- Ratio -->
+    <text x="0" y="16" fill="#e27838" font-weight="bold">TỶ LỆ:</text>
+    <text x="60" y="16" fill="#2c1a0e" font-weight="800">1 : 2.05 (Chibi cân bằng)</text>
+
+    <!-- Head & Body height -->
+    <text x="0" y="38" fill="#695648">• Đầu: ~136px (53%) | Thân+Chân: ~120px</text>
+    <text x="0" y="56" fill="#695648">• Nam: Áo ba lỗ trắng, quần đùi xanh, dép tổ ong</text>
+    <text x="0" y="74" fill="#695648">• Nữ: Croptop cam san hô, short jean, dép tông</text>
+
+    <!-- Palette Swatches -->
+    <text x="0" y="104" fill="#e27838" font-weight="bold">BẢNG MÀU:</text>
+    <g transform="translate(70, 93)">
+      <circle cx="10" cy="8" r="8" fill="#3a2416"/>
+      <circle cx="30" cy="8" r="8" fill="#efb684"/>
+      <circle cx="50" cy="8" r="8" fill="#155aa8"/>
+      <circle cx="70" cy="8" r="8" fill="#e5a93b"/>
+      <circle cx="90" cy="8" r="8" fill="#d94f35"/>
+      <circle cx="110" cy="8" r="8" fill="#3f6d9f"/>
+    </g>
+
+    <!-- Why Fits -->
+    <text x="0" y="132" fill="#2c1a0e" font-weight="bold">ƯU ĐIỂM:</text>
+    <text x="0" y="152" fill="#443224">✓ Chuẩn không khí vỉa hè, rất đời, hóm hỉnh</text>
+    <text x="0" y="170" fill="#443224">✓ Mắt hạt cườm rõ nét, dễ đọc trên mobile</text>
+    <text x="0" y="188" fill="#443224">✓ Cân bằng hoàn hảo giữa cute và hài bựa</text>
+  </g>
+</g>
+
+<!-- COLUMN 2: HƯỚNG 2 (HOÀI NIỆM) -->
+<g transform="translate(460, 150)">
+  <rect width="360" height="520" rx="16" fill="#ffffff" filter="url(#dropC)"/>
+  <path d="M0 16C0 7.16 7.16 0 16 0H344C352.84 0 360 7.16 360 16V60H0Z" fill="#8c6239"/>
+  <text x="180" y="26" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" letter-spacing="1">HƯỚNG 2 (HOÀI NIỆM)</text>
+  <text x="180" y="48" fill="#ffffff" font-size="18" font-weight="800" text-anchor="middle">Phố Cổ Mộc Mạc</text>
+
+  <rect x="16" y="74" width="328" height="230" rx="10" fill="#f4eee3"/>
+  <path d="M16 264H344V304H16Z" fill="#c47a5b"/>
+  <ellipse cx="100" cy="272" rx="40" ry="7" fill="#000" opacity=".16"/>
+  <ellipse cx="230" cy="272" rx="40" ry="7" fill="#000" opacity=".16"/>
+
+  <g transform="translate(42, 66) scale(0.68)">
+    <use href="concept-style-2-moc-mac.svg#char-male-2"/>
+  </g>
+  <g transform="translate(38, 66) scale(0.68)">
+    <use href="concept-style-2-moc-mac.svg#char-female-2"/>
+  </g>
+
+  <g transform="translate(20, 318)" font-size="12">
+    <text x="0" y="16" fill="#8c6239" font-weight="bold">TỶ LỆ:</text>
+    <text x="60" y="16" fill="#2c1a0e" font-weight="800">1 : 2.35 (Thanh mảnh retro)</text>
+
+    <text x="0" y="38" fill="#695648">• Đầu: ~124px (48%) | Thân+Chân: ~132px</text>
+    <text x="0" y="56" fill="#695648">• Nam: May ô ngà dệt kim, quần đùi rêu, dép lốp</text>
+    <text x="0" y="74" fill="#695648">• Nữ: Áo lửng vàng bơ, short kaki nâu, dép rọ be</text>
+
+    <text x="0" y="104" fill="#8c6239" font-weight="bold">BẢNG MÀU:</text>
+    <g transform="translate(70, 93)">
+      <circle cx="10" cy="8" r="8" fill="#342014"/>
+      <circle cx="30" cy="8" r="8" fill="#f5c292"/>
+      <circle cx="50" cy="8" r="8" fill="#375530"/>
+      <circle cx="70" cy="8" r="8" fill="#ffeaa7"/>
+      <circle cx="90" cy="8" r="8" fill="#b6895d"/>
+      <circle cx="110" cy="8" r="8" fill="#1e2226"/>
+    </g>
+
+    <text x="0" y="132" fill="#2c1a0e" font-weight="bold">ƯU ĐIỂM:</text>
+    <text x="0" y="152" fill="#443224">✓ Gu retro Sài Gòn/Hà Nội 90s rất được chuộng</text>
+    <text x="0" y="170" fill="#443224">✓ Áo dài, nón lá, áo hoa khi mặc vào cực kỳ hợp</text>
+    <text x="0" y="188" fill="#443224">✓ Tránh hoàn toàn khuôn mẫu anime công nghiệp</text>
+  </g>
+</g>
+
+<!-- COLUMN 3: HƯỚNG 3 (HIỆN ĐẠI) -->
+<g transform="translate(860, 150)">
+  <rect width="360" height="520" rx="16" fill="#ffffff" filter="url(#dropC)"/>
+  <path d="M0 16C0 7.16 7.16 0 16 0H344C352.84 0 360 7.16 360 16V60H0Z" fill="#7c3aed"/>
+  <text x="180" y="26" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" letter-spacing="1">HƯỚNG 3 (HIỆN ĐẠI)</text>
+  <text x="180" y="48" fill="#ffffff" font-size="18" font-weight="800" text-anchor="middle">Sắc Màu Gen Z</text>
+
+  <rect x="16" y="74" width="328" height="230" rx="10" fill="#f0edf9"/>
+  <path d="M16 264H344V304H16Z" fill="#d2cbe3"/>
+  <ellipse cx="100" cy="272" rx="44" ry="8" fill="#000" opacity=".16"/>
+  <ellipse cx="230" cy="272" rx="44" ry="8" fill="#000" opacity=".16"/>
+
+  <g transform="translate(42, 66) scale(0.68)">
+    <use href="concept-style-3-gen-z.svg#char-male-3"/>
+  </g>
+  <g transform="translate(38, 66) scale(0.68)">
+    <use href="concept-style-3-gen-z.svg#char-female-3"/>
+  </g>
+
+  <g transform="translate(20, 318)" font-size="12">
+    <text x="0" y="16" fill="#7c3aed" font-weight="bold">TỶ LỆ:</text>
+    <text x="60" y="16" fill="#2c1a0e" font-weight="800">1 : 1.85 (Super Chibi)</text>
+
+    <text x="0" y="38" fill="#695648">• Đầu: ~148px (58%) | Thân+Chân: ~108px</text>
+    <text x="0" y="56" fill="#695648">• Nam: Ba lỗ khoét nách, quần bóng rổ, dép bánh mì</text>
+    <text x="0" y="74" fill="#695648">• Nữ: Baby-tee sọc tím, quần biker, dép mint</text>
+
+    <text x="0" y="104" fill="#7c3aed" font-weight="bold">BẢNG MÀU:</text>
+    <g transform="translate(70, 93)">
+      <circle cx="10" cy="8" r="8" fill="#381e14"/>
+      <circle cx="30" cy="8" r="8" fill="#f8c69d"/>
+      <circle cx="50" cy="8" r="8" fill="#0984e3"/>
+      <circle cx="70" cy="8" r="8" fill="#fed330"/>
+      <circle cx="90" cy="8" r="8" fill="#8b5cf6"/>
+      <circle cx="110" cy="8" r="8" fill="#10b981"/>
+    </g>
+
+    <text x="0" y="132" fill="#2c1a0e" font-weight="bold">ƯU ĐIỂM:</text>
+    <text x="0" y="152" fill="#443224">✓ Biểu cảm hài hước kiểu meme, dễ chụp chia sẻ</text>
+    <text x="0" y="170" fill="#443224">✓ Mắt to, màu tươi, cực kỳ nổi trên màn hình 5"</text>
+    <text x="0" y="188" fill="#443224">✓ Thu hút mạnh nhóm người chơi 18-28 tuổi</text>
+  </g>
+</g>
+</svg>

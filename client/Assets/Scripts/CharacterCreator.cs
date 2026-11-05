@@ -17,6 +17,8 @@ namespace ViaHeOnline
 
         public static void Show(Transform canvas, LookOptions options, Action<Dictionary<string, object>> onDone)
         {
+            // An older server may not send the option counts; fall back to the shipped sprite counts
+            options ??= new LookOptions { hair = 4, brows = 4, lips = 4, cheeks = 3, earrings = 4 };
             var root = UIBuilder.Box(canvas, "CharacterCreator");
             UIBuilder.Fill(root);
             root.gameObject.AddComponent<Image>().color = Draw.Hex("#5ec2f2");

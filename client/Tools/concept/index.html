@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Vỉa Hè Online — Thiết Kế Nhân Vật (Giai Đoạn 1: Khái Niệm)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #f5efe6;
+      --panel: #ffffff;
+      --ink: #3a2416;
+      --primary: #e27838;
+      --primary-dark: #b85418;
+      --subtle: #7a6555;
+      --border: #e2d6c5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    header {
+      max-width: 1200px;
+      margin: 0 auto 24px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: var(--primary);
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+      font-weight: 800;
+    }
+    p.lead {
+      margin: 0;
+      color: var(--subtle);
+      font-size: 15px;
+    }
+
+    /* Controls Bar */
+    .controls {
+      max-width: 1200px;
+      margin: 0 auto 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      background: var(--panel);
+      padding: 14px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(58, 36, 22, 0.06);
+    }
+    .ctrl-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ctrl-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--subtle);
+    }
+    button.btn {
+      padding: 8px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    button.btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    button.btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    /* Concept Cards Container */
+    .concepts-grid {
+      max-width: 1200px;
+      margin: 0 auto 32px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 24px;
+    }
+    .concept-card {
+      background: var(--panel);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(58, 36, 22, 0.08);
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .concept-card.featured {
+      border-color: var(--primary);
+    }
+    .card-head {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-head h2 {
+      margin: 0 0 4px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .card-head .subtitle {
+      font-size: 13px;
+      color: var(--subtle);
+    }
+
+    .card-view {
+      position: relative;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      min-height: 380px;
+      transition: background 0.3s;
+    }
+    /* Background variations */
+    .bg-street {
+      background: linear-gradient(to bottom, #dbe9f4 0%, #eaf4f8 70%, #d8caa7 70%, #bca782 100%);
+    }
+    .bg-checker {
+      background-image: repeating-conic-gradient(#eee 0 25%, #fff 0 50%);
+      background-size: 20px 20px;
+    }
+    .bg-light {
+      background: #faf6f0;
+    }
+
+    .card-view svg, .card-view object {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .card-body {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #fff;
+    }
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border);
+    }
+    .spec-key {
+      font-weight: 700;
+      color: var(--subtle);
+    }
+    .spec-val {
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .swatches {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .swatch {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      position: relative;
+    }
+
+    .points-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+      color: #4a3629;
+    }
+    .points-list li {
+      margin-bottom: 4px;
+    }
+
+    /* Comparison Section */
+    .section-title {
+      max-width: 1200px;
+      margin: 32px auto 16px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .full-image-card {
+      max-width: 1200px;
+      margin: 0 auto 32px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 6px 20px rgba(58, 36, 22, 0.08);
+      overflow-x: auto;
+    }
+    .full-image-card img, .full-image-card object {
+      width: 100%;
+      min-width: 800px;
+      height: auto;
+      display: block;
+    }
+
+    /* Technical Architecture */
+    .tech-box {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 6px 20px rgba(58, 36, 22, 0.08);
+    }
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 16px;
+    }
+    .tech-item {
+      padding: 16px;
+      background: #fdfaf6;
+      border-radius: 10px;
+      border-left: 4px solid var(--primary);
+    }
+    .tech-item h4 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      color: var(--primary-dark);
+    }
+    .tech-item p {
+      margin: 0;
+      font-size: 13px;
+      color: #554133;
+    }
+    code {
+      background: #f0e6d6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: Consolas, monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div style="margin-bottom: 16px; padding: 12px 18px; background: #e0f2fe; border: 1.5px solid #0284c7; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <span style="font-weight: 700; color: #0369a1; font-size: 14px;">🚀 Thiết kế mới: Giao diện Hàng Rong Mobile (Cuộc sống đường phố)</span>
+      <div style="display: flex; gap: 8px;">
+        <a href="ui-hang-rong-viewer.html" style="background: #e27838; color: #fff; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 13px;">🎨 Mở Bản Mẫu Giao Diện Hàng Rong Mobile →</a>
+        <a href="stage2-sample-viewer.html" style="background: #0284c7; color: #fff; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 13px;">Mẫu Nhân Vật Chuẩn Giai Đoạn 2 →</a>
+      </div>
+    </div>
+    <div class="badge">VỈA HÈ ONLINE • ART DIRECTION & TECHNICAL ART</div>
+    <h1>Khái Niệm Thiết Kế Bộ Nhân Vật Người Chơi</h1>
+    <p class="lead">Giai đoạn 1: Đề xuất 3 hướng phong cách khác nhau, kèm bảng màu, tỷ lệ đầu/thân và lập luận nghệ thuật.</p>
+  </header>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="ctrl-group">
+      <span class="ctrl-label">Phông Nền:</span>
+      <button class="btn active" onclick="setBg('bg-street')">Phố Vỉa Hè</button>
+      <button class="btn" onclick="setBg('bg-light')">Nền Sáng</button>
+      <button class="btn" onclick="setBg('bg-checker')">Caro Trong Suốt</button>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">Thu Phóng:</span>
+      <button class="btn" onclick="setZoom(0.7)">Nhỏ (0.7x)</button>
+      <button class="btn active" onclick="setZoom(1)">Chuẩn (1x)</button>
+      <button class="btn" onclick="setZoom(1.3)">Phóng to (1.3x)</button>
+    </div>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="concepts-grid">
+
+    <!-- Card 1 -->
+    <div class="concept-card featured">
+      <div class="card-head">
+        <div class="badge">ĐỀ XUẤT CHÍNH</div>
+        <h2>1. Hóm Hỉnh Đời Thường</h2>
+        <div class="subtitle">Chibi Comedic Street • Duyên dáng, ấm áp, đậm nét Việt</div>
+      </div>
+      <div class="card-view bg-street" id="view-1">
+        <object type="image/svg+xml" data="concept-style-1-hom-hinh.svg" style="width: 100%;"></object>
+      </div>
+      <div class="card-body">
+        <div class="spec-row">
+          <span class="spec-key">Tỷ lệ đầu/thân:</span>
+          <span class="spec-val">1 : 2.05 (Chibi cân bằng)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Chiều cao đầu:</span>
+          <span class="spec-val">~136 px (53% chiều cao)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Đường viền:</span>
+          <span class="spec-val">#3a2416 (2.2 px)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Bảng màu:</span>
+          <div class="swatches">
+            <div class="swatch" style="background:#3a2416" title="Viền nâu"></div>
+            <div class="swatch" style="background:#efb684" title="Da ấm"></div>
+            <div class="swatch" style="background:#155aa8" title="Xanh quần đùi"></div>
+            <div class="swatch" style="background:#e5a93b" title="Vàng dép tổ ong"></div>
+            <div class="swatch" style="background:#d94f35" title="Cam san hô"></div>
+            <div class="swatch" style="background:#3f6d9f" title="Denim"></div>
+          </div>
+        </div>
+        <div>
+          <strong style="font-size: 13px;">Vì sao phù hợp nhất:</strong>
+          <ul class="points-list" style="margin-top: 6px;">
+            <li>Đặc trưng vỉa hè: Áo ba lỗ, quần đùi thể thao, <strong>dép tổ ong vàng huyền thoại</strong> và dép tông kẹp ngón.</li>
+            <li>Biếm họa nhẹ nhàng: Nam bụng hơi nhô ngộ nghĩnh, mắt hạt cườm linh động, khóe miệng cười nhếch mép hóm hỉnh.</li>
+            <li>Độ nhận diện cực tốt khi hiển thị ở kích thước nhỏ trên smartphone.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="concept-card">
+      <div class="card-head">
+        <div class="badge" style="background: #8c6239;">HOÀI NIỆM</div>
+        <h2>2. Phố Cổ Mộc Mạc</h2>
+        <div class="subtitle">Retro Saigon / Hà Nội 90s • Bút sắt & màu bột vintage</div>
+      </div>
+      <div class="card-view bg-street" id="view-2">
+        <object type="image/svg+xml" data="concept-style-2-moc-mac.svg" style="width: 100%;"></object>
+      </div>
+      <div class="card-body">
+        <div class="spec-row">
+          <span class="spec-key">Tỷ lệ đầu/thân:</span>
+          <span class="spec-val">1 : 2.35 (Thanh mảnh retro)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Chiều cao đầu:</span>
+          <span class="spec-val">~124 px (48% chiều cao)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Đường viền:</span>
+          <span class="spec-val">#342014 (2.0 px)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Bảng màu:</span>
+          <div class="swatches">
+            <div class="swatch" style="background:#342014" title="Nâu cà phê"></div>
+            <div class="swatch" style="background:#f5c292" title="Da bánh mật"></div>
+            <div class="swatch" style="background:#faf5ea; border: 1px solid #ccc;" title="May ô ngà"></div>
+            <div class="swatch" style="background:#375530" title="Xanh rêu lính"></div>
+            <div class="swatch" style="background:#ffeaa7" title="Vàng bơ"></div>
+            <div class="swatch" style="background:#b6895d" title="Kaki nâu"></div>
+          </div>
+        </div>
+        <div>
+          <strong style="font-size: 13px;">Vì sao phù hợp:</strong>
+          <ul class="points-list" style="margin-top: 6px;">
+            <li>Phong cách tranh minh họa thiếu nhi thập niên 90: Áo may ô ngà dệt kim, quần đùi rêu túi hộp, dép lốp cao su đen, dép rọ sandal be.</li>
+            <li>Mắt híp cười hiền, nốt ruồi duyên, tóc rẽ ngôi 7/3 hoài niệm.</li>
+            <li>Rất tôn dáng trang phục truyền thống: Áo dài, Nón lá, Sơ mi hoa mặc vào cực kỳ ăn nhập.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="concept-card">
+      <div class="card-head">
+        <div class="badge" style="background: #7c3aed;">HIỆN ĐẠI</div>
+        <h2>3. Sắc Màu Gen Z</h2>
+        <div class="subtitle">Vibrant Pop Cartoon • Tròn căng, meme-able, màu tương phản cao</div>
+      </div>
+      <div class="card-view bg-street" id="view-3">
+        <object type="image/svg+xml" data="concept-style-3-gen-z.svg" style="width: 100%;"></object>
+      </div>
+      <div class="card-body">
+        <div class="spec-row">
+          <span class="spec-key">Tỷ lệ đầu/thân:</span>
+          <span class="spec-val">1 : 1.85 (Super Chibi)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Chiều cao đầu:</span>
+          <span class="spec-val">~148 px (58% chiều cao)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Đường viền:</span>
+          <span class="spec-val">#381e14 (2.4 px)</span>
+        </div>
+        <div class="spec-row">
+          <div class="spec-key">Bảng màu:</div>
+          <div class="swatches">
+            <div class="swatch" style="background:#381e14" title="Viền socola"></div>
+            <div class="swatch" style="background:#f8c69d" title="Da hồng hào"></div>
+            <div class="swatch" style="background:#0984e3" title="Xanh coban"></div>
+            <div class="swatch" style="background:#fed330" title="Vàng mù tạt"></div>
+            <div class="swatch" style="background:#8b5cf6" title="Tím lavender"></div>
+            <div class="swatch" style="background:#10b981" title="Xanh mint"></div>
+          </div>
+        </div>
+        <div>
+          <strong style="font-size: 13px;">Vì sao phù hợp:</strong>
+          <ul class="points-list" style="margin-top: 6px;">
+            <li>Đầu khổng lồ, má tròn căng, tứ chi múp míp, biểu cảm hài bựa kiểu meme vui nhộn.</li>
+            <li>Trang phục streetwear trẻ: Áo khoét nách sâu viền cyan, quần bóng rổ, baby-tee sọc tím, dép sục bánh mì.</li>
+            <li>Độ tương phản và kích thước mắt lớn giúp nhân vật nổi bật tuyệt đối trên màn hình điện thoại 5 inch.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Big Comparison Board -->
+  <h2 class="section-title">Bản Vẽ So Sánh Chi Tiết (Full Comparison Board)</h2>
+  <div class="full-image-card">
+    <object type="image/svg+xml" data="concept-comparison.svg" style="width: 100%;"></object>
+  </div>
+
+  <!-- Technical Specs -->
+  <div class="tech-box">
+    <h3 style="margin: 0 0 10px; font-size: 18px;">Ràng Buộc Kỹ Thuật Đã Được Kiểm Tra Tuyệt Đối (Technical Architecture)</h3>
+    <div class="tech-grid">
+      <div class="tech-item">
+        <h4>1. Khung 160 x 256 px</h4>
+        <p>Tất cả layer vẽ trên khung chuẩn <code>160 x 256 px</code>, nền trong suốt. Chân nhân vật luôn chạm đáy <code>y = 256</code> để các layer ghép chồng chuẩn xác 100% không cần offset.</p>
+      </div>
+      <div class="tech-item">
+        <h4>2. Thứ tự lớp (Draw Order)</h4>
+        <p>Tuân thủ tuyệt đối quy tắc trong <code>Character.cs</code>:<br>
+        <code>hairback (-1)</code> &rarr; <code>body (0)</code> &rarr; <code>earrings (1)</code> &rarr; <code>cheeks (2)</code> &rarr; <code>brows (3)</code> &rarr; <code>lips (4)</code> &rarr; <code>hair (5)</code> &rarr; <code>pants (6)</code> &rarr; <code>shirt (7)</code> &rarr; <code>hat (9)</code> &rarr; <code>acc (10)</code>.</p>
+      </div>
+      <div class="tech-item">
+        <h4>3. Chu kỳ đi bộ (Walk Cycle 3 Poses)</h4>
+        <p>3 tư thế: Đứng (step 0), step 1, step 2. Lật trái/phải bằng <code>scaleX = -1</code> nên thiết kế bất đối xứng nhẹ nhưng góc nhìn 3/4 lật vẫn tự nhiên và đồng nhất.</p>
+      </div>
+      <div class="tech-item">
+        <h4>4. Khả năng tương thích trang phục</h4>
+        <p>Mũ (nón lá, mũ bảo hiểm, mũ lưỡi trai) và phụ kiện (kính râm, loa kẹo kéo) khớp vừa vặn cho cả nam lẫn nữ trên cùng một hệ tọa độ đầu.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setBg(cls) {
+      document.querySelectorAll('.card-view').forEach(el => {
+        el.className = 'card-view ' + cls;
+      });
+      document.querySelectorAll('.controls .ctrl-group:first-child button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+    function setZoom(scale) {
+      document.querySelectorAll('.card-view object').forEach(el => {
+        el.style.transform = `scale(${scale})`;
+        el.style.transformOrigin = 'bottom center';
+      });
+      document.querySelectorAll('.controls .ctrl-group:last-child button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

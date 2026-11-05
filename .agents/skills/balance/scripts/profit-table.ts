@@ -1,5 +1,5 @@
 // Prints the per-product profit table and the levelling curve, read straight from server/src/data.ts.
-//   cd server && npx tsx ../.claude/skills/balance/scripts/profit-table.ts
+//   cd server && npx tsx ../.agents/skills/balance/scripts/profit-table.ts
 import { PRODUCTS, WEARABLES, BALANCE, xpToLevelUp, maxEmployeesForLevel, hireCost } from '../../../../server/src/data.js';
 
 const d = (n: number) => n.toLocaleString('vi-VN');

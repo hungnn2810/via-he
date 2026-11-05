@@ -146,12 +146,17 @@ namespace ViaHeOnline
         // Quick stretch (when invited)
         public void Surprise(float seconds = 1f) => _surprisedUntil = Time.time + seconds;
 
-        public void Say(string text)
+        float _sayUntil;
+
+        public void Say(string text, float duration = 0)
         {
             bool show = !string.IsNullOrEmpty(text);
             _bubble.gameObject.SetActive(show);
             _bubbleBg.gameObject.SetActive(show);
-            if (!show || _bubble.text == text) return;
+            if (!show) return;
+            if (duration > 0) _sayUntil = Time.time + duration;
+            else _sayUntil = 0;
+            if (_bubble.text == text) return;
             _bubble.text = text;
             _bubbleBg.size = new Vector2(Mathf.Clamp(text.Length * 0.095f + 0.35f, 0.7f, 5f), 0.62f);
         }
@@ -171,6 +176,12 @@ namespace ViaHeOnline
 
         void Update()
         {
+            if (_sayUntil > 0 && Time.time > _sayUntil)
+            {
+                _sayUntil = 0;
+                Say("");
+            }
+
             var p = transform.position;
             var next = Vector3.Lerp(p, Target, 1 - Mathf.Exp(-10f * Time.deltaTime));
             if (Mathf.Abs(next.x - p.x) > 0.0005f) _facing = Mathf.Sign(next.x - p.x);

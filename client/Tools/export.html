@@ -32,4 +32,14 @@ window.exportSprites = async () => {
   await fetch('/save?name=sprites.txt', { method: 'POST', body: `ppu,${PPU}\n` + rows.join('\n') });
   return rows.length;
 };
+if (new URLSearchParams(location.search).get('auto') === 'true') {
+  setTimeout(async () => {
+    try {
+      const count = await window.exportSprites();
+      await fetch('/done?count=' + count);
+    } catch (e) {
+      console.error(e);
+    }
+  }, 300);
+}
 </script></body></html>

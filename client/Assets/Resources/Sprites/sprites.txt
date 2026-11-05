@@ -129,7 +129,7 @@ bg_land_0,0,0,0,0,0,0
 bg_land_1,0,0,0,0,0,0
 bg_land_2,0,0,0,0,0,0
 bg_land_3,0,0,0,0,0,0
-lot_soil,0.5,0.35,0,0,0,0
+lot_soil,0.5,0.5,0,0,0,0
 crop_mung_bean_1,0.5,0,0,0,0,0
 crop_mung_bean_2,0.5,0,0,0,0,0
 crop_mung_bean_3,0.5,0,0,0,0,0

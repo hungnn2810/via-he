@@ -73,7 +73,7 @@ name) for inspecting one sprite.
 
 ## Conventions of the sprite set
 
-- Sprite names are English snake_case (project rule in `CLAUDE.md`); text painted onto sprites
+- Sprite names are English snake_case (project rule in `AGENTS.md`); text painted onto sprites
   stays Vietnamese.
 - 200 px = 1 Unity unit (`PPU`). Do not change it; every size in the scene depends on it.
 - UI sprites carry a `border` (9-slice) argument so they stretch without distorting corners.

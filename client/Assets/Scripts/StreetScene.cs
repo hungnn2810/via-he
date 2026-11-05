@@ -13,7 +13,8 @@ namespace ViaHeOnline
     public class StreetScene : MonoBehaviour
     {
         public const float WorldScale = 100f;   // 100 server units = 1 Unity unit
-        public const float CameraY = 0.3f;
+        public const float CameraY = 0.3f;      // only the starting height; FitCamera takes over once a street is loaded
+        const float ScreenMargin = 0.5f, RoadBottom = -5.3f;
         const float EmptySlotTop = 1.35f, StallY = 0.15f, PlayerY = -0.85f, CustomerY = -1.45f, QueueY = -0.35f, MotorbikeY = -2.95f;
         const float PlayerScale = 0.85f, CustomerScale = 0.8f, SellerScale = 0.82f;
         const float MotorbikeMinSpeed = 2.8f, MotorbikeMaxSpeed = 4.6f;
@@ -22,6 +23,25 @@ namespace ViaHeOnline
         static readonly string[] Bystanders = { "npc_cap_man", "npc_girl", "npc_firefighter", "npc_worker" };
         static readonly string[] ParkedBikes = { "bike_delivery", "bike_sport", "bike_cub" };
         static readonly string[] Traffic = { "traffic_sport", "traffic_cub", "traffic_scooter" };
+
+        static readonly string[] InviteLines =
+        {
+            "Bắt mắt đấy, gói cho một phần!",
+            "Bán nhanh cho chị kịp giờ nhé!",
+            "Nghe mời dẻo miệng ghê, mua liền!",
+            "Đang đói bụng thì gặp ngay quán, may quá!",
+            "Có tươi nóng không đấy quán ơi?",
+            "Thôi vào đây ủng hộ một phần!"
+        };
+
+        static readonly string[] SaleLines =
+        {
+            "Ngon tuyệt cú mèo, mai tôi lại ghé!",
+            "Cảm ơn quán nhé, đắt hàng!",
+            "Vừa miệng lắm, cho quán 5 sao!",
+            "Gói cẩn thận ghê, thơm phức!",
+            "Ngon bổ rẻ, lát đồng nghiệp tôi cũng ghé!"
+        };
 
         // Customer groups look different so players learn who buys what
         static readonly Dictionary<string, string[]> GroupLooks = new Dictionary<string, string[]>
@@ -32,7 +52,11 @@ namespace ViaHeOnline
 
         // Must match BALANCE in server/src/data.ts
         const float FirstSlotX = 220f, LastSlotMargin = 220f;
-        const float LotStartX = 2.5f, LotSpacing = 5f, LotY = 1.1f, LotHalfWidth = 1.2f, CropScale = 0.75f, LandY = 0.9f;
+        // Lots are rectangles side by side with no gaps, filling the street between a 1-unit margin at each end.
+        // LotWidth * lotsPerDistrict (4, server BALANCE) + 2 margins = street length (20 units); keep lot_soil in sprites.js as wide as LotWidth.
+        const float LotWidth = 4.5f, LotSpacing = LotWidth, LotStartX = 1f + LotWidth / 2f, LotHalfWidth = LotWidth / 2f;
+        const float LotY = 1.1f, LotSoilY = 1.6f, CropScale = 0.75f, LandY = 0.9f;   // plants stand on LotY + 0.2, in the middle of the soil
+        const float LotLabelHeight = 1.35f;   // above the lot, but low enough to clear the HUD at the top of the screen
         const int RainDrops = 70;
         const float LotScale = 0.72f;
 
@@ -83,6 +107,7 @@ namespace ViaHeOnline
         {
             _net = net;
             _cam = Camera.main;
+            StreetObject.GetActiveEvent = () => _net?.Room?.State?.@event ?? "";
             _net.OnSale += m =>
             {
                 if (!_stalls.TryGetValue(m.slot, out var s)) return;
@@ -93,12 +118,27 @@ namespace ViaHeOnline
                 if (s.Seller.gameObject.activeSelf) s.Seller.Cheer();
                 else foreach (var kv in _net.Room.State.players)
                     if (kv.Value.id == m.ownerId && _players.TryGetValue(kv.Key, out var c)) c.Cheer();
+
+                // buyer at this slot also cheers and thanks
+                if (_net.Room?.State?.customers != null)
+                {
+                    foreach (var kv in _net.Room.State.customers)
+                    {
+                        if (kv.Value.targetSlot == m.slot && _customers.TryGetValue(kv.Key, out var buyer))
+                        {
+                            buyer.Cheer();
+                            buyer.Say(SaleLines[UnityEngine.Random.Range(0, SaleLines.Length)], 2f);
+                            break;
+                        }
+                    }
+                }
             };
             _net.OnInvite += m =>
             {
                 if (!_customers.TryGetValue(m.customerId, out var k)) return;
                 FloatMoney("!", k.transform.position + Vector3.up * 2f, Color.yellow, false);
                 k.Surprise();
+                k.Say(InviteLines[UnityEngine.Random.Range(0, InviteLines.Length)], 2.2f);
             };
         }
 
@@ -120,7 +160,7 @@ namespace ViaHeOnline
             var sky = Draw.Put(_background, "bg_sky", new Vector2(mid, 0.5f), 1, -1000);
             sky.transform.localScale = new Vector3(width / 0.32f, 8f / 2.56f, 1);
 
-            // Distant city scrolls slower than the camera
+            // Distant city (the camera is fixed, so it does not need parallax)
             _farCity = new GameObject("FarCity").transform;
             _farCity.SetParent(_background, false);
             float cityWidth = SpriteLibrary.Get("bg_river_city").bounds.size.x * ShopScale;
@@ -168,10 +208,10 @@ namespace ViaHeOnline
             for (int i = _lots.Count; st.lots.ContainsKey(i.ToString()); i++)
             {
                 var position = new Vector2(LotX(i), LotY);
-                var soil = Draw.Put(_background, "lot_soil", position, 0.9f, -947);
-                var thing = Draw.Put(_background, "banana_stage_1", position, CropScale, -945);
-                var bg = Draw.Sized(_background, "ui_tag", position + new Vector2(0, 1.9f), new Vector2(1f, 0.3f), -940, SpriteDrawMode.Sliced);
-                var label = Draw.Text(_background, "", position + new Vector2(0, 1.9f), 0.14f, Color.white, -939);
+                var soil = Draw.Put(_background, "lot_soil", new Vector2(position.x, LotSoilY), 1f, -947);
+                var thing = Draw.Put(_background, "banana_stage_1", position + new Vector2(0, 0.2f), CropScale, -945);
+                var bg = Draw.Sized(_background, "ui_tag", position + new Vector2(0, LotLabelHeight), new Vector2(1f, 0.3f), -940, SpriteDrawMode.Sliced);
+                var label = Draw.Text(_background, "", position + new Vector2(0, LotLabelHeight), 0.14f, Color.white, -939);
                 _lots.Add(new LotView { Soil = soil, Thing = thing, LabelBg = bg, Label = label });
             }
         }
@@ -301,7 +341,7 @@ namespace ViaHeOnline
             SyncLots(st);
             SyncDecorations(st);
             RunRain(st);
-            FollowCamera(st);
+            FitCamera();
             RunMotorbikes();
             HandleTap(st);
         }
@@ -425,22 +465,14 @@ namespace ViaHeOnline
             }
         }
 
-        Character Me()
+        // A street is one fixed screen: the camera never scrolls, it zooms so the whole street fits the width,
+        // and sits with the bottom of the road at the bottom of the screen. Runs every frame so a window resize or rotation refits.
+        void FitCamera()
         {
-            foreach (var kv in _net.Room.State.players)
-                if (kv.Value.id == _net.Account.id && _players.TryGetValue(kv.Key, out var c)) return c;
-            return null;
-        }
-
-        void FollowCamera(StreetState st)
-        {
-            var me = Me();
-            if (!me || !_cam) return;
-            float halfWidth = _cam.orthographicSize * _cam.aspect;
-            float x = Mathf.Clamp(me.transform.position.x, halfWidth - 1f, _length - halfWidth + 1f);
-            var p = _cam.transform.position;
-            _cam.transform.position = new Vector3(Mathf.Lerp(p.x, x, 1 - Mathf.Exp(-4f * Time.deltaTime)), CameraY, -10);
-            if (_farCity) _farCity.localPosition = new Vector3(_cam.transform.position.x * 0.7f, 0, 0);
+            if (!_cam) return;
+            float size = (_length + 2 * ScreenMargin) / 2f / _cam.aspect;
+            _cam.orthographicSize = size;
+            _cam.transform.position = new Vector3(_length / 2f, RoadBottom + size, -10);
         }
 
         // Motorbikes ride along the road to liven up the street (client-side decoration only)

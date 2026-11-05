@@ -18,7 +18,7 @@ one over the `catalog` message, so editing this array is enough for both sides.
 { id: 'rice_rolls', name: 'Bánh cuốn', unlockLevel: 7, cost: 12000, price: 30000, sellSeconds: 4, xp: 4 },
 ```
 
-- `id`: lowercase snake_case **English** (project rule in `CLAUDE.md`). It becomes the sprite
+- `id`: lowercase snake_case **English** (project rule in `AGENTS.md`). It becomes the sprite
   name and a client lookup key, so a typo in one place silently breaks three.
 - `name`: Vietnamese — it is player-facing text, which the project rule keeps in Vietnamese.
 - Keep the array sorted by `unlockLevel`; the in-game product picker renders in array order.

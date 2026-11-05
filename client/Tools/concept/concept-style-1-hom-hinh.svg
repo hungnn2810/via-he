@@ -1,0 +1,331 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<defs>
+  <!-- Filters -->
+  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+  <filter id="drop" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#1b120c" flood-opacity="0.12"/></filter>
+  
+  <!-- Skin Gradients -->
+  <radialGradient id="skin1" cx=".60" cy=".38" r=".72">
+    <stop offset="0%" stop-color="#ffe4c7"/>
+    <stop offset="55%" stop-color="#f0b887"/>
+    <stop offset="100%" stop-color="#b87342"/>
+  </radialGradient>
+  <linearGradient id="limb1" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#d39260"/>
+    <stop offset="55%" stop-color="#f6c89e"/>
+    <stop offset="100%" stop-color="#e4a879"/>
+  </linearGradient>
+
+  <!-- Hair Gradients -->
+  <linearGradient id="hairM1" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#543d2f"/>
+    <stop offset="100%" stop-color="#18110d"/>
+  </linearGradient>
+  <linearGradient id="hairF1" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#7a482b"/>
+    <stop offset="100%" stop-color="#28130a"/>
+  </linearGradient>
+
+  <!-- Clothes Gradients -->
+  <linearGradient id="whiteTank1" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="100%" stop-color="#c5ced8"/>
+  </linearGradient>
+  <linearGradient id="blueShorts1" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#4ea6ec"/>
+    <stop offset="100%" stop-color="#1356a3"/>
+  </linearGradient>
+  <linearGradient id="honeycombSandals1" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ffd54f"/>
+    <stop offset="100%" stop-color="#d4941e"/>
+  </linearGradient>
+
+  <linearGradient id="coralTop1" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#ff937b"/>
+    <stop offset="100%" stop-color="#d8482f"/>
+  </linearGradient>
+  <linearGradient id="denimShorts1" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#8bb4dc"/>
+    <stop offset="100%" stop-color="#3b699c"/>
+  </linearGradient>
+  <linearGradient id="pinkSlippers1" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ff6584"/>
+    <stop offset="100%" stop-color="#c92850"/>
+  </linearGradient>
+
+  <!-- Card Background -->
+  <linearGradient id="cardBg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="100%" stop-color="#fdf9f4"/>
+  </linearGradient>
+</defs>
+
+<!-- Outer Container -->
+<rect width="960" height="600" fill="#f4ece1" rx="16"/>
+
+<!-- Header -->
+<g transform="translate(40, 36)">
+  <rect x="0" y="0" width="168" height="26" rx="6" fill="#e27838"/>
+  <text x="84" y="17" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" letter-spacing="1">HƯỚNG 1 (ĐỀ XUẤT CHÍNH)</text>
+  <text x="0" y="52" fill="#2c1a0e" font-size="24" font-weight="800">Hóm Hỉnh Đời Thường (Chibi Comedic Street)</text>
+  <text x="0" y="74" fill="#6c5647" font-size="13">Biếm họa hóm hỉnh, ấm áp, đậm nét sinh hoạt vỉa hè Việt Nam. Thân quen như anh hàng xóm và cô em phòng trọ.</text>
+</g>
+
+<!-- Stage Floor Plate -->
+<g transform="translate(40, 130)">
+  <rect width="520" height="430" rx="16" fill="url(#cardBg)" filter="url(#drop)"/>
+  <rect x="16" y="16" width="488" height="344" rx="12" fill="#eaf4f8"/>
+  
+  <!-- Sidewalk Tiles Pattern -->
+  <path d="M16 320H504V360H16Z" fill="#d9cbba"/>
+  <line x1="16" y1="320" x2="504" y2="320" stroke="#b39d82" stroke-width="2"/>
+  <path d="M80 320V360M160 320V360M240 320V360M320 320V360M400 320V360M480 320V360" stroke="#b39d82" stroke-width="1.5" opacity=".6"/>
+
+  <!-- Character Ground Shadows -->
+  <ellipse cx="145" cy="336" rx="58" ry="10" fill="#26170d" opacity=".18"/>
+  <ellipse cx="365" cy="336" rx="56" ry="10" fill="#26170d" opacity=".18"/>
+
+  <!-- Character 1: NAM (Áo ba lỗ trắng, Quần đùi xanh viền trắng, Dép tổ ong) -->
+  <!-- Scaled into 160x256 frame standard: 0.8 scale at (65, 20) -->
+  <g id="char-male-1" transform="translate(65, 24) scale(0.8)" stroke="#3a2416" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Back Arm (Left arm in 3/4) -->
+    <path d="M116 200Q138 212 136 244" fill="none" stroke-width="12"/>
+    <path d="M116 200Q138 212 136 244" fill="none" stroke="url(#limb1)" stroke-width="8"/>
+    <circle cx="136" cy="248" r="7" fill="url(#skin1)"/>
+
+    <!-- Legs & Yellow Honeycomb Sandals -->
+    <!-- Back Leg -->
+    <path d="M102 270L104 306H115L113 270Z" fill="url(#limb1)"/>
+    <path d="M98 306Q112 300 124 306L124 314H98Z" fill="url(#honeycombSandals1)"/>
+    <!-- Honeycomb holes texture -->
+    <g stroke="#9c6d13" stroke-width="1" opacity=".7">
+      <circle cx="106" cy="309" r="1.2" fill="none"/>
+      <circle cx="112" cy="308" r="1.2" fill="none"/>
+      <circle cx="118" cy="309" r="1.2" fill="none"/>
+    </g>
+
+    <!-- Front Leg -->
+    <path d="M80 270L77 306H88L92 270Z" fill="url(#limb1)"/>
+    <path d="M66 306Q78 300 90 306L90 314H66Z" fill="url(#honeycombSandals1)"/>
+    <g stroke="#9c6d13" stroke-width="1" opacity=".7">
+      <circle cx="74" cy="309" r="1.2" fill="none"/>
+      <circle cx="80" cy="308" r="1.2" fill="none"/>
+      <circle cx="86" cy="309" r="1.2" fill="none"/>
+    </g>
+
+    <!-- Blue Sports Shorts with White Side Stripe -->
+    <path d="M70 238Q92 248 116 238L120 274L98 276L93 258L88 276L66 274Z" fill="url(#blueShorts1)"/>
+    <path d="M112 240L116 274" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <path d="M74 252Q80 258 86 254" fill="none" stroke="#0e3f7c" stroke-width="1.6"/>
+    <!-- Drawstring -->
+    <path d="M92 244Q90 252 86 254M94 244Q96 252 98 255" fill="none" stroke="#ffffff" stroke-width="1.8"/>
+
+    <!-- Neck -->
+    <path d="M85 172H104V194H85Z" fill="url(#limb1)"/>
+
+    <!-- White Tank Top (Áo ba lỗ trắng) -->
+    <!-- Belly curves slightly forward for comfortable comedic slouch -->
+    <path d="M76 190L68 216Q66 234 70 242Q93 252 116 242Q118 230 116 214L110 190L101 190Q93 206 85 190Z" fill="url(#whiteTank1)"/>
+    <!-- Ribbed tank subtle shading and fold lines -->
+    <path d="M72 216Q70 234 72 240Q80 245 88 245Q76 228 78 198Z" fill="#8f9aa8" opacity=".45" stroke="none" filter="url(#soft)"/>
+    <path d="M84 226Q92 232 102 224M88 236Q98 240 108 232" fill="none" stroke="#9aa3ae" stroke-width="1.5"/>
+
+    <!-- Front Arm (Right arm) -->
+    <path d="M75 198Q54 214 60 250" fill="none" stroke-width="13"/>
+    <path d="M75 198Q54 214 60 250" fill="none" stroke="url(#limb1)" stroke-width="9"/>
+    <circle cx="60" cy="254" r="7" fill="url(#skin1)"/>
+
+    <!-- Ear (in 3/4 perspective on left) -->
+    <ellipse cx="42" cy="116" rx="13" ry="17" fill="url(#skin1)"/>
+    <path d="M40 108Q47 116 41 126" fill="none" stroke="#a9683c" stroke-width="1.8"/>
+
+    <!-- Head & Cheeks (Chibi shape with soft comedic jowl) -->
+    <path d="M104 24C154 24 182 62 180 106C179 134 162 158 136 170C120 178 100 179 84 172C50 162 28 134 28 98C28 54 58 24 104 24Z" fill="url(#skin1)"/>
+    <!-- Soft Cheeks Blush & Shadow -->
+    <path d="M44 118C50 144 72 166 104 170C78 172 52 152 42 126Z" fill="#a8683f" opacity=".5" stroke="none" filter="url(#soft)"/>
+    <ellipse cx="94" cy="144" rx="10" ry="7" fill="#f0776f" opacity=".35" stroke="none" filter="url(#soft)"/>
+    <ellipse cx="146" cy="140" rx="8" ry="6" fill="#f0776f" opacity=".3" stroke="none" filter="url(#soft)"/>
+
+    <!-- Male Hair (Modern side-tapered messy bangs) -->
+    <path d="M26 114C12 56 54 14 106 15C156 16 192 56 183 102C178 94 172 88 166 86C162 74 150 70 138 72C126 62 108 68 94 66C84 76 70 80 62 92C58 102 56 112 50 116C44 106 34 104 26 114Z" fill="url(#hairM1)"/>
+    <g fill="none" stroke="#9c8370" stroke-width="2.4" opacity=".6">
+      <path d="M60 58Q76 34 104 30"/>
+      <path d="M84 62Q100 40 130 42"/>
+      <path d="M118 56Q136 48 156 60"/>
+      <path d="M42 84Q44 66 56 52"/>
+    </g>
+
+    <!-- Eyebrows (Comedic slightly raised street-smart look) -->
+    <path d="M98 106L130 101L130 107L100 114Z" fill="#20140e" stroke-width="1"/>
+    <path d="M148 101L172 103L172 108L150 107Z" fill="#20140e" stroke-width="1"/>
+
+    <!-- Eyes (Expressive bead eyes, 3/4 perspective) -->
+    <ellipse cx="118" cy="125" rx="10" ry="11" fill="#fbf7ef" stroke-width="1.6"/>
+    <ellipse cx="158" cy="123" rx="8" ry="10" fill="#fbf7ef" stroke-width="1.6"/>
+    <circle cx="122" cy="126" r="4.6" fill="#21140d" stroke="none"/>
+    <circle cx="161" cy="124" r="4.0" fill="#21140d" stroke="none"/>
+    <circle cx="124" cy="123" r="1.5" fill="#ffffff" stroke="none"/>
+    <circle cx="163" cy="121" r="1.3" fill="#ffffff" stroke="none"/>
+    <!-- Eyelids -->
+    <path d="M107 119Q118 112 129 119M150 117Q158 112 166 118" fill="none" stroke="#20140e" stroke-width="2.6"/>
+
+    <!-- Nose & Mouth (Wry half-smile) -->
+    <path d="M142 128Q150 138 141 142" fill="none" stroke="#a9683c" stroke-width="2"/>
+    <path d="M128 156Q142 162 156 152" fill="none" stroke="#6d2b23" stroke-width="3"/>
+    <path d="M152 149Q158 152 157 156" fill="none" stroke="#6d2b23" stroke-width="1.8"/>
+  </g>
+
+  <!-- Character 2: NỮ (Áo croptop san hô, Quần short jean, Dép tông kẹp ngón) -->
+  <g id="char-female-1" transform="translate(285, 24) scale(0.8)" stroke="#3a2416" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Hair Back (Long ponytail falling behind shoulder) -->
+    <path d="M34 108C22 46 64 14 108 16C156 18 190 58 182 112C180 124 176 134 170 142L44 148C38 136 36 122 34 108Z" fill="url(#hairF1)"/>
+    <path d="M38 132C22 148 18 176 26 196C32 208 44 206 46 194C50 176 54 158 64 146Z" fill="url(#hairF1)"/>
+    <path d="M34 160Q32 178 38 194M44 150Q40 172 42 192" fill="none" stroke="#b77a50" stroke-width="2" opacity=".6"/>
+
+    <!-- Back Arm (Left arm) -->
+    <path d="M112 200Q134 214 130 244" fill="none" stroke-width="12"/>
+    <path d="M112 200Q134 214 130 244" fill="none" stroke="url(#limb1)" stroke-width="8"/>
+    <circle cx="130" cy="248" r="6.5" fill="url(#skin1)"/>
+
+    <!-- Legs & Pink Flip-Flop Slippers -->
+    <path d="M102 268L104 306H115L114 268Z" fill="url(#limb1)"/>
+    <path d="M100 306Q114 300 124 306L124 313H100Z" fill="url(#pinkSlippers1)"/>
+    <!-- Thong Strap -->
+    <path d="M108 304L113 309M117 304L113 309" fill="none" stroke="#ffffff" stroke-width="1.8"/>
+
+    <path d="M84 268L80 306H91L96 268Z" fill="url(#limb1)"/>
+    <path d="M70 306Q82 300 92 306L92 313H70Z" fill="url(#pinkSlippers1)"/>
+    <path d="M78 304L83 309M87 304L83 309" fill="none" stroke="#ffffff" stroke-width="1.8"/>
+
+    <!-- Neck & Waist bare skin -->
+    <path d="M87 172H105V194H87Z" fill="url(#limb1)"/>
+    <path d="M80 212Q76 228 78 244H114Q116 228 112 212Z" fill="url(#limb1)"/>
+
+    <!-- Denim Shorts -->
+    <path d="M74 240Q96 248 118 240L122 270L102 272L97 256L92 272L70 270Z" fill="url(#denimShorts1)"/>
+    <path d="M76 250H118M92 243V256" fill="none" stroke="#2f5680" stroke-width="1.5"/>
+    <circle cx="95" cy="246" r="1.5" fill="#e0ab3a" stroke="none"/>
+
+    <!-- Coral Pink Crop Top -->
+    <path d="M80 188L72 218Q96 228 120 218L112 188L103 188Q96 202 89 188Z" fill="url(#coralTop1)"/>
+    <path d="M76 208Q96 216 116 208" fill="none" stroke="#ffe3c8" stroke-width="2.6"/>
+    <path d="M76 198Q80 212 78 220Q86 224 92 222Q84 210 84 192Z" fill="#a83c28" opacity=".35" stroke="none" filter="url(#soft)"/>
+
+    <!-- Front Arm (Right arm akimbo on hip) -->
+    <path d="M78 198Q56 214 74 236" fill="none" stroke-width="13"/>
+    <path d="M78 198Q56 214 74 236" fill="none" stroke="url(#limb1)" stroke-width="9"/>
+    <circle cx="76" cy="238" r="6.5" fill="url(#skin1)"/>
+
+    <!-- Ear & Big Gold Hoop Earring -->
+    <ellipse cx="48" cy="120" rx="11" ry="15" fill="url(#skin1)"/>
+    <circle cx="46" cy="142" r="7" fill="none" stroke="#e0ab3a" stroke-width="3"/>
+
+    <!-- Female Head -->
+    <path d="M104 30C150 30 176 66 174 108C173 134 158 156 134 168C120 175 102 176 88 170C56 160 36 134 36 102C36 60 62 30 104 30Z" fill="url(#skin1)"/>
+    <path d="M50 122C56 146 76 164 104 166C80 170 56 150 46 128Z" fill="#a8683f" opacity=".5" stroke="none" filter="url(#soft)"/>
+
+    <!-- Hair Front (Curtain fringe with side hair) -->
+    <path d="M34 112C26 58 62 22 106 22C150 24 182 60 176 106C172 92 164 82 152 76C142 70 130 68 120 74C100 90 78 94 62 92C60 100 58 106 54 108C48 100 40 102 34 112Z" fill="url(#hairF1)"/>
+    <g fill="none" stroke="#c08a60" stroke-width="2.4" opacity=".6">
+      <path d="M62 62Q84 36 118 36"/>
+      <path d="M90 74Q112 52 146 58"/>
+      <path d="M46 90Q48 70 60 56"/>
+    </g>
+
+    <!-- Cheeks Blush -->
+    <circle cx="100" cy="146" r="11" fill="#f0776f" opacity=".35" stroke="none" filter="url(#soft)"/>
+    <circle cx="152" cy="140" r="6" fill="#f0776f" opacity=".35" stroke="none" filter="url(#soft)"/>
+
+    <!-- Eyebrows (Soft feminine arched) -->
+    <path d="M104 106Q118 98 132 106" fill="none" stroke="#3a2015" stroke-width="3"/>
+    <path d="M150 104Q160 99 170 106" fill="none" stroke="#3a2015" stroke-width="3"/>
+
+    <!-- Eyes (Big sparkling expressive) -->
+    <ellipse cx="118" cy="125" rx="10" ry="12" fill="#fbf7ef" stroke-width="1.6"/>
+    <ellipse cx="157" cy="123" rx="8" ry="11" fill="#fbf7ef" stroke-width="1.6"/>
+    <circle cx="122" cy="126" r="5" fill="#351d12" stroke="none"/>
+    <circle cx="160" cy="124" r="4.4" fill="#351d12" stroke="none"/>
+    <circle cx="124" cy="123" r="1.5" fill="#ffffff" stroke="none"/>
+    <circle cx="162" cy="121" r="1.3" fill="#ffffff" stroke="none"/>
+    <path d="M105 121Q116 111 130 118L134 115M148 116Q157 110 167 118" fill="none" stroke="#20140e" stroke-width="3"/>
+
+    <!-- Nose & Lips (Sweet cheerful smile) -->
+    <path d="M141 133Q146 139 140 141" fill="none" stroke="#a9683c" stroke-width="1.8"/>
+    <path d="M130 153Q140 150 144 152Q148 150 154 152Q146 162 140 161Q134 160 130 153Z" fill="#c9374f" stroke-width="1.5"/>
+  </g>
+
+  <!-- Labels under characters -->
+  <text x="145" y="390" fill="#2c1a0e" font-size="15" font-weight="bold" text-anchor="middle">Nam Mặc Định</text>
+  <text x="145" y="408" fill="#755a47" font-size="12" text-anchor="middle">Áo ba lỗ · Quần đùi xanh · Dép tổ ong</text>
+
+  <text x="365" y="390" fill="#2c1a0e" font-size="15" font-weight="bold" text-anchor="middle">Nữ Mặc Định</text>
+  <text x="365" y="408" fill="#755a47" font-size="12" text-anchor="middle">Áo croptop · Short jean · Dép tông hồng</text>
+</g>
+
+<!-- Right Specs Panel -->
+<g transform="translate(580, 130)">
+  <!-- Box 1: Tỷ lệ đầu/thân -->
+  <rect width="340" height="110" rx="12" fill="#ffffff" filter="url(#drop)"/>
+  <text x="20" y="28" fill="#e27838" font-size="12" font-weight="bold" letter-spacing="0.5">TỶ LỆ ĐẦU / THÂN</text>
+  <text x="20" y="56" fill="#2c1a0e" font-size="22" font-weight="800">1 : 2.05 (Chibi cân bằng)</text>
+  <text x="20" y="78" fill="#665345" font-size="12">• Đầu: ~136px (53% chiều cao) — Trán rộng, má phúng phính</text>
+  <text x="20" y="96" fill="#665345" font-size="12">• Thân + Chân: ~120px (47%) — Thân mảnh, tư thế tự nhiên</text>
+
+  <!-- Box 2: Bảng màu (Color Palette) -->
+  <g transform="translate(0, 126)">
+    <rect width="340" height="172" rx="12" fill="#ffffff" filter="url(#drop)"/>
+    <text x="20" y="26" fill="#e27838" font-size="12" font-weight="bold" letter-spacing="0.5">BẢNG MÀU CHỦ ĐẠO</text>
+    
+    <!-- Color Swatches -->
+    <g transform="translate(20, 36)">
+      <!-- Line -->
+      <circle cx="14" cy="14" r="14" fill="#3a2416"/>
+      <text x="36" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#3a2416</text>
+      <text x="36" y="24" fill="#7d6756" font-size="10">Viền nâu ấm</text>
+
+      <!-- Skin -->
+      <circle cx="170" cy="14" r="14" fill="#efb684"/>
+      <text x="192" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#efb684</text>
+      <text x="192" y="24" fill="#7d6756" font-size="10">Da bánh mật ấm</text>
+    </g>
+
+    <g transform="translate(20, 78)">
+      <!-- Blue Shorts -->
+      <circle cx="14" cy="14" r="14" fill="#155aa8"/>
+      <text x="36" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#155aa8</text>
+      <text x="36" y="24" fill="#7d6756" font-size="10">Xanh quần đùi</text>
+
+      <!-- Honeycomb Yellow -->
+      <circle cx="170" cy="14" r="14" fill="#e5a93b"/>
+      <text x="192" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#e5a93b</text>
+      <text x="192" y="24" fill="#7d6756" font-size="10">Vàng dép tổ ong</text>
+    </g>
+
+    <g transform="translate(20, 120)">
+      <!-- Coral -->
+      <circle cx="14" cy="14" r="14" fill="#d94f35"/>
+      <text x="36" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#d94f35</text>
+      <text x="36" y="24" fill="#7d6756" font-size="10">Cam san hô croptop</text>
+
+      <!-- Denim -->
+      <circle cx="170" cy="14" r="14" fill="#3f6d9f"/>
+      <text x="192" y="12" fill="#2c1a0e" font-size="11" font-weight="bold">#3f6d9f</text>
+      <text x="192" y="24" fill="#7d6756" font-size="10">Xanh bò denim</text>
+    </g>
+  </g>
+
+  <!-- Box 3: Lý do phù hợp -->
+  <g transform="translate(0, 310)">
+    <rect width="340" height="120" rx="12" fill="#ffffff" filter="url(#drop)"/>
+    <text x="20" y="26" fill="#e27838" font-size="12" font-weight="bold" letter-spacing="0.5">LÝ DO PHÙ HỢP VỚI GAME</text>
+    <text x="20" y="50" fill="#443224" font-size="12" font-weight="600">✓ Rất "đời":</text>
+    <text x="82" y="50" fill="#5c483a" font-size="12">Dép tổ ong, áo ba lỗ, quần short denim.</text>
+    <text x="20" y="70" fill="#443224" font-size="12" font-weight="600">✓ Hài hước:</text>
+    <text x="82" y="70" fill="#5c483a" font-size="12">Dáng đứng hơi xìu xìu, mặt tỉnh bơ dí dỏm.</text>
+    <text x="20" y="90" fill="#443224" font-size="12" font-weight="600">✓ Mobile:</text>
+    <text x="82" y="90" fill="#5c483a" font-size="12">Mắt hạt cườm &amp; mảng màu đậm đọc rõ ở 1x.</text>
+    <text x="20" y="110" fill="#443224" font-size="12" font-weight="600">✓ Kỹ thuật:</text>
+    <text x="82" y="110" fill="#5c483a" font-size="12">Dễ vẽ bằng Canvas 2D, các layer khớp 100%.</text>
+  </g>
+</g>
+</svg>
