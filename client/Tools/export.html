@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Vỉa Hè Online sprites</title>
+<style>
+  body { margin: 0; padding: 16px; font: 14px Arial; background: #2b2f36; color: #eee; }
+  #list { display: flex; flex-wrap: wrap; gap: 10px; }
+  figure { margin: 0; padding: 6px; background: repeating-conic-gradient(#555 0 25%, #666 0 50%) 0 0 / 16px 16px; border-radius: 6px; text-align: center; }
+  figcaption { font-size: 11px; margin-top: 4px; }
+  canvas { max-width: 220px; max-height: 220px; display: block; margin: auto; }
+</style></head><body>
+<p>Serve this page from a server with a <code>POST /save</code> route, then call <code>exportSprites()</code> to write PNGs into <code>client/Assets/Resources/Sprites</code>.</p>
+<div id="list"></div>
+<script type="module">
+import { SPRITES, PPU } from './sprites.js';
+const canvases = {};
+for (const s of SPRITES) {
+  const c = document.createElement('canvas'); c.width = s.w; c.height = s.h;
+  s.draw(c.getContext('2d'));
+  canvases[s.name] = c;
+  const f = document.createElement('figure'); f.append(c);
+  const cap = document.createElement('figcaption'); cap.textContent = `${s.name} ${s.w}×${s.h}`; f.append(cap);
+  document.getElementById('list').append(f);
+}
+window.SPRITES = SPRITES; window.CANVASES = canvases;
+window.exportSprites = async () => {
+  const rows = [];
+  for (const s of SPRITES) {
+    await fetch('/save?name=' + s.name + '.png', { method: 'POST', body: canvases[s.name].toDataURL('image/png') });
+    const [left, bottom, right, top] = s.border ?? [0, 0, 0, 0];
+    rows.push([s.name, s.pivot[0], s.pivot[1], left, bottom, right, top].join(','));
+  }
+  // Unity reads this file (TextAsset) for each sprite's pivot and 9-slice border
+  await fetch('/save?name=sprites.txt', { method: 'POST', body: `ppu,${PPU}\n` + rows.join('\n') });
+  return rows.length;
+};
+</script></body></html>

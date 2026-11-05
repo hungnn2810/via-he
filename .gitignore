@@ -1,4 +1,21 @@
 node_modules/
+*.tmp
+
+# server
+server/data/
+
+# Unity
+client/[Ll]ibrary/
+client/[Tt]emp/
+client/[Oo]bj/
+client/[Ll]ogs/
+client/[Uu]ser[Ss]ettings/
+client/[Bb]uild/
+client/[Bb]uilds/
+client/*.csproj
+client/*.sln
+client/.vs/
+
+# data from the old TikTok LIVE version
 du-lieu-xom.json
 du-lieu-thu.json
-*.tmp

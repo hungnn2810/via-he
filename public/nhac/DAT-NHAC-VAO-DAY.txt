@@ -1,4 +1,0 @@
-Dat file nhac nen cua ban vao thu muc nay (mp3, m4a, ogg, wav, aac), ten gi cung duoc.
-Game dung file co ten ghi trong config.json (muc "fileNhac") neu co, khong thi tu lay file nhac dau tien trong thu muc.
-Neu khong co file, game tu choi nhac lofi tu tao (khong ban quyen).
-Chi dung nhac ban co quyen su dung.

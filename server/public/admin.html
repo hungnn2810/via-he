@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Vỉa Hè Online admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { font: 15px/1.5 Arial, sans-serif; max-width: 900px; margin: 24px auto; padding: 0 16px; color: #1d3557; }
+  section { border: 1px solid #c7d6e5; border-radius: 8px; padding: 12px 16px; margin: 16px 0; }
+  h1 { font-size: 22px; } h2 { font-size: 17px; margin: 0 0 8px; }
+  input, button { font: inherit; padding: 6px 10px; margin: 2px; }
+  table { border-collapse: collapse; width: 100%; } td, th { border-bottom: 1px solid #e3ebf3; padding: 4px 6px; text-align: left; }
+  pre { background: #f4f7fa; padding: 8px; overflow: auto; }
+  #status { color: #c92a2a; min-height: 22px; }
+</style></head><body>
+<h1>Vỉa Hè Online admin</h1>
+<p>The token stays in this page and is sent only in the <code>x-admin-token</code> header.</p>
+<input id="token" type="password" placeholder="Admin token" autocomplete="off"><button id="load">Load</button>
+<div id="status"></div>
+<section><h2>Retention and activity</h2><pre id="stats">Not loaded</pre></section>
+<section><h2>Reports</h2><table><thead><tr><th>When</th><th>Reporter</th><th>Target</th><th>Reason</th><th></th></tr></thead><tbody id="reports"></tbody></table></section>
+<section><h2>Ban or unban a player</h2>
+  <input id="playerId" placeholder="Player id"><button id="ban">Ban</button><button id="unban">Unban</button></section>
+<section><h2>Start an event on every street</h2>
+  <input id="eventId" placeholder="id, e.g. football_night"><input id="eventName" placeholder="Name shown to players">
+  <input id="eventSeconds" type="number" min="60" value="3600"><input id="eventBoost" placeholder="Boosted products, comma separated"><button id="startEvent">Start</button></section>
+<script>
+const $ = (id) => document.getElementById(id);
+const say = (text) => { $('status').textContent = text; };
+async function call(path, body) {
+  const r = await fetch(path, {
+    method: body ? 'POST' : 'GET',
+    headers: { 'x-admin-token': $('token').value, 'content-type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!r.ok) throw new Error(`${path} failed with ${r.status}`);
+  return r.json();
+}
+async function ban(playerId, banned) {
+  try { await call('/admin/ban', { playerId, banned }); say(`${banned ? 'Banned' : 'Unbanned'} ${playerId}`); } catch (e) { say(e.message); }
+}
+async function load() {
+  try {
+    $('stats').textContent = JSON.stringify(await call('/admin/stats'), null, 2);
+    const rows = $('reports'); rows.replaceChildren();
+    for (const report of await call('/admin/reports')) {
+      const tr = document.createElement('tr');
+      for (const text of [new Date(report.at).toLocaleString(), report.reporter, report.target, report.reason]) {
+        const td = document.createElement('td'); td.textContent = text; tr.append(td);
+      }
+      const td = document.createElement('td'); const b = document.createElement('button');
+      b.textContent = 'Ban target'; b.onclick = () => ban(report.target, true); td.append(b); tr.append(td);
+      rows.append(tr);
+    }
+    say('');
+  } catch (e) { say(e.message); }
+}
+$('load').onclick = load;
+$('ban').onclick = () => ban($('playerId').value.trim(), true);
+$('unban').onclick = () => ban($('playerId').value.trim(), false);
+$('startEvent').onclick = async () => {
+  const boost = $('eventBoost').value.split(',').map((s) => s.trim()).filter(Boolean);
+  try {
+    await call('/admin/event', { id: $('eventId').value.trim(), name: $('eventName').value.trim(), seconds: Number($('eventSeconds').value), rules: { boost } });
+    say('Event started');
+  } catch (e) { say(e.message); }
+};
+</script></body></html>
