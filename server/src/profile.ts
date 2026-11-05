@@ -8,6 +8,8 @@ import {
   BALANCE, LOOK_OPTIONS, NPC_STREETS, SURNAMES, GIVEN_NAMES, TRAITS, WEARABLES, getWearable, hireCost, xpToLevelUp,
   type BuildingType, type Trait, type WearSlot,
 } from './data.js';
+import type { MarketState } from './market.js';
+import { emptyFortuneDay, type FortuneDay, type FortuneState } from './fortune.js';
 
 export type Outfit = Partial<Record<WearSlot, string>>;
 
@@ -106,10 +108,14 @@ export interface Profile {
   deliveries: { reward: number; doneAt: number }[];
   orderDay: { day: number; count: number };
   activityDay: { day: number; shuttle: number; caro: number };
+  cafeDay: { day: number; sessions: number; visitors: string[] }; // café payouts and fame already given today (as the owner)
   wedding: { endsAt: number; progress: number; givers: string[] };
   lastWeddingAt: number;
+  fortune: FortuneState | null;  // today's fortune (xem bói), see fortune.ts
+  fortuneDay: FortuneDay;        // daily counters for sharing fortunes and emotes
   communityClaims: Record<string, number>;  // community event id → reward steps already paid
   communityGiven: Record<string, number>;   // community event id → bunches given
+  market: MarketState;       // wholesale credit debt and shared order limits
   outfit: Outfit;
   wardrobe: string[];        // ids of owned wearables not being worn
   employees: Employee[];
@@ -123,6 +129,7 @@ const DATA_DIR = process.env.DATA_DIR || path.resolve('data');
 if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
 
 const db = new DatabaseSync(path.join(DATA_DIR, 'game.db'));
+export const gameDb = db; // for modules that keep their own shared tables (market.ts)
 db.exec(`CREATE TABLE IF NOT EXISTS players (
   id TEXT PRIMARY KEY, device_id TEXT UNIQUE, name TEXT, level INTEGER, data TEXT, updated_at INTEGER
 )`);
@@ -205,11 +212,14 @@ function worldDefaults() {
     profession: null as Profile['profession'], neighbours: {} as Profile['neighbours'],
     vehicle: 'walk', vehicles: [] as string[], orders: [] as DeliveryOrder[], ordersAt: 0, deliveries: [] as Profile['deliveries'],
     orderDay: { day: 0, count: 0 }, activityDay: { day: 0, shuttle: 0, caro: 0 },
+    cafeDay: { day: 0, sessions: 0, visitors: [] as string[] },
     wedding: { endsAt: 0, progress: 0, givers: [] as string[] }, lastWeddingAt: 0,
     gardenerId: '', lastWageDay: 0, daily: { day: 0, tasks: [] as DailyTask[] },
     friends: [] as string[], fame: 0, fameDay: { day: 0, visitors: [] as string[], helpers: [] as string[], gifters: [] as string[], professionHelpers: [] as string[], salesFame: 0, salesCarry: 0 },
     titles: [] as string[], decorations: [] as string[], recoveryCode: newRecoveryCode(), banned: false, isNpc: false, lastTidyDay: 0,
     communityClaims: {} as Record<string, number>, communityGiven: {} as Record<string, number>,
+    fortune: null as FortuneState | null, fortuneDay: emptyFortuneDay(),
+    market: { debt: 0, borrowedAt: 0, creditLockedUntil: 0, sharedDay: 0, sharedGiven: 0 } as MarketState,
   };
 }
 
@@ -529,7 +539,7 @@ export function fireEmployee(profile: Profile, employeeId: string) {
 
 // Data sent only to the profile's owner
 export function privateProfile(profile: Profile, maxEmployees: number, storeCapacity: number) {
-  const { fameDay: _fameDay, banned: _banned, isNpc: _isNpc, lastWageDay: _wage, lastTidyDay: _tidy, communityClaims: _claims, communityGiven: _given, orderDay: _orderDay, activityDay: _activityDay, wedding: _wedding, ...visible } = profile;
+  const { fameDay: _fameDay, banned: _banned, isNpc: _isNpc, lastWageDay: _wage, lastTidyDay: _tidy, communityClaims: _claims, communityGiven: _given, orderDay: _orderDay, activityDay: _activityDay, cafeDay: _cafeDay, wedding: _wedding, ...visible } = profile;
   return {
     ...visible,
     xpToLevelUp: xpToLevelUp(profile.level),

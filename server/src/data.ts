@@ -78,7 +78,7 @@ export const getWearable = (id: string) => WEARABLES.find((w) => w.id === id);
 export const SURNAMES = ['Nguyễn', 'Trần', 'Lê', 'Phạm', 'Hoàng', 'Vũ', 'Đặng', 'Bùi', 'Đỗ', 'Ngô'];
 export const GIVEN_NAMES = ['Lan', 'Hùng', 'Mai', 'Tuấn', 'Hoa', 'Nam', 'Thảo', 'Dũng', 'Linh', 'Phúc', 'Hà', 'Sơn', 'Trang', 'Long', 'My'];
 
-export type BuildingType = 'tea_shop' | 'store' | 'kitchen' | 'grocery' | 'barber' | 'stage';
+export type BuildingType = 'tea_shop' | 'store' | 'kitchen' | 'grocery' | 'barber' | 'stage' | 'cafe';
 
 export interface Building {
   name: string;
@@ -96,6 +96,7 @@ export const BUILDINGS: Record<BuildingType, Building> = {
   kitchen:  { name: 'Bếp nhà',      cost: 400000,   buildSeconds: 120,  unlockLevel: 2, maxLevel: 1, incomePerHour: 0 },
   tea_shop: { name: 'Quán trà đá',  cost: 500000,   buildSeconds: 300,  unlockLevel: 1, maxLevel: 3, incomePerHour: 40000 },
   grocery:  { name: 'Tiệm tạp hóa', cost: 1500000,  buildSeconds: 1800, unlockLevel: 3, maxLevel: 3, incomePerHour: 100000 },
+  cafe:     { name: 'Quán cà phê', cost: 1200000,  buildSeconds: 1800, unlockLevel: 4, maxLevel: 3, incomePerHour: 80000 },
   barber:   { name: 'Tiệm cắt tóc', cost: 3000000,  buildSeconds: 3600, unlockLevel: 5, maxLevel: 3, incomePerHour: 150000 },
   stage:    { name: 'Sân khấu xóm', cost: 20000000, buildSeconds: 7200, unlockLevel: 8, maxLevel: 1, incomePerHour: 0, needsFame: 200, fame: 100 },
 };

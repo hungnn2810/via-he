@@ -2,7 +2,8 @@ node_modules/
 *.tmp
 
 # server
-server/data/
+server/data/*
+!server/data/*.json
 
 # Unity
 client/[Ll]ibrary/
@@ -19,3 +20,6 @@ client/.vs/
 # data from the old TikTok LIVE version
 du-lieu-xom.json
 du-lieu-thu.json
+
+# Unity CLI captures from the smoke test
+client/Screenshots/

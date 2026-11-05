@@ -16,11 +16,17 @@ import {
 import { meetingOpen, mergeRules, pickStreetEvent, scheduledEvent, seasonalEvent, weekIndex, type GameEvent } from '../events.js';
 import { NEIGHBOURS, finishQuest, giveNeighbourGift, questEvent } from '../stories.js';
 import { emptyBoard, hasFive, npcMove, placeMark, shuttleReward } from '../activities.js';
+import { FORTUNES, checkEmote, drawFortune, fortuneView, fortuneXp, shareFortune } from '../fortune.js';
+import { CafeSeats, regenStamina } from '../cafe.js';
+import { IncidentManager } from '../incidents.js';
 import {
   type Appearance, type Profile, type Outfit, GameError, addLogEntry, addReport, addXp, advanceTutorial, buyWearable, castVote, changeLook,
   claimPlayerOrder, communityProgress, createCharacter, fireEmployee, getProfile, hireEmployee, listPlayerOrders, markDirty, outfitBonus,
   postPlayerOrder, privateProfile, randomLook, takeOff, track, verifyToken, wear,
 } from '../profile.js';
+import {
+  buyWholesale, claimSharedOrder, contributeSharedOrder, marketPrices, refundStall, settleDebt, sharedOrderView, stockStall, type StallStock,
+} from '../market.js';
 
 type Auth = { id: string };
 type StreetClient = Client<{ auth: Auth }>;
@@ -60,6 +66,9 @@ export class StreetRoom extends Room<{ state: StreetState }> {
   private streetEventEndsAt = 0;
   private nextStreetEventAt = 0;
   private orderProgress = new Map<string, number>(); // player → portions sold during a shipper order
+  private stallStock = new Map<number, StallStock>();  // slot → how the stall's stock was obtained (see market.ts)
+  private cafe!: CafeSeats;
+  private incidents!: IncidentManager;
 
   onCreate(options: { ownerId?: string; district?: number }) {
     const owner = options.ownerId && getProfile(options.ownerId);
@@ -68,6 +77,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     if (!owner.districts[district]) throw new Error('District does not exist');
     this.owner = owner;
     this.district = district;
+    this.cafe = new CafeSeats(district);
     this.state.district = district;
     this.state.districtName = DISTRICTS[district].name;
     this.state.ownerId = owner.id;
@@ -77,6 +87,14 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.state.slotCount = BALANCE.slotsPerStreet;
     this.state.ownerSlots = BALANCE.ownerSlots;
     this.nextStreetEventAt = Date.now() + BALANCE.streetEventEverySeconds * 1000 * (0.5 + Math.random());
+    this.incidents = new IncidentManager({
+      owner,
+      present: () => [...this.state.players.values()].map((p) => getProfile(p.id)).filter((p): p is Profile => !!p),
+      ownerHasOpenStall: () => [...this.state.stalls.values()].some((s) => s.ownerId === owner.id && !s.employeeId),
+      send: (id, type, payload) => { const o = online.get(id); if (o?.room === this) o.client.send(type, payload); },
+      broadcast: (type, payload) => this.broadcast(type, payload),
+      changed: (p) => { markDirty(p); this.sendProfile(p.id); },
+    });
     if (owner.isNpc) tendNpcGarden(owner);
     this.syncStreet();
     this.updateMetadata();
@@ -92,6 +110,14 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       p.speech = filterWords(m.text.trim().slice(0, 80));
       p.speechAt = Date.now();
     });
+
+    this.handle('sitCafe', (pr, c, m: { district: number; lot: number }) => {
+      this.cafe.sit(this.owner, pr, this.district, m.district, m.lot);
+      markDirty(this.owner);
+      this.sendProfile(this.owner.id);
+      this.broadcast('cafeSeats', this.cafe.view());
+    });
+    this.handle('leaveCafe', (_pr, c) => { if (this.cafe.leave(c.auth!.id)) this.broadcast('cafeSeats', this.cafe.view()); });
 
     this.handle('openStall', (pr, c, m: { slot: number; productId: string; quantity: number; employeeId?: string }) => this.openStall(pr, c, m));
     this.handle('closeStall', (pr, _c, m: { slot: number }) => this.closeStall(m.slot, pr.id));
@@ -153,7 +179,11 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.handle('neighbourGift', (pr, _c, m: { id: string }) => giveNeighbourGift(pr, m.id, dayIndex(), (item, n) => takeFromStore(pr, item, n)));
     this.handle('buyVehicle', (pr, c, m: { id: string }) => { buyVehicle(pr, m.id); this.refreshVehicle(pr, c); });
     this.handle('useVehicle', (pr, c, m: { id: string }) => { useVehicle(pr, m.id); this.refreshVehicle(pr, c); });
-    this.handle('sendDelivery', (pr, _c, m: { orderId: string }) => { sendDelivery(pr, m.orderId); track(pr.id, 'delivery'); });
+    this.handle('sendDelivery', (pr, _c, m: { orderId: string }) => {
+      const kind = sendDelivery(pr, m.orderId);
+      questEvent(pr, 'deliver', kind);
+      track(pr.id, 'delivery');
+    });
     this.handle('collectDeliveries', (pr, c) => c.send('income', { amount: collectDeliveries(pr).total }));
     this.handle('postOrder', (pr, _c, m: { item: string; quantity: number; price: number }) => {
       const product = getProduct(m.item);
@@ -169,6 +199,12 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       if (buyer) { buyer.store[order.item] = (buyer.store[order.item] ?? 0) + order.quantity; markDirty(buyer); this.sendProfile(buyer.id); }
     });
     this.onMessage('playerOrders', () => listPlayerOrders());
+    this.onMessage('marketPrices', () => marketPrices());
+    this.handle('marketBuy', (pr, _c, m: { item: string; quantity: number; credit?: boolean }) => { buyWholesale(pr, m.item, m.quantity, !!m.credit); track(pr.id, 'market_buy', m.quantity); });
+    this.handle('marketCredit', (pr, _c, m: { item: string; quantity: number }) => { buyWholesale(pr, m.item, m.quantity, true); track(pr.id, 'market_credit', m.quantity); });
+    this.onMessage('sharedOrder', (c: StreetClient) => { const pr = c.auth && getProfile(c.auth.id); return pr ? sharedOrderView(pr) : null; });
+    this.handle('contributeSharedOrder', (pr, c, m: { quantity: number }) => { c.send('sharedOrderGiven', contributeSharedOrder(pr, m.quantity)); track(pr.id, 'shared_order', m.quantity); });
+    this.handle('claimSharedOrder', (pr, c) => c.send('sharedOrderClaimed', claimSharedOrder(pr)));
     this.handle('vote', (pr, _c, m: { choice: string }) => {
       if (!meetingOpen()) throw new GameError('Họp tổ dân phố vào tối Chủ nhật');
       if (!MEETING_CHOICES.some((x) => x.id === m.choice)) throw new GameError('Lựa chọn không hợp lệ');
@@ -212,6 +248,8 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       track(pr.id, 'donate', m.quantity);
     });
     this.handle('claimCommunity', (pr) => claimCommunity(pr, seasonalEvent()?.id ?? '', this.activeRules()));
+    this.handle('pauseStalls', (pr) => this.incidents.pauseStalls(pr));
+    this.handle('joinCleanup', (pr) => this.incidents.joinCleanup(pr));
     this.handle('addFriend', (pr) => addFriend(pr, this.owner.id));
     this.handle('removeFriend', (pr, _c, m: { friendId: string }) => removeFriend(pr, m.friendId));
     this.handle('report', (pr, _c, m: { targetId: string; reason: string }) => {
@@ -232,6 +270,19 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       if (employeesAtWork.has(m.employeeId)) throw new GameError('Nhân viên đang đứng sạp, dọn sạp trước đã');
       fireEmployee(pr, m.employeeId);
     });
+    this.handle('drawFortune', (pr, c) => { c.send('fortune', drawFortune(pr)); });
+    this.handle('shareFortune', (pr, _c, m: { friendId: string }) => {
+      const friend = getProfile(String(m.friendId ?? ''));
+      shareFortune(pr, friend);
+      markDirty(friend!);
+      this.sendProfile(friend!.id);
+      online.get(friend!.id)?.client.send('fortuneShared', { from: pr.id, fromName: pr.name, fortune: fortuneView(friend!) });
+    });
+    this.handle('emote', (pr, _c, m: { targetId: string; kind: string }) => {
+      const target = getProfile(String(m.targetId ?? ''));
+      const { text } = checkEmote(pr, target, m.kind);
+      online.get(target!.id)?.client.send('emote', { from: pr.id, fromName: pr.name, kind: m.kind, text });
+    });
     this.onMessage('catalog', () => ({ products: PRODUCTS, wearables: WEARABLES, balance: BALANCE, lookOptions: LOOK_OPTIONS, dailyTasks: DAILY_TASKS, decorations: DECORATIONS,
       districts: DISTRICTS, meetingChoices: MEETING_CHOICES,
       crops: Object.entries(CROPS).map(([id, c]) => ({ id, ...c })),
@@ -240,6 +291,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       vehicles: Object.entries(VEHICLES).map(([id, v]) => ({ id, ...v })),
       orderKinds: Object.entries(ORDER_KINDS).map(([id, k]) => ({ id, ...k })),
       neighbours: NEIGHBOURS,
+      fortunes: FORTUNES,
       buildings: Object.entries(BUILDINGS).map(([id, b]) => ({ id, ...b })) }));
 
     this.setSimulationInterval((dt) => this.tick(dt / 1000), 100);
@@ -289,6 +341,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.state.players.set(client.sessionId, p);
 
     payWages(profile);
+    settleDebt(profile);
     refreshDaily(profile);
     refreshOrders(profile);
     track(profile.id, 'session');
@@ -303,12 +356,15 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     }
     markDirty(profile);
     client.send('profile', privateProfile(profile, maxEmployees(profile), storeCapacity(profile)));
+    client.send('cafeSeats', this.cafe.view());
+    this.incidents.sendCurrent(profile.id);
     this.updateMetadata();
   }
 
   onLeave(client: StreetClient) {
     const id = client.auth?.id;
     this.state.players.delete(client.sessionId);
+    if (id && this.cafe.leave(id)) this.broadcast('cafeSeats', this.cafe.view());
     if (id && online.get(id)?.client === client) online.delete(id);
     // A stall the owner runs in person closes when they leave; stalls run by employees keep selling
     if (id) for (const s of [...this.state.stalls.values()]) if (s.ownerId === id && !s.employeeId) this.closeStall(s.slot, id);
@@ -353,15 +409,14 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     const capacity = BALANCE.baseStallCapacity + Math.floor(strength / 2);
     const quantity = Math.max(1, Math.min(capacity, Math.floor(m.quantity) || 0));
     let stock = quantity;
+    let bought: StallStock | undefined;
     if (product.homegrown) {
       stock = Math.min(quantity, profile.store[product.id] ?? 0);
       if (stock < 1) throw new GameError(`Kho hết ${product.name}`);
       takeFromStore(profile, product.id, stock);
       advanceTutorial(profile, 4);
     } else {
-      const totalCost = quantity * product.cost;
-      if (profile.money < totalCost) throw new GameError('Không đủ tiền nhập hàng');
-      profile.money -= totalCost;
+      bought = stockStall(profile, product, quantity);
     }
 
     const s = new Stall();
@@ -377,6 +432,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     s.sellerOutfit = this.outfitString(outfit);
     s.sellerLook = m.employeeId ? profile.employees.find((x) => x.id === m.employeeId)!.look : this.lookString(profile);
     this.state.stalls.set(String(slot), s);
+    if (bought) this.stallStock.set(slot, bought);
     if (s.employeeId) employeesAtWork.set(s.employeeId, this.roomId);
     else {
       // selling in person: walk to the stall
@@ -395,10 +451,11 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     const product = getProduct(s.productId);
     if (profile && product && s.remaining > 0) {
       if (product.homegrown) profile.store[product.id] = (profile.store[product.id] ?? 0) + s.remaining;
-      else profile.money += s.remaining * product.cost;
+      else refundStall(profile, product, s.remaining, this.stallStock.get(slot));
       markDirty(profile);
       this.sendProfile(profile.id);
     }
+    this.stallStock.delete(slot);
     if (s.employeeId) employeesAtWork.delete(s.employeeId);
     this.state.customers.forEach((k) => { if (k.targetSlot === slot) this.customerMoveOn(k); });
     this.state.stalls.delete(String(slot));
@@ -459,6 +516,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
 
     if (this.owner.isNpc && tendNpcGarden(this.owner, now)) this.syncStreet();
     this.runEvents(now);
+    this.incidents.tick(now);
     this.spawnCustomer(dt * (this.activeRules().spawnFactor ?? 1) * (this.owner.isNpc ? 1 : footTraffic(this.owner, this.district)));
     this.runActivities(now);
 
@@ -469,7 +527,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
         const d = s.x - k.x;
         if (Math.abs(d) > 12) { k.x += Math.sign(d) * CUSTOMER_SPEED * 1.3 * dt; continue; }
         if (k.status === 'buy') continue;
-        if (!s.servingCustomerId) {
+        if (!s.servingCustomerId && !this.incidents.isPaused(s.ownerId, now)) {
           s.servingCustomerId = k.id;
           const product = getProduct(s.productId)!;
           s.saleEndsAt = now + product.sellSeconds * 1000 * Math.max(0.35, 1 - this.sellerStats(s).skill / 250);
@@ -489,7 +547,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       const passed = this.passedStalls.get(k.id)!;
       const wants = k.wants.split(',');
       st.stalls.forEach((s) => {
-        if (k.targetSlot >= 0 || passed.has(s.slot) || s.remaining < 1 || !wants.includes(s.productId)) return;
+        if (k.targetSlot >= 0 || passed.has(s.slot) || s.remaining < 1 || !wants.includes(s.productId) || this.incidents.isPaused(s.ownerId, now)) return;
         const ahead = (s.x - k.x) * k.dir;
         if (ahead < 0 || ahead > 60) return;
         passed.add(s.slot);
@@ -503,12 +561,14 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       if (s.servingCustomerId && now >= s.saleEndsAt) this.completeSale(s);
     }
 
+    if (this.cafe.expire(this.owner, now)) this.broadcast('cafeSeats', this.cafe.view());
+
     this.staminaTimer += dt;
     if (this.staminaTimer >= BALANCE.staminaRegenSeconds) {
       this.staminaTimer = 0;
       st.players.forEach((p) => {
         const profile = getProfile(p.id);
-        if (profile && profile.stamina < BALANCE.maxStamina) { profile.stamina++; markDirty(profile); this.sendProfile(profile.id); }
+        if (profile && profile.stamina < BALANCE.maxStamina) { profile.stamina = regenStamina(profile.stamina, this.cafe.isSeated(p.id)); markDirty(profile); this.sendProfile(profile.id); }
       });
     }
 
@@ -842,7 +902,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
   }
 
   private grantXp(profile: Profile, xp: number) {
-    if (!addXp(profile, xp)) return;
+    if (!addXp(profile, fortuneXp(profile, xp))) return;
     this.state.players.forEach((p) => { if (p.id === profile.id) p.level = profile.level; });
     if (profile.id === this.owner.id) this.state.ownerLevel = profile.level;
     this.broadcast('levelUp', { id: profile.id, name: profile.name, level: profile.level });

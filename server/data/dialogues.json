@@ -1,0 +1,106 @@
+{
+  "bystanders": {
+    "npc_cap_man": {
+      "default": [
+        "Hôm nay phố đông ghê!",
+        "Bán đắt hàng nha bà con!",
+        "Cà phê sáng chưa anh em?",
+        "Hôm nay chạy mấy cuốc mỏi rã rời.",
+        "Đang đợi đơn nổ đây...",
+        "Phố mình dạo này làm ăn xôm tụ hẳn!"
+      ],
+      "rain": [
+        "Mưa ngập hết đường rồi, chạy xe cẩn thận nhé!",
+        "Mưa gió ế ẩm quá bác chủ ơi...",
+        "Tạt vào trú mưa làm ấm trà đá đã!"
+      ],
+      "hot_sun": [
+        "Nắng chảy mỡ thế này, cho cốc trà đá giải nhiệt nào!",
+        "Đội mũ vào em ơi, nắng rát hết cả mặt!"
+      ],
+      "rush_hour": [
+        "Giờ tan tầm kẹt xe từ đầu ngõ tới đây!",
+        "Tranh thủ bán đi, người ta đi làm về đông lắm!"
+      ]
+    },
+    "npc_girl": {
+      "default": [
+        "Nóng quá, thèm ly trà đá!",
+        "Có gì ngon không anh chị ơi?",
+        "Hôm nay học xong sớm ra phố chơi!",
+        "Món xôi ở đây thơm nức mũi!",
+        "Cuối tuần phố mình nhộn nhịp ghê!",
+        "Ví còn mấy chục nghìn, ăn gì cho ngon bổ rẻ ta?"
+      ],
+      "rain": [
+        "Trời mưa lạnh thế này ăn chè chuối nóng là đỉnh nhất!",
+        "Mưa rơi ướt hết cả tập vở rồi!"
+      ],
+      "night_market": [
+        "Chợ đêm lung linh quá, đi dạo một vòng sắm đồ thôi!",
+        "Tối nay đông vui như trẩy hội ấy!"
+      ]
+    },
+    "npc_worker": {
+      "default": [
+        "Đường này đào hoài chưa xong!",
+        "Nghỉ tay hút điếu thuốc, uống ngụm trà đã.",
+        "Làm từ sáng tới giờ đói mờ mắt rồi.",
+        "Bác chủ quầy xới cho bát xôi đầy đặn tí nhé!",
+        "Lao động là vinh quang, mà mệt quá anh em ơi!"
+      ],
+      "hot_sun": [
+        "Nắng chang chang thế này xây trát mệt đứt hơi.",
+        "Cho ca trà đá to nhiều đá em ơi!"
+      ]
+    },
+    "npc_firefighter": {
+      "default": [
+        "Dọn hàng nhớ tắt bếp than nha!",
+        "Phố này an toàn là trên hết!",
+        "Bình chữa cháy để ngay ngắn nhé các bác!",
+        "Vỉa hè gọn gàng thế này xe cứu hỏa dễ vào!"
+      ]
+    },
+    "npc_old_man": {
+      "default": [
+        "Ngày xưa phố này vắng lắm, toàn đầm chuối...",
+        "Ông còn miếng đất, chăm chỉ buôn bán gom tiền mà mua!",
+        "Người trẻ bây giờ buôn bán năng động, chịu khó ghê.",
+        "Sáng nào ông cũng phải làm ấm trà ngắm phố xá.",
+        "Cứ chăm chỉ lương thiện rồi trời sẽ thương các cháu ạ."
+      ],
+      "tet": [
+        "Tết đến nơi rồi, hoa đào hoa mai nở rực cả xóm!"
+      ]
+    }
+  },
+  "customers": {
+    "invite": [
+      "Nghe bác chủ mời dẻo miệng quá, ghé mua ủng hộ!",
+      "Trông món này bắt mắt đấy, gói cho tôi một phần!",
+      "Đang đói bụng thì gặp ngay quán, may quá!",
+      "Bán nhanh cho chị còn kịp giờ đón con nhé!",
+      "Có tươi ngon nóng hổi không đấy bác chủ ơi?",
+      "Ủa bên kia cũng bán mà bên này mời nhiệt tình hơn, thôi vào đây!"
+    ],
+    "sale": [
+      "Ngon tuyệt cú mèo, mai tôi lại ghé!",
+      "Cảm ơn nhé, chúc quán đắt hàng!",
+      "Vừa miệng lắm, cho quán 5 sao!",
+      "Gói cẩn thận ghê, thơm phức cả phố!"
+    ],
+    "leave": [
+      "Hôm nay ví mỏng, hẹn hôm khác nhé!",
+      "Đang vội quá, tí nữa quay lại!",
+      "Đi dạo một vòng xem có gì lạ không đã."
+    ]
+  },
+  "shouts": [
+    "Ai bánh mì Sài Gòn, đặc ruột thơm bơ nào...",
+    "Bắp xào bơ, bắp luộc ngô nướng nóng hổi đê!",
+    "Tào phớ đây, nước đường hoa bưởi thanh mát nào!",
+    "Ve chai, đồng nát, đồ điện cũ hỏng bán đi..."
+  ]
+}
+

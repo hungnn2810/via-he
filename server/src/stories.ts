@@ -3,12 +3,12 @@
 import { BALANCE } from './data.js';
 import { GameError, type Profile } from './profile.js';
 
-export type QuestType = 'give' | 'harvest' | 'sell' | 'cook' | 'visit' | 'help' | 'build';
+export type QuestType = 'give' | 'harvest' | 'sell' | 'cook' | 'visit' | 'help' | 'build' | 'deliver';
 
 export interface Quest {
   text: string;
   type: QuestType;
-  item?: string;   // give: what to bring; cook and harvest: only this item counts
+  item?: string;   // give: what to bring; cook and harvest: only this item counts; deliver: only this order kind counts (near, far, bulk)
   target: number;
 }
 
@@ -67,8 +67,8 @@ export const NEIGHBOURS: Neighbour[] = [
     quests: [
       { text: 'Giao hàng cả ngày khát quá. Có nước mía không em? Cho anh 3 ly.', type: 'give', item: 'fresh_cane', target: 3 },
       { text: 'Anh đang gom tiền mở cửa hàng. Em bán 20 phần giúp anh có thêm khách quen.', type: 'sell', target: 20 },
-      { text: 'Đường vào phố em anh chưa thuộc. Em ghé thử một phố bạn rồi chỉ anh.', type: 'visit', target: 1 },
-      { text: 'Có khách đặt đồ ăn. Em nấu giúp anh 3 mẻ nhé.', type: 'cook', target: 3 },
+      { text: 'Em có xe đạp chưa? Gửi thử một đơn gần để anh xem em chạy có vững không.', type: 'deliver', item: 'near', target: 1 },
+      { text: 'Có khách đặt món chế biến ở xa. Em gửi một đơn xa, anh chỉ đường cho.', type: 'deliver', item: 'far', target: 1 },
       { text: 'Sắp đủ tiền rồi! Gửi anh 10 phần bánh chuối nướng để khai trương.', type: 'give', item: 'banana_cake', target: 10 },
     ],
   },

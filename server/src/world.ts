@@ -10,6 +10,7 @@ import {
 } from './profile.js';
 import { friendship } from './stories.js';
 import type { EventRules } from './events.js';
+import { fortuneTrafficMultiplier, helpRewardFor } from './fortune.js';
 
 const DAY = 86_400_000;
 export const dayIndex = (now = Date.now()) => Math.floor(now / DAY);
@@ -40,7 +41,7 @@ export const hasBuilding = (profile: Profile, district: number, type: BuildingTy
 export function footTraffic(profile: Profile, district: number, now = Date.now()) {
   const built = profile.districts[district]?.lots.filter((l) => isBuilt(l, now)).length ?? 0;
   const base = Math.min(BALANCE.maxTraffic, BALANCE.baseTraffic + built * BALANCE.trafficPerBuilding);
-  return base * (1 + (DISTRICTS[district]?.customerPct ?? 0) / 100);
+  return base * (1 + (DISTRICTS[district]?.customerPct ?? 0) / 100) * fortuneTrafficMultiplier(profile, now);
 }
 
 // ---------- Store ----------
@@ -334,6 +335,7 @@ export function sendDelivery(profile: Profile, orderId: string, now = Date.now()
   takeFromStore(profile, order.item, order.quantity);
   profile.orders = profile.orders.filter((o) => o !== order);
   profile.deliveries.push({ reward: order.reward, doneAt: now + Math.round(rules.seconds * 1000 * 100 / vehicle.speedPct) });
+  return order.kind;
 }
 
 export function collectDeliveries(profile: Profile, now = Date.now()) {
@@ -414,7 +416,7 @@ export function helpWater(helper: Profile, owner: Profile, district: number, ind
     lot.watered = true;
   }
   owner.fameDay.helpers.push(helper.id);
-  helper.money += BALANCE.helpReward;
+  helper.money += helpRewardFor(helper, owner, now);
   owner.money += BALANCE.helpReward;
   addFame(owner, FAME.help);
   if (helper.tutorial === 7) advanceTutorial(helper, 8);

@@ -133,8 +133,17 @@ refuses(() => W.sendDelivery(p, near.id, t0), 'xe tốt hơn', 'Walking cannot t
 W.useVehicle(p, 'bicycle');
 p.store = { [near.item]: 5 };
 const money = p.money;
-W.sendDelivery(p, near.id, t0);
+check(W.sendDelivery(p, near.id, t0) === 'near', 'Sending reports the order kind');
 check(!p.store[near.item] && p.deliveries.length === 1, 'Sending takes the goods');
+// The shipper's story counts deliveries by order kind
+const shipperQuests = S.NEIGHBOURS.find((n) => n.id === 'shipper')!.quests;
+const deliverQuest = shipperQuests.findIndex((q) => q.type === 'deliver');
+const shipper = p.neighbours.shipper = { points: 0, quests: deliverQuest, progress: 0, giftDay: 0 };
+S.questEvent(p, 'deliver', 'far');
+check(shipper.progress === 0, 'A far delivery does not count for a near-delivery quest');
+S.questEvent(p, 'deliver', 'near');
+check(shipper.progress === 1, 'A near delivery counts for the shipper quest');
+delete p.neighbours.shipper;
 refuses(() => W.collectDeliveries(p, t0 + 1000), 'giao xong', 'The vehicle needs time');
 check(W.collectDeliveries(p, t0 + DAY).total === near.reward && p.money === money + near.reward, 'A finished delivery pays out');
 

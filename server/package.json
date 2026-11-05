@@ -9,6 +9,11 @@
     "test": "tsx test/simulation.ts",
     "test:garden": "tsx test/garden.ts",
     "test:world": "tsx test/world.ts",
+    "test:dialogues": "tsx test/dialogues.ts",
+    "test:market": "tsx test/market.ts",
+    "test:fortune": "tsx test/fortune.ts",
+    "test:incidents": "tsx test/incidents.ts",
+    "test:cafe": "tsx test/cafe.ts",
     "schema-cs": "schema-codegen src/schema.ts --csharp --namespace ViaHeOnline.Schema --output ../client/Assets/Scripts/Schema"
   },
   "dependencies": {
