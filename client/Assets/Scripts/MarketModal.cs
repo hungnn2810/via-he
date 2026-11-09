@@ -346,7 +346,7 @@ namespace ViaHeOnline
                     ["quantity"] = currentQty,
                     ["credit"] = false,
                 });
-                SoundFx.Coins();
+                SoundFx.Sale();
                 UiToast.Show($"Đã nhập {currentQty} {item.name} về kho!", Theme.ToastTone.Success);
             };
 
@@ -559,7 +559,7 @@ namespace ViaHeOnline
                 btnClaim.Clicked += () =>
                 {
                     _net.Send("claimSharedOrder");
-                    SoundFx.Coins();
+                    SoundFx.Sale();
                     UiToast.Show("Đang nhận thưởng đơn hàng...", Theme.ToastTone.Success);
                 };
             }

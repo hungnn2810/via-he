@@ -16,6 +16,7 @@ namespace ViaHeOnline
         public static void Water() => Play("water", 0.3f, (880, 0.04f), (740, 0.04f), (988, 0.05f));
         public static void Harvest() => Play("harvest", 0.4f, (523, 0.07f), (659, 0.07f), (784, 0.11f));
         public static void Sale() => Play("sale", 0.3f, (988, 0.05f), (1319, 0.1f));
+        public static void Coins() => Play("coins", 0.3f, (988, 0.05f), (1319, 0.08f), (1568, 0.1f));
         public static void LevelUp() => Play("level", 0.45f, (523, 0.09f), (659, 0.09f), (784, 0.09f), (1047, 0.2f));
         public static void Horn() => Play("horn", 0.2f, (880, 0.08f), (1175, 0.12f));
 

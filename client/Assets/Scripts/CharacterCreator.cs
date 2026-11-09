@@ -110,7 +110,7 @@ namespace ViaHeOnline
             {
                 SoundFx.Tap();
                 _previewStep = (_previewStep + 1) % 3;
-                walkBtn.Text = _previewStep == 0 ? "Bước đi" : $"Dáng {_previewStep}";
+                walkBtn.SetText(_previewStep == 0 ? "Bước đi" : $"Dáng {_previewStep}");
                 Redraw();
             };
 

@@ -153,6 +153,12 @@ namespace ViaHeOnline
             return button;
         }
 
+        public string Text
+        {
+            get => Label ? Label.text : "";
+            set => SetText(value);
+        }
+
         public void SetText(string text) => Label.text = text;
 
         public void SetRole(Theme.Btn role)

@@ -22,6 +22,7 @@ namespace ViaHeOnline
         // Semantic figures inside body copy: a gain reads blue, a cost reads red
         public static readonly Color FigureGain = Hex("#2f7fd6");
         public static readonly Color FigureCost = Hex("#d33b3b");
+        public static readonly Color FigureSuccess = Hex("#22c55e");
 
         // Boards
         public static readonly Color Cream = Hex("#fdf3dc");
@@ -40,10 +41,12 @@ namespace ViaHeOnline
 
         public static string PanelSprite(Skin skin) => skin == Skin.Amber ? "panel_amber" : "panel_blue";
         public static string BoardSprite(Skin skin) => skin == Skin.Amber ? "board_cream" : "board_blue";
+        public static string BoardCreamSprite() => "board_cream";
+        public static string BoardBlueSprite() => "board_blue";
         public static Color TitleColor(Skin skin) => Gold;
 
         /// Button roles. Each has drawn _normal / _pressed / _disabled art rather than a runtime tint.
-        public enum Btn { Green, Blue, Red, Gold, Gray }
+        public enum Btn { Green, Blue, Red, Gold, Gray, Amber = Gold }
 
         public static string ButtonSprite(Btn role, bool pressed = false, bool disabled = false)
         {
