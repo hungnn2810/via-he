@@ -608,7 +608,7 @@ namespace ViaHeOnline
             FetchSharedOrder();
         }
 
-        protected override void OnDestroy()
+        void OnDestroy()
         {
             if (_net != null)
             {
@@ -616,7 +616,6 @@ namespace ViaHeOnline
                 _net.OnSharedOrderGiven -= HandleSharedOrderGiven;
                 _net.OnSharedOrderClaimed -= HandleSharedOrderClaimed;
             }
-            base.OnDestroy();
         }
     }
 }
