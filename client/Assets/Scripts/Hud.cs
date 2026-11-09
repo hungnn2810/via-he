@@ -19,16 +19,16 @@ namespace ViaHeOnline
 
         static readonly string[] TutorialLines =
         {
-            "Chào cháu! Bãi đất này giờ là của cháu. Chạm vào ô đất, chọn Chuối để trồng nhé.",
-            "Tốt lắm! Chạm vào cây chuối để tưới, cây sẽ chín nhanh hơn.",
-            "Giờ chờ chuối chín, rồi chạm vào cây để thu hoạch.",
-            "Có chuối rồi! Chạm vào ô trống trên vỉa hè, chọn Chuối để dọn hàng.",
-            "Chạm vào khách muốn mua chuối để mời họ tới sạp của cháu.",
-            "Bán giỏi lắm! Giờ chạm ô đất trống trồng thêm vụ chuối nữa, vụ này chín sau 10 phút.",
-            "Xây quán cho phố đông vui nào. Chạm ô đất trống, chọn Quán trà đá. Thiếu tiền thì bán thêm nhé.",
-            "Hàng xóm đang cần giúp đấy. Bấm Xe buýt để sang một phố khác nhé.",
-            "Về phố mình thôi. Chuối chín thì chạm vào cây để thu hoạch.",
-            "Trồng một vụ mới trước khi nghỉ nhé. Vụ này lâu hơn, cháu quay lại là vừa chín.",
+            "Chào bạn! Chào mừng đến với Vỉa Hè Online. Hãy chạm vào ô vỉa hè trống để dọn sạp nhé.",
+            "Chọn món hàng muốn bán và số lượng, sau đó bấm Dọn hàng.",
+            "Khách qua lại trên phố rồi! Chạm vào khách đi ngang để mời họ ghé sạp.",
+            "Bán giỏi lắm! Tiền thu được sẽ giúp bạn nâng cấp sạp và nhập thêm hàng mới.",
+            "Ghé Chợ Đầu Mối để nhập thêm nhiều mặt hàng đa dạng với giá sỉ tốt.",
+            "Thuê thêm nhân viên phụ bán để sạp hàng tiếp tục phục vụ khách ngay cả khi bạn vắng mặt.",
+            "Xây quán cho phố đông vui nào. Chạm ô đất trống, chọn Quán trà đá.",
+            "Hàng xóm đang cần giao lưu đấy. Bấm Xe buýt để sang thăm một phố khác nhé.",
+            "Về phố mình thôi. Khách hàng vẫn đang chờ ủng hộ sạp của bạn.",
+            "Chuẩn bị hàng hoá đầy đủ trước khi nghỉ ngơi để sạp luôn đắt khách nhé.",
         };
 
         Network _net;
@@ -916,8 +916,8 @@ namespace ViaHeOnline
 
         static string TutorialLine(int step, bool home)
         {
-            if (!home && step == 7) return "Chạm vào cây chuối trên phố này để tưới giúp, cả hai cùng có thưởng.";
-            if (!home && step == 8) return "Cảm ơn cháu! Bấm Về nhà để quay lại phố mình.";
+            if (!home && step == 7) return "Ghé thăm phố bạn bè để giao lưu và bày sạp ké, cả hai cùng có thưởng.";
+            if (!home && step == 8) return "Cảm ơn bạn! Bấm Về nhà để quay lại phố mình.";
             if (step >= 0 && step < TutorialLines.Length) return TutorialLines[step];
             return "";
         }
@@ -932,11 +932,11 @@ namespace ViaHeOnline
             int previous = _lastTutorial < 0 ? -1 : _lastTutorial / 2;
             if (previous >= 0 && previous < 5 && p.tutorial >= 5)
             {
-                UiToast.Show("Bán được nải đầu tiên rồi, giỏi lắm cháu!", Theme.ToastTone.Success);
+                UiToast.Show("Bán được đơn hàng đầu tiên rồi, giỏi lắm bạn!", Theme.ToastTone.Success);
             }
             if (previous >= 0 && previous < TutorialDone && p.tutorial >= TutorialDone)
             {
-                UiToast.Show("Xong rồi! Nhật ký và Thêm đã mở. Chuối và quán trà sẽ chờ cháu quay lại.", Theme.ToastTone.Success);
+                UiToast.Show("Xong rồi! Nhật ký và Thêm đã mở. Chúc bạn buôn may bán đắt!", Theme.ToastTone.Success);
             }
 
             _lastTutorial = key;

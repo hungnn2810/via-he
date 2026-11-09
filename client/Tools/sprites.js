@@ -46,7 +46,7 @@ function stroke(g, d, color, width) {
 }
 function limb(g, d, width) { stroke(g, d, INK, width + 4.4); stroke(g, d, '#e9b283', width); }
 function dot(g, x, y, r, color, line = 2.2) { ellipse(g, x, y, r, r); g.fillStyle = color; g.fill(); if (line) { g.lineWidth = line; g.strokeStyle = INK; g.stroke(); } }
-const skinFill = (g) => { const r = g.createRadialGradient(100, 96, 10, 100, 96, 150); r.addColorStop(0, '#fff0df'); r.addColorStop(0.6, '#f8c89b'); r.addColorStop(1, '#c67b45'); return r; };
+const skinFill = (g) => gradient(g, 0, 24, 0, 166, [[0, '#fff3e0'], [0.2, '#fed7aa'], [1, '#fbc58d']]);
 
 // ---------- manifest ----------
 const sprites = [];
@@ -1439,37 +1439,70 @@ add('ui_speech_bubble', 96, 80, (g) => {
 }, [0.5, 0], [30, 30, 30, 24]);
 
 // ---------- CHARACTER LAYER SYSTEM ----------
+// Authentic Hàng Rong (Flash 2012) style: Big chubby head (ratio ~1:2), wide cheeks,
+// small cheeky cartoon eyes, 2-tone cell-shading, iconic tank top and honeycomb sandals.
 function maleFace(g) {
-  ellipse(g, 46, 116, 11, 15); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.2; g.strokeStyle = INK; g.stroke();
-  stroke(g, 'M44 110Q50 116 46 124', '#a9683c', 1.8);
-  ellipse(g, 152, 114, 8, 12); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
-  shape(g, 'M100 32C140 32 154 64 152 108C151 138 140 156 122 165C110 170 90 170 78 165C60 156 48 138 48 108C46 64 60 32 100 32Z', skinFill(g), 2.4);
-  const sh = new Path2D('M54 122C60 144 78 162 100 166C76 168 56 150 48 128Z');
-  g.fillStyle = 'rgba(168,104,63,0.3)'; g.fill(sh);
-  ellipse(g, 78, 120, 13, 15); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
-  ellipse(g, 122, 118, 11, 14); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
-  dot(g, 80, 121, 8.2, '#140c08', 0); dot(g, 124, 119, 7.2, '#140c08', 0);
-  dot(g, 83, 117, 3.0, '#ffffff', 0); dot(g, 126, 115, 2.6, '#ffffff', 0);
-  dot(g, 76, 125, 1.5, '#ffffff', 0); dot(g, 120, 123, 1.3, '#ffffff', 0);
-  stroke(g, 'M64 112Q78 100 92 112', '#140c08', 3.6); stroke(g, 'M110 110Q122 100 134 110', '#140c08', 3.6);
-  stroke(g, 'M98 125Q104 134 98 138', '#a9683c', 2.2);
+  // Ears
+  ellipse(g, 32, 114, 9, 13); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.2; g.strokeStyle = INK; g.stroke();
+  stroke(g, 'M30 108Q35 114 32 120', '#a9683c', 1.6);
+  ellipse(g, 168, 114, 9, 13); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.2; g.strokeStyle = INK; g.stroke();
+  stroke(g, 'M170 108Q165 114 168 120', '#a9683c', 1.6);
+
+  // Big chubby caricature head contour (wide cheeks, short round chin)
+  shape(g, 'M100 24C152 24 174 54 172 106C170 144 146 166 116 166H84C54 166 30 144 28 106C26 54 48 24 100 24Z', skinFill(g), 2.5);
+
+  // Crisp chin / jawline cast shadow (Flash 2-tone cell shade)
+  shape(g, 'M54 136C70 160 130 160 146 136C134 156 66 156 54 136Z', 'rgba(180,83,9,0.22)', 0);
+
+  // Authentic Hàng Rong eyes (mắt hạt mè tấu hài / lém lỉnh, single crisp shine)
+  // Left eye
+  ellipse(g, 72, 112, 8.5, 9.5); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 1.8; g.strokeStyle = INK; g.stroke();
+  dot(g, 74, 112, 4.8, '#180e09', 0);
+  dot(g, 76, 110, 1.3, '#ffffff', 0);
+  stroke(g, 'M62 108Q72 100 82 109', '#140c08', 3.0);
+  stroke(g, 'M67 121Q73 124 79 121', 'rgba(168,104,63,0.45)', 1.4);
+
+  // Right eye
+  ellipse(g, 128, 112, 8.5, 9.5); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 1.8; g.strokeStyle = INK; g.stroke();
+  dot(g, 130, 112, 4.8, '#180e09', 0);
+  dot(g, 132, 110, 1.3, '#ffffff', 0);
+  stroke(g, 'M118 109Q128 100 138 108', '#140c08', 3.0);
+  stroke(g, 'M121 121Q127 124 133 121', 'rgba(168,104,63,0.45)', 1.4);
+
+  // Characteristic street vendor hook nose
+  stroke(g, 'M98 118Q105 127 97 131', '#9a532a', 2.4);
 }
 
 function femaleFace(g) {
-  ellipse(g, 48, 118, 10, 14); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.2; g.strokeStyle = INK; g.stroke();
-  stroke(g, 'M46 112Q51 118 48 124', '#a9683c', 1.6);
-  ellipse(g, 150, 116, 7, 11); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
-  shape(g, 'M100 34C138 34 152 64 150 106C149 134 138 154 120 164C110 168 90 168 80 164C62 154 50 134 50 106C48 64 62 34 100 34Z', skinFill(g), 2.4);
-  const sh = new Path2D('M56 122C62 142 80 160 100 164C78 166 60 148 52 128Z');
-  g.fillStyle = 'rgba(168,104,63,0.3)'; g.fill(sh);
-  ellipse(g, 78, 120, 13, 15); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
-  ellipse(g, 122, 118, 11, 14); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 2.0; g.strokeStyle = INK; g.stroke();
-  dot(g, 80, 121, 8.4, '#1c100a', 0); dot(g, 124, 119, 7.4, '#1c100a', 0);
-  dot(g, 83, 117, 3.2, '#ffffff', 0); dot(g, 126, 115, 2.7, '#ffffff', 0);
-  dot(g, 76, 125, 1.6, '#ffffff', 0); dot(g, 120, 123, 1.4, '#ffffff', 0);
-  stroke(g, 'M64 113Q77 101 92 111L96 107M88 107L93 103', '#140c08', 3.6);
-  stroke(g, 'M110 111Q121 101 134 110L138 106M130 106L135 102', '#140c08', 3.6);
-  stroke(g, 'M99 127Q103 133 99 136', '#a9683c', 2.0);
+  // Ears
+  ellipse(g, 34, 114, 8.5, 12.5); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.2; g.strokeStyle = INK; g.stroke();
+  stroke(g, 'M32 108Q37 114 34 120', '#a9683c', 1.6);
+  ellipse(g, 166, 114, 8.5, 12.5); g.fillStyle = skinFill(g); g.fill(); g.lineWidth = 2.2; g.strokeStyle = INK; g.stroke();
+  stroke(g, 'M168 108Q163 114 166 120', '#a9683c', 1.6);
+
+  // Chubby rounded cute caricature head
+  shape(g, 'M100 26C150 26 172 56 170 106C168 142 144 164 116 164H84C56 164 32 142 30 106C28 56 50 26 100 26Z', skinFill(g), 2.5);
+
+  // Soft chin shadow
+  shape(g, 'M56 136C72 158 128 158 144 136C132 154 68 154 56 136Z', 'rgba(180,83,9,0.20)', 0);
+
+  // Big expressive eyes with cute Flash corner lashes
+  ellipse(g, 72, 112, 9, 10); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 1.8; g.strokeStyle = INK; g.stroke();
+  dot(g, 74, 112, 5.0, '#180e09', 0);
+  dot(g, 76, 110, 1.5, '#ffffff', 0);
+  stroke(g, 'M61 108Q72 99 83 108M83 104L87 100', '#140c08', 3.0);
+
+  ellipse(g, 128, 112, 9, 10); g.fillStyle = '#ffffff'; g.fill(); g.lineWidth = 1.8; g.strokeStyle = INK; g.stroke();
+  dot(g, 130, 112, 5.0, '#180e09', 0);
+  dot(g, 132, 110, 1.5, '#ffffff', 0);
+  stroke(g, 'M117 108Q128 99 139 108M139 104L143 100', '#140c08', 3.0);
+
+  // Cute peach blush dots
+  dot(g, 54, 128, 7, 'rgba(251,113,133,0.35)', 0);
+  dot(g, 146, 128, 7, 'rgba(251,113,133,0.35)', 0);
+
+  // Button nose
+  stroke(g, 'M98 120Q104 127 98 130', '#a9683c', 2.2);
 }
 
 function maleBody(g, step) {
@@ -1479,23 +1512,35 @@ function maleBody(g, step) {
   limb(g, `M128 194Q142 214 ${backArmX} ${backArmY}`, 9);
   dot(g, backArmX, backArmY, 7.5, '#efb684');
   shape(g, `M${108 - a} 272L${109 - a} 306H${120 - a}L120 - a 272Z`, '#e9b283');
-  shape(g, `M${104 - a} 306Q${118 - a} 298 ${130 - a} 306L130 - a 314H${104 - a}Z`, gradient(g, 0, 304, 0, 314, [[0, '#fbbf24'], [1, '#d97706']]));
-  [110, 116, 122].forEach((hx) => { g.fillStyle = '#92400e'; g.beginPath(); g.arc(hx - a, 310, 1.3, 0, Math.PI * 2); g.fill(); });
+  // Back honeycomb sandal (dép tổ ong)
+  shape(g, `M${104 - a} 306Q${118 - a} 298 ${130 - a} 306L130 - a 314H${104 - a}Z`, gradient(g, 0, 304, 0, 314, [[0, '#fef08a'], [1, '#eab308']]), 2);
+  [110, 116, 122].forEach((hx) => { g.fillStyle = '#78350f'; g.beginPath(); g.arc(hx - a, 310, 1.4, 0, Math.PI * 2); g.fill(); });
+
   shape(g, `M${80 + a} 272L${78 + a} 306H${89 + a}L92 + a 272Z`, '#e9b283');
-  shape(g, `M${72 + a} 306Q${84 + a} 298 ${96 + a} 306L96 + a 314H${72 + a}Z`, gradient(g, 0, 304, 0, 314, [[0, '#fbbf24'], [1, '#d97706']]));
-  [78, 84, 90].forEach((hx) => { g.fillStyle = '#92400e'; g.beginPath(); g.arc(hx + a, 310, 1.3, 0, Math.PI * 2); g.fill(); });
+  // Front honeycomb sandal (dép tổ ong)
+  shape(g, `M${72 + a} 306Q${84 + a} 298 ${96 + a} 306L96 + a 314H${72 + a}Z`, gradient(g, 0, 304, 0, 314, [[0, '#fef08a'], [1, '#eab308']]), 2);
+  [78, 84, 90].forEach((hx) => { g.fillStyle = '#78350f'; g.beginPath(); g.arc(hx + a, 310, 1.4, 0, Math.PI * 2); g.fill(); });
+
+  // Blue street shorts with white side stripe and drawstring
   shape(g, 'M68 242Q100 248 132 242L136 278L108 280L100 262L92 280L64 278Z', gradient(g, 0, 242, 0, 280, [[0, '#3b82f6'], [1, '#1d4ed8']]), 2.4);
   stroke(g, 'M128 244L132 278', '#ffffff', 3.0);
   dot(g, 100, 248, 2.4, '#ffffff', 0);
   stroke(g, 'M97 250Q91 258 95 264M103 250Q109 258 105 264', '#ffffff', 2.0);
-  shape(g, 'M90 164H110V190H90Z', '#e9b283');
-  stroke(g, 'M88 188Q100 196 112 188', '#c67b45', 1.8);
-  shape(g, 'M74 186L64 212Q62 232 66 244Q100 252 134 244Q138 232 136 212L126 186L114 186Q100 200 86 186Z', gradient(g, 64, 186, 136, 246, [[0, '#ffffff'], [0.7, '#edf2f7'], [1, '#cbd5e1']]), 2.4);
-  stroke(g, 'M86 218Q100 226 114 218M88 230Q100 236 112 230', '#94a3b8', 1.8);
+
+  // Neck
+  shape(g, 'M88 160H112V188H88Z', '#e9b283');
+  stroke(g, 'M86 186Q100 194 114 186', '#c67b45', 1.8);
+
+  // White ribbed tank top (Áo ba lỗ dân dã)
+  shape(g, 'M74 184L64 212Q62 232 66 244Q100 252 134 244Q138 232 136 212L126 184L114 184Q100 198 86 184Z', gradient(g, 64, 184, 136, 246, [[0, '#ffffff'], [0.7, '#f1f5f9'], [1, '#cbd5e1']]), 2.4);
+  stroke(g, 'M86 218Q100 226 114 218M88 230Q100 236 112 230', '#94a3b8', 1.6);
+
+  // Front arm & hand (mitt hand with thumb)
   const frontArmX = step === 1 ? 52 : step === 2 ? 68 : 60;
   const frontArmY = step === 1 ? 236 : step === 2 ? 248 : 242;
   limb(g, `M72 194Q56 214 ${frontArmX} ${frontArmY}`, 9.5);
   shape(g, `M${frontArmX - 6} ${frontArmY - 6}C${frontArmX - 12} ${frontArmY - 4} ${frontArmX - 10} ${frontArmY + 8} ${frontArmX - 2} ${frontArmY + 10}C${frontArmX + 6} ${frontArmY + 12} ${frontArmX + 10} ${frontArmY + 4} ${frontArmX + 6} ${frontArmY - 4}Z`, '#efb684', 1.8);
+
   maleFace(g);
 }
 
@@ -1506,23 +1551,34 @@ function femaleBody(g, step) {
   limb(g, `M126 194Q138 214 ${backArmX} ${backArmY}`, 8.5);
   dot(g, backArmX, backArmY, 6.8, '#efb684');
   shape(g, `M${106 - a} 270L${108 - a} 306H${118 - a}L118 - a 270Z`, '#e9b283');
-  shape(g, `M${102 - a} 306Q${114 - a} 298 ${126 - a} 306L126 - a 313H${102 - a}Z`, gradient(g, 0, 306, 0, 313, [[0, '#f472b6'], [1, '#db2777']]));
-  stroke(g, `M${110 - a} 304L${115 - a} 309M${119 - a} 304L${115 - a} 309`, '#ffffff', 1.8);
+  // Cute pink honeycomb sandal
+  shape(g, `M${102 - a} 306Q${114 - a} 298 ${126 - a} 306L126 - a 313H${102 - a}Z`, gradient(g, 0, 306, 0, 313, [[0, '#f472b6'], [1, '#db2777']]), 2);
+  [108, 114, 120].forEach((hx) => { g.fillStyle = '#831843'; g.beginPath(); g.arc(hx - a, 309, 1.3, 0, Math.PI * 2); g.fill(); });
+
   shape(g, `M${82 + a} 270L${80 + a} 306H${90 + a}L92 + a 270Z`, '#e9b283');
-  shape(g, `M${74 + a} 306Q${86 + a} 298 ${96 + a} 306L96 + a 313H${74 + a}Z`, gradient(g, 0, 306, 0, 313, [[0, '#f472b6'], [1, '#db2777']]));
-  stroke(g, `M${82 + a} 304L${87 + a} 309M${91 + a} 304L${87 + a} 309`, '#ffffff', 1.8);
-  shape(g, 'M91 164H109V190H91Z', '#e9b283');
+  shape(g, `M${74 + a} 306Q${86 + a} 298 ${96 + a} 306L96 + a 313H${74 + a}Z`, gradient(g, 0, 306, 0, 313, [[0, '#f472b6'], [1, '#db2777']]), 2);
+  [80, 86, 92].forEach((hx) => { g.fillStyle = '#831843'; g.beginPath(); g.arc(hx + a, 309, 1.3, 0, Math.PI * 2); g.fill(); });
+
+  // Neck & Bare midriff waist
+  shape(g, 'M88 160H112V188H88Z', '#e9b283');
   shape(g, 'M82 210Q78 226 80 244H120Q122 226 118 210Z', '#e9b283');
   dot(g, 100, 228, 1.5, '#a9683c', 0);
+
+  // Denim shorts with yellow stitching and copper rivet
   shape(g, 'M74 240Q100 246 126 240L130 272L108 274L100 256L92 274L70 272Z', gradient(g, 0, 240, 0, 274, [[0, '#60a5fa'], [1, '#2563eb']]), 2.4);
   stroke(g, 'M76 250H124M100 242V256', '#1e3a8a', 1.6);
   dot(g, 100, 246, 1.6, '#eab308', 0);
+
+  // Coral peach crop top with cap sleeves
   shape(g, 'M76 186L66 214Q100 224 134 214L124 186L112 186Q100 198 88 186Z', gradient(g, 66, 186, 134, 224, [[0, '#fb7185'], [1, '#e11d48']]), 2.4);
   stroke(g, 'M74 206Q100 214 126 206', '#ffe4e6', 2.4);
+
+  // Front arm & hand (mitt hand)
   const frontArmX = step === 1 ? 58 : step === 2 ? 72 : 66;
   const frontArmY = step === 1 ? 236 : step === 2 ? 248 : 242;
   limb(g, `M74 194Q60 214 ${frontArmX} ${frontArmY}`, 8.5);
-  dot(g, frontArmX, frontArmY, 6.8, '#efb684');
+  shape(g, `M${frontArmX - 5} ${frontArmY - 5}C${frontArmX - 10} ${frontArmY - 3} ${frontArmX - 8} ${frontArmY + 7} ${frontArmX - 1} ${frontArmY + 9}C${frontArmX + 5} ${frontArmY + 10} ${frontArmX + 8} ${frontArmY + 3} ${frontArmX + 5} ${frontArmY - 3}Z`, '#efb684', 1.6);
+
   femaleFace(g);
 }
 
@@ -1574,39 +1630,66 @@ HAIR_FEMALE.forEach((d, i) => {
 });
 
 const BROWS = [
-  (g) => { shape(g, 'M98 106L130 101L130 107L100 114Z', '#20140e', 1); shape(g, 'M148 101L172 103L172 108L150 107Z', '#20140e', 1); },
-  (g) => stroke(g, 'M104 106Q118 97 132 106M150 104Q160 98 170 106', '#3a2015', 3.2),
-  (g) => stroke(g, 'M102 98L132 110M172 98L148 110', '#20140e', 5),
-  (g) => stroke(g, 'M106 104Q118 100 130 104M152 102Q160 99 168 103', '#3a2015', 2),
+  // 0: Classic slanted comic eyebrows (lông mày xếch lém lỉnh)
+  (g) => {
+    shape(g, 'M60 104L86 97L86 102L62 108Z', '#20140e', 1);
+    shape(g, 'M114 97L140 104L138 108L114 102Z', '#20140e', 1);
+  },
+  // 1: Thick expressive arched brows (lông mày rậm tấu hài)
+  (g) => stroke(g, 'M60 103Q73 94 86 101M114 101Q127 94 140 103', '#20140e', 3.4),
+  // 2: Asymmetrical raised brow (nhướn mày cà khịa)
+  (g) => {
+    stroke(g, 'M60 95Q73 87 86 96', '#20140e', 3.2);
+    stroke(g, 'M114 105L140 101', '#20140e', 3.4);
+  },
+  // 3: Thin mischievous brows (mày láu cá)
+  (g) => stroke(g, 'M62 103Q73 99 84 103M116 103Q127 99 138 103', '#3a2015', 2.2),
 ];
 BROWS.forEach((draw, i) => layer(`brows_${i}`, draw));
 
 const LIPS = [
+  // 0: Signature Hàng Rong wry smirk (nhếch mép đểu lộ răng sún)
   (g) => {
-    shape(g, 'M126 154Q142 163 158 151Q152 165 138 165Q128 165 126 154Z', '#7a221a');
-    stroke(g, 'M126 154Q142 163 158 151', '#2c140e', 2.4);
-    stroke(g, 'M153 148Q160 152 158 156', '#2c140e', 1.8);
-    stroke(g, 'M130 156Q142 160 154 153', '#ffffff', 2.6);
+    shape(g, 'M86 146Q100 156 118 141Q114 157 98 156Q88 154 86 146Z', '#7a221a');
+    stroke(g, 'M86 146Q100 156 118 141', '#2c140e', 2.4);
+    stroke(g, 'M115 137Q120 142 118 146', '#2c140e', 1.8);
+    shape(g, 'M92 148L100 148L99 153L91 152Z', '#ffffff', 0);
   },
-  (g) => { shape(g, 'M124 150Q142 160 160 148Q154 168 140 168Q128 168 124 150Z', '#8b2f2f'); shape(g, 'M129 153Q142 158 156 151L153 156Q142 161 131 158Z', '#fff', 1); },
-  (g) => { ellipse(g, 142, 154, 6, 7); g.fillStyle = '#8b2f2f'; g.fill(); g.lineWidth = 2; g.strokeStyle = INK; g.stroke(); },
-  (g) => shape(g, 'M130 153Q140 150 144 152Q148 150 154 152Q146 162 140 161Q134 160 130 153Z', '#c9374f', 1.5),
+  // 1: Wide open grin with tooth row (cười toe toét)
+  (g) => {
+    shape(g, 'M84 145Q100 160 116 145Q112 163 100 163Q88 163 84 145Z', '#8b2f2f');
+    stroke(g, 'M84 145Q100 160 116 145', '#2c140e', 2.0);
+    shape(g, 'M87 147Q100 155 113 147L111 151Q100 157 89 151Z', '#ffffff', 0);
+  },
+  // 2: Whistling / cheeky tooth-pick smirk (miệng huýt sáo / ngậm tăm)
+  (g) => {
+    ellipse(g, 106, 148, 5, 6); g.fillStyle = '#7a221a'; g.fill(); g.lineWidth = 1.8; g.strokeStyle = INK; g.stroke();
+    stroke(g, 'M106 148L124 142', '#fbbf24', 2.2);
+  },
+  // 3: Comical wide shout / banter mouth (miệng la ó / cãi lộn)
+  (g) => {
+    shape(g, 'M88 146Q100 141 112 146Q114 159 100 159Q86 159 88 146Z', '#c9374f', 1.6);
+    shape(g, 'M92 153Q100 156 108 153Q100 159 92 153Z', '#fb7185', 0);
+  },
 ];
 LIPS.forEach((draw, i) => layer(`lips_${i}`, draw));
 
-layer('cheeks_1', (g) => { [[100, 146, 11], [150, 141, 7]].forEach(([x, y, r]) => dot(g, x, y, r, 'rgba(240,119,111,.35)', 0)); });
+layer('cheeks_1', (g) => {
+  [[62, 128, 8], [138, 128, 8]].forEach(([x, y, r]) => dot(g, x, y, r, 'rgba(244,114,182,.38)', 0));
+});
 layer('cheeks_2', (g) => {
-  g.save(); g.translate(96, 144); g.rotate(-0.16);
-  roundRect(g, -13, -8, 26, 16, 4); g.fillStyle = '#fef3c7'; g.fill();
-  g.lineWidth = 1.8; g.strokeStyle = '#b45309'; g.stroke();
-  roundRect(g, -5, -5, 10, 10, 2); g.fillStyle = '#ffffff'; g.fill();
+  // Iconic street criss-cross bandage patch on left cheek
+  g.save(); g.translate(58, 132); g.rotate(0.2);
+  roundRect(g, -12, -7, 24, 14, 3); g.fillStyle = '#fef3c7'; g.fill();
+  g.lineWidth = 1.6; g.strokeStyle = '#b45309'; g.stroke();
+  roundRect(g, -5, -4, 10, 8, 2); g.fillStyle = '#ffffff'; g.fill();
   g.lineWidth = 1.0; g.strokeStyle = '#d97706'; g.stroke();
-  dot(g, -9, 0, 0.8, '#b45309', 0); dot(g, 9, 0, 0.8, '#b45309', 0);
+  dot(g, -8, 0, 0.8, '#b45309', 0); dot(g, 8, 0, 0.8, '#b45309', 0);
   g.restore();
 });
-layer('earrings_1', (g) => { ellipse(g, 46, 142, 7, 7); g.lineWidth = 3; g.strokeStyle = '#e0ab3a'; g.stroke(); });
-layer('earrings_2', (g) => dot(g, 44, 134, 4, '#f1f3f5', 1.6));
-layer('earrings_3', (g) => { stroke(g, 'M44 132V144', '#e0ab3a', 2); shape(g, 'M44 144L50 152L44 160L38 152Z', '#e0ab3a', 1.6); });
+layer('earrings_1', (g) => { ellipse(g, 30, 126, 6, 6); g.lineWidth = 2.4; g.strokeStyle = '#e0ab3a'; g.stroke(); });
+layer('earrings_2', (g) => dot(g, 30, 122, 3.5, '#f1f3f5', 1.4));
+layer('earrings_3', (g) => { stroke(g, 'M30 120V130', '#e0ab3a', 1.8); shape(g, 'M30 130L35 137L30 144L25 137Z', '#e0ab3a', 1.4); });
 
 const wearLayer = (id, draw) => layer(`wear_${id}`, draw);
 wearLayer('conical', (g) => { shape(g, 'M14 78L104 2L192 78Q104 100 14 78Z', gradient(g, 0, 0, 0, 90, [[0, '#f6e2a8'], [1, '#c9a24f']])); stroke(g, 'M60 42Q104 54 150 42', '#a8843c', 1.6); });
@@ -1623,7 +1706,14 @@ wearLayer('ao_dai', (g) => {
 });
 wearLayer('jeans', (g) => { shape(g, 'M70 238Q92 246 116 238L118 306H102L94 262L88 306H72Z', gradient(g, 0, 238, 0, 306, [[0, '#5c7fb0'], [1, '#2c4a78']])); });
 wearLayer('khaki', (g) => { shape(g, 'M70 238Q92 246 116 238L118 306H102L94 262L88 306H72Z', gradient(g, 0, 238, 0, 306, [[0, '#d6bb8a'], [1, '#a2845a']])); });
-wearLayer('sunglasses', (g) => { shape(g, 'M104 116Q118 112 132 116Q132 134 116 134Q104 132 104 116Z', '#1c1c20'); shape(g, 'M146 114Q158 110 170 114Q170 130 158 130Q146 128 146 114Z', '#1c1c20'); stroke(g, 'M132 118H146', INK, 2.4); });
+wearLayer('sunglasses', (g) => {
+  shape(g, 'M58 105Q72 100 86 105Q86 123 72 123Q58 121 58 105Z', '#1c1c20');
+  shape(g, 'M114 105Q128 100 142 105Q142 123 128 123Q114 121 114 105Z', '#1c1c20');
+  stroke(g, 'M86 107H114', INK, 2.4);
+  stroke(g, 'M58 107L32 113M142 107L168 113', INK, 2.0);
+  // Lens shine
+  stroke(g, 'M64 108L72 120M120 108L128 120', 'rgba(255,255,255,0.4)', 1.5);
+});
 wearLayer('speaker', (g) => { shape(g, 'M134 254H170V298H134Z', '#2f3640'); dot(g, 152, 268, 8, '#596275', 1.6); dot(g, 152, 288, 5, '#596275', 1.6); stroke(g, 'M152 254Q152 240 136 244', INK, 2.4); });
 
 // ---------- VEHICLES ----------

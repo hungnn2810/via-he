@@ -54,8 +54,8 @@ namespace ViaHeOnline
             _scene = sceneGo.AddComponent<StreetScene>();
             _scene.Init(_net, _cam);
 
-            _scene.OnEmptySlotTapped += (slot) => UiToast.Show($"Ô trống {slot}: Chạm để dọn hàng");
-            _scene.OnOwnStallTapped += (stall) => UiToast.Show($"Sạp của bạn: {stall.productId}");
+            _scene.OnEmptySlotTapped += (slot) => StallModal.Show(_net, _net?.Room?.State, slot);
+            _scene.OnOwnStallTapped += (stall) => StallModal.ShowClose(_net, stall);
             _scene.OnLotTapped += (index) => UiToast.Show($"Ô đất số {index}");
             _scene.OnObjectAction += (action) => UiToast.Show($"Khu vực: {action}");
 
@@ -263,13 +263,14 @@ namespace ViaHeOnline
 
             _hud.OnHomeClicked += () => _ = JoinStreet(null);
             _hud.OnDistrictSelected += (d) => _ = JoinStreet(null, d);
-            _hud.OnStallClicked += () => UiToast.Show("Chạm vào ô vỉa hè trống để dọn hàng");
-            _hud.OnStaffClicked += () => UiToast.Show("Nhân viên (mở ở cấp 3)");
-            _hud.OnWardrobeClicked += () => UiToast.Show("Tủ đồ (mở ở cấp 2)");
-            _hud.OnShopClicked += () => UiToast.Show("Cửa hàng (mở ở cấp 2)");
-            _hud.OnLogClicked += () => UiToast.Show("Nhật ký kinh doanh");
-            _hud.OnBusClicked += () => UiToast.Show("Xe buýt sang phố khác");
-            _hud.OnMenuClicked += () => UiToast.Show("Menu mở rộng");
+            _hud.OnStallClicked += () => StallModal.Show(_net, _net?.Room?.State, -1);
+            _hud.OnStaffClicked += () => StaffModal.Show(_net);
+            _hud.OnWardrobeClicked += () => WardrobeModal.Show(_net);
+            _hud.OnShopClicked += () => ShopModal.Show(_net);
+            _hud.OnMarketClicked += () => MarketModal.Show(_net);
+            _hud.OnLogClicked += () => LogModal.Show(_net);
+            _hud.OnBusClicked += () => BusModal.Show(_net, (ownerId, dist) => _ = JoinStreet(ownerId, dist));
+            _hud.OnMenuClicked += () => _hud.ShowMoreMenu();
 
             if (_net.Profile != null)
             {

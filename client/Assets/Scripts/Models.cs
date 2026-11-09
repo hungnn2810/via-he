@@ -82,6 +82,15 @@ namespace ViaHeOnline
         public List<DailyTask> tasks = new List<DailyTask>();
     }
 
+    public class MarketState
+    {
+        public long debt;
+        public long borrowedAt;
+        public long creditLockedUntil;
+        public long sharedDay;
+        public int sharedGiven;
+    }
+
     public class Profile
     {
         public string id;
@@ -101,6 +110,7 @@ namespace ViaHeOnline
         public int storeCapacity;
         public int freeSeeds;
         public int tutorial;
+        public MarketState market;
         public ProfessionState profession;
         public Dictionary<string, NeighbourState> neighbours = new Dictionary<string, NeighbourState>();
         public string vehicle;
@@ -324,10 +334,55 @@ namespace ViaHeOnline
         public List<LeaderboardEntry> top = new List<LeaderboardEntry>();
     }
 
+    public class MarketPriceItem
+    {
+        public string item;
+        public string name;
+        public int unlockLevel;
+        public long cost;
+        public int pct;
+        public long price;
+    }
+
+    public class MarketPricesResult
+    {
+        public long day;
+        public int unlockLevel;
+        public int maxBuy;
+        public int creditLevel;
+        public long creditLimit;
+        public int interestPct;
+        public List<MarketPriceItem> prices = new List<MarketPriceItem>();
+    }
+
+    public class SharedOrderResult
+    {
+        public long id;
+        public string item;
+        public int target;
+        public int progress;
+        public long reward;
+        public long expiresAt;
+        public int level;
+        public int perDay;
+        public int mine;
+        public int givenToday;
+        public int claimable;
+    }
+
     public class SaleMessage { public int slot; public long amount; public string ownerId; }
     public class LevelUpMessage { public string id; public string name; public int level; }
     public class InviteMessage { public string playerId; public string customerId; }
     public class ErrorMessage { public string text; }
     public class IncomeMessage { public long amount; }
     public class OrderDoneMessage { public long reward; }
+    public class RegularSaleMessage { public string name; public string customerId; }
+    public class FortuneMessage { public string text; public int luckyNumber; }
+    public class FortuneSharedMessage { public string from; public string fromName; public FortuneMessage fortune; }
+    public class SeasonMessage { public string id; public int day; }
+    public class SeasonQuestDoneMessage { public string season; public string quest; public long reward; }
+    public class SharedOrderGivenMessage { public string who; public int quantity; }
+    public class SharedOrderClaimedMessage { public string who; }
+    public class EmoteMessage { public string fromId; public string targetId; public string kind; public string text; }
+    public class CafeSeatsMessage { public List<object> seats = new List<object>(); }
 }

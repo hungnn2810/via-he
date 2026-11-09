@@ -150,10 +150,14 @@ namespace ViaHeOnline
             SetLookNamed(body);
         }
 
-        public static void FillPortrait(RectTransform parent, string look, string outfit = "")
+        public static void FillPortrait(RectTransform parent, string look, string outfit = "", int step = 0)
         {
             foreach (Transform child in parent) Destroy(child.gameObject);
             var (body, layers) = Parts(look, outfit);
+            if (step > 0 && SpriteLibrary.Has($"{body}_step{step}"))
+            {
+                body = $"{body}_step{step}";
+            }
             var names = new List<(string sprite, int order)>(layers) { (body, Depth.LayerBody) };
             names.Sort((a, b) => a.order.CompareTo(b.order));
             foreach (var (sprite, _) in names)

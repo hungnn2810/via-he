@@ -32,6 +32,15 @@ namespace ViaHeOnline
         public event Action OnRoomLeft;
         public event Action<long> OnIncome;
         public event Action<long> OnOrderDone;
+        public event Action<RegularSaleMessage> OnRegularSale;
+        public event Action<FortuneMessage> OnFortune;
+        public event Action<FortuneSharedMessage> OnFortuneShared;
+        public event Action<SeasonMessage> OnSeason;
+        public event Action<SeasonQuestDoneMessage> OnSeasonQuestDone;
+        public event Action<SharedOrderGivenMessage> OnSharedOrderGiven;
+        public event Action<SharedOrderClaimedMessage> OnSharedOrderClaimed;
+        public event Action<EmoteMessage> OnEmote;
+        public event Action<CafeSeatsMessage> OnCafeSeats;
 
         public Network()
         {
@@ -78,6 +87,8 @@ namespace ViaHeOnline
         }
 
         public async Task<List<PlayerOrderInfo>> GetPlayerOrders() => await Room.Request<List<PlayerOrderInfo>>("playerOrders");
+        public async Task<MarketPricesResult> GetMarketPrices() => await Room.Request<MarketPricesResult>("marketPrices");
+        public async Task<SharedOrderResult> GetSharedOrder() => await Room.Request<SharedOrderResult>("sharedOrder");
 
         public async Task<Leaderboard> GetLeaderboard() => await Client.Http.Get<Leaderboard>("api/leaderboard");
 
@@ -109,6 +120,15 @@ namespace ViaHeOnline
             room.OnMessage<InviteMessage>("inviteCustomer", m => OnInvite?.Invoke(m));
             room.OnMessage<IncomeMessage>("income", m => OnIncome?.Invoke(m.amount));
             room.OnMessage<OrderDoneMessage>("orderDone", m => OnOrderDone?.Invoke(m.reward));
+            room.OnMessage<RegularSaleMessage>("regularSale", m => OnRegularSale?.Invoke(m));
+            room.OnMessage<FortuneMessage>("fortune", m => OnFortune?.Invoke(m));
+            room.OnMessage<FortuneSharedMessage>("fortuneShared", m => OnFortuneShared?.Invoke(m));
+            room.OnMessage<SeasonMessage>("season", m => OnSeason?.Invoke(m));
+            room.OnMessage<SeasonQuestDoneMessage>("seasonQuestDone", m => OnSeasonQuestDone?.Invoke(m));
+            room.OnMessage<SharedOrderGivenMessage>("sharedOrderGiven", m => OnSharedOrderGiven?.Invoke(m));
+            room.OnMessage<SharedOrderClaimedMessage>("sharedOrderClaimed", m => OnSharedOrderClaimed?.Invoke(m));
+            room.OnMessage<EmoteMessage>("emote", m => OnEmote?.Invoke(m));
+            room.OnMessage<CafeSeatsMessage>("cafeSeats", m => OnCafeSeats?.Invoke(m));
             room.OnLeave += _ => { if (Room == room) { Room = null; OnRoomLeft?.Invoke(); } };
             if (Catalog == null) Catalog = await room.Request<Catalog>("catalog");
         }
