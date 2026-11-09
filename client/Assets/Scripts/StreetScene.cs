@@ -66,7 +66,7 @@ namespace ViaHeOnline
         const float FirstSlotX = 220f, LastSlotMargin = 220f;
         const float LotWidth = 4.5f, LotSpacing = LotWidth, LotStartX = 1f + LotWidth / 2f, LotHalfWidth = LotWidth / 2f;
         const float LotY = 1.1f, LotSoilY = 1.6f, CropScale = 0.75f, LandY = 0.9f;
-        const float LotLabelHeight = 1.35f;
+        const float LotLabelHeight = 0.55f;
         const int RainDrops = 70;
         const float LotScale = 0.72f;
 
@@ -158,7 +158,7 @@ namespace ViaHeOnline
             // River city backdrop
             if (SpriteLibrary.Has("bg_river_city"))
             {
-                var city = Draw.Put(_background, "bg_river_city", new Vector2(_length / 2f, RiverCityY), 1f, -990);
+                var city = Draw.Sized(_background, "bg_river_city", new Vector2(_length / 2f, RiverCityY), new Vector2(_length + 8f, 2.7f), Depth.RiverCity, SpriteDrawMode.Tiled);
                 _farCity = city.transform;
             }
 
@@ -168,14 +168,32 @@ namespace ViaHeOnline
             Draw.Sized(_background, landSprite, new Vector2(0f, LandY), new Vector2(_length, 1.5f), Depth.Land, SpriteDrawMode.Tiled);
 
             // Sidewalk, curb, road
-            Draw.Sized(_background, "street_sidewalk", new Vector2(0f, -1.2f), new Vector2(_length, 1.5f), Depth.Of(-1.2f), SpriteDrawMode.Tiled);
-            Draw.Sized(_background, "street_curb", new Vector2(0f, -2.4f), new Vector2(_length, 0.4f), Depth.Of(-2.4f), SpriteDrawMode.Tiled);
-            Draw.Sized(_background, "street_road", new Vector2(0f, -4.0f), new Vector2(_length, 2.0f), Depth.Of(-4.0f), SpriteDrawMode.Tiled);
+            Draw.Sized(_background, "street_sidewalk", new Vector2(0f, -1.2f), new Vector2(_length, 1.5f), Depth.Sidewalk, SpriteDrawMode.Tiled);
+            Draw.Sized(_background, "street_curb", new Vector2(0f, -2.4f), new Vector2(_length, 0.4f), Depth.Curb, SpriteDrawMode.Tiled);
+            Draw.Sized(_background, "street_road", new Vector2(0f, -4.0f), new Vector2(_length, 2.0f), Depth.Road, SpriteDrawMode.Tiled);
+
+            // Continuous background houses row
+            AddBackgroundHouses();
 
             // Scenery shops & buildings
             AddSceneryBuilding("shop_job_office", 2f, LandY);
             AddSceneryBuilding("shop_market", _length - 3f, LandY);
             AddSceneryBuilding("bus_stop", _length - 1f, StallY);
+        }
+
+        void AddBackgroundHouses()
+        {
+            float houseWidth = 2.25f;
+            int index = 0;
+            for (float x = 0f; x <= _length + houseWidth; x += houseWidth)
+            {
+                string houseSprite = $"house_{index % 5}";
+                if (SpriteLibrary.Has(houseSprite))
+                {
+                    Draw.Put(_background, houseSprite, new Vector2(x, 1.05f), ShopScale, Depth.Of(1.05f));
+                }
+                index++;
+            }
         }
 
         void AddSceneryBuilding(string sprite, float x, float y)
@@ -196,8 +214,8 @@ namespace ViaHeOnline
                 float x = LotX(index);
                 root.transform.localPosition = new Vector3(x, LotY, 0f);
 
-                var baseSr = Draw.Put(root.transform, "lot_soil", new Vector2(0f, LotSoilY - LotY), LotScale, Depth.Land + 10);
-                var cropSr = Draw.Put(root.transform, "banana_stage_1", new Vector2(0f, 0.2f), CropScale, Depth.Crops);
+                var baseSr = Draw.Put(root.transform, "lot_soil", new Vector2(0f, LotSoilY - LotY), LotScale, Depth.Of(LotSoilY) - 5);
+                var cropSr = Draw.Put(root.transform, "banana_stage_1", new Vector2(0f, 0.2f), CropScale, Depth.Of(LotY + 0.2f));
                 cropSr.gameObject.SetActive(false);
 
                 var label = Draw.Text(root.transform, "", new Vector2(0f, LotLabelHeight), 0.18f, Theme.Gold, Depth.BubbleText);
@@ -242,7 +260,7 @@ namespace ViaHeOnline
                 else if (!string.IsNullOrEmpty(lot.crop))
                 {
                     view.BaseRenderer.sprite = SpriteLibrary.Get("lot_soil");
-                    view.BaseRenderer.sortingOrder = Depth.Land + 10;
+                    view.BaseRenderer.sortingOrder = Depth.Of(LotSoilY) - 5;
                     view.CropRenderer.gameObject.SetActive(true);
 
                     bool ripe = readyAt > 0 && now >= readyAt;
@@ -257,27 +275,36 @@ namespace ViaHeOnline
                     string cropName = lot.crop == "banana" ? $"banana_stage_{stage}" : $"crop_{lot.crop}_{stage}";
                     if (!SpriteLibrary.Has(cropName)) cropName = "banana_stage_1";
                     view.CropRenderer.sprite = SpriteLibrary.Get(cropName);
-                    view.CropRenderer.sortingOrder = Depth.Crops;
+                    view.CropRenderer.sortingOrder = Depth.Of(LotY + 0.2f);
                     view.Label.text = ripe ? (mine ? "Thu hoạch" : "Đã chín") : (lot.watered ? "Đã tưới" : "Tưới");
                 }
                 else
                 {
                     view.CropRenderer.gameObject.SetActive(false);
                     view.BaseRenderer.sprite = SpriteLibrary.Get("lot_soil");
-                    view.BaseRenderer.sortingOrder = Depth.Land + 10;
-                    view.Label.text = mine ? "Chạm để dùng đất" : "Đất trống";
+                    view.BaseRenderer.sortingOrder = Depth.Of(LotSoilY) - 5;
+                    view.Label.text = "";
                 }
             }
         }
 
         void SyncSlots(StreetState st)
         {
+            float slotDist = st.slotCount > 1
+                ? (float)((st.length - FirstSlotX - LastSlotMargin) / (st.slotCount - 1) / WorldScale)
+                : 2.5f;
+
+            // slot_empty is 260px wide = 1.3 Unity units at scale 1.0
+            float baseScale = 0.8f;
+            float maxAllowedWidth = slotDist * 0.9f;
+            float targetScale = Mathf.Min(baseScale, maxAllowedWidth / 1.3f);
+
             while (_emptySlots.Count < st.slotCount)
             {
                 int slot = _emptySlots.Count;
                 string sp = slot < st.ownerSlots ? "slot_owner" : "slot_empty";
                 if (!SpriteLibrary.Has(sp)) sp = "slot_item";
-                var go = Draw.Put(transform, sp, new Vector2(SlotX(slot, st), StallY), 0.8f, Depth.Slots).gameObject;
+                var go = Draw.Put(transform, sp, new Vector2(SlotX(slot, st), StallY), targetScale, Depth.Of(StallY) - 5).gameObject;
                 _emptySlots.Add(go);
             }
             for (int i = 0; i < _emptySlots.Count; i++)
@@ -287,6 +314,7 @@ namespace ViaHeOnline
                 if (i < st.slotCount)
                 {
                     _emptySlots[i].transform.localPosition = new Vector3(SlotX(i, st), StallY, 0f);
+                    _emptySlots[i].transform.localScale = new Vector3(targetScale, targetScale, 1f);
                 }
             }
         }
@@ -307,10 +335,11 @@ namespace ViaHeOnline
                     var root = new GameObject($"Stall_{slot}");
                     root.transform.SetParent(transform, false);
 
+                    int stallDepth = Depth.Of(StallY);
                     string color = UmbrellaColor.TryGetValue(s.productId, out var c) ? c : "red";
-                    var umb = Draw.Put(root.transform, $"umbrella_{color}", new Vector2(0f, 1.4f), 0.9f, Depth.StallUmbrella);
-                    var cnt = Draw.Put(root.transform, $"counter_{s.productId}", Vector2.zero, SellerScale, Depth.StallCounter);
-                    var seller = Character.Create(root.transform, "Người bán", Depth.StallCounter - 1, SellerScale);
+                    var umb = Draw.Put(root.transform, $"umbrella_{color}", new Vector2(0f, 1.4f), 0.9f, stallDepth - 2);
+                    var cnt = Draw.Put(root.transform, $"counter_{s.productId}", Vector2.zero, SellerScale, stallDepth + 1);
+                    var seller = Character.Create(root.transform, "Người bán", stallDepth, SellerScale);
                     seller.transform.localPosition = new Vector3(0f, 0.45f, 0f);
                     seller.SortByDepth = false;
 
@@ -384,7 +413,7 @@ namespace ViaHeOnline
                 if (!string.IsNullOrEmpty(st.@event) && st.@event.Contains("tet")) deco = "deco_peach_tree";
                 if (SpriteLibrary.Has(deco))
                 {
-                    var dSr = Draw.Put(transform, deco, new Vector2(x, LotY), DecorScale, Depth.Decorations);
+                    var dSr = Draw.Put(transform, deco, new Vector2(x, LotY), DecorScale, Depth.Of(LotY));
                     _decorations.Add(dSr.gameObject);
                 }
             }

@@ -353,7 +353,7 @@ namespace ViaHeOnline
         void BuildTutorialStrip()
         {
             var stripRt = Ui.Rect("TutorialStrip", transform);
-            Ui.Place(stripRt, Ui.BottomLeft, new Vector2(560f, 96f), new Vector2(Theme.Space3, 86f), Ui.BottomLeft);
+            Ui.Place(stripRt, Ui.BottomLeft, new Vector2(560f, 96f), new Vector2(Theme.Space3, 96f), Ui.BottomLeft);
             _tutorialStrip = stripRt;
 
             var bg = Ui.Img(stripRt, "Bg", Theme.PanelSprite(Theme.Skin.Amber));

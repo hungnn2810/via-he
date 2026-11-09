@@ -11,13 +11,15 @@ namespace ViaHeOnline
         /// Compute sorting order from y position in Unity units.
         public static int Of(float y) => 1000 - Mathf.RoundToInt(y * 100f);
 
-        // Fixed orders observed from world contract:
+        // Fixed flat backdrops (strictly behind all ground objects):
+        public const int Sky = -1000;
+        public const int RiverCity = -990;
         public const int Land = -972;
-        public const int Crops = -945;
-        public const int Decorations = -944;
-        public const int Slots = -920;
-        public const int StallUmbrella = 0;
-        public const int StallCounter = 10;
+        public const int Sidewalk = -960;
+        public const int Curb = -950;
+        public const int Road = -940;
+
+        // Overlays & effects (strictly in front of ground objects):
         public const int Rain = 1200;
         public const int Traffic = 1300;
         public const int FloatMoney = 2000;

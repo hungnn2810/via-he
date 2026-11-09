@@ -1106,19 +1106,28 @@ const COUNTERS = {
 };
 Object.entries(COUNTERS).forEach(([id, draw]) => add(`counter_${id}`, 380, 190, draw));
 
-add('slot_empty', 340, 210, (g) => {
-  roundRect(g, 8, 8, 324, 194, 26); g.fillStyle = 'rgba(255,255,255,.35)'; g.fill();
-  g.setLineDash([16, 10]); g.lineWidth = 5; g.strokeStyle = 'rgba(255,255,255,.95)'; g.stroke(); g.setLineDash([]);
-  ellipse(g, 170, 92, 34, 34); fill(g, '#27ae60', 4, '#fff');
-  drawText(g, '+', 170, 90, 52, '#fff');
-  drawText(g, 'Dọn hàng', 170, 160, 28, '#fff', 'rgba(0,0,0,.45)');
+add('slot_empty', 260, 70, (g) => {
+  roundRect(g, 4, 4, 252, 62, 8); g.fillStyle = 'rgba(255,255,255,0.08)'; g.fill();
+  g.setLineDash([8, 6]); g.lineWidth = 2.5; g.strokeStyle = 'rgba(255,255,255,0.45)'; g.stroke(); g.setLineDash([]);
+  const cr = 10;
+  g.strokeStyle = 'rgba(255,255,255,0.65)'; g.lineWidth = 2.5;
+  g.beginPath(); g.moveTo(4, 4 + cr); g.lineTo(4, 4); g.lineTo(4 + cr, 4); g.stroke();
+  g.beginPath(); g.moveTo(256 - cr, 4); g.lineTo(256, 4); g.lineTo(256, 4 + cr); g.stroke();
+  g.beginPath(); g.moveTo(4, 66 - cr); g.lineTo(4, 66); g.lineTo(4 + cr, 66); g.stroke();
+  g.beginPath(); g.moveTo(256 - cr, 66); g.lineTo(256, 66); g.lineTo(256, 66 - cr); g.stroke();
+  g.strokeStyle = 'rgba(255,255,255,0.6)'; g.lineWidth = 2.5;
+  g.beginPath(); g.moveTo(130 - 8, 35); g.lineTo(130 + 8, 35); g.moveTo(130, 35 - 8); g.lineTo(130, 35 + 8); g.stroke();
 });
-add('slot_owner', 340, 210, (g) => {
-  roundRect(g, 8, 8, 324, 194, 26); g.fillStyle = 'rgba(255,215,60,.35)'; g.fill();
-  g.setLineDash([16, 10]); g.lineWidth = 5; g.strokeStyle = '#ffd43b'; g.stroke(); g.setLineDash([]);
-  ellipse(g, 170, 92, 34, 34); fill(g, '#f39c12', 4, '#fff');
-  drawText(g, '★', 170, 92, 40, '#fff');
-  drawText(g, 'Ô chủ phố', 170, 160, 28, '#fff', 'rgba(0,0,0,.45)');
+add('slot_owner', 260, 70, (g) => {
+  roundRect(g, 4, 4, 252, 62, 8); g.fillStyle = 'rgba(241,196,15,0.12)'; g.fill();
+  g.setLineDash([8, 6]); g.lineWidth = 2.5; g.strokeStyle = 'rgba(243,156,18,0.55)'; g.stroke(); g.setLineDash([]);
+  const cr = 10;
+  g.strokeStyle = 'rgba(243,156,18,0.75)'; g.lineWidth = 2.5;
+  g.beginPath(); g.moveTo(4, 4 + cr); g.lineTo(4, 4); g.lineTo(4 + cr, 4); g.stroke();
+  g.beginPath(); g.moveTo(256 - cr, 4); g.lineTo(256, 4); g.lineTo(256, 4 + cr); g.stroke();
+  g.beginPath(); g.moveTo(4, 66 - cr); g.lineTo(4, 66); g.lineTo(4 + cr, 66); g.stroke();
+  g.beginPath(); g.moveTo(256 - cr, 66); g.lineTo(256, 66); g.lineTo(256, 66 - cr); g.stroke();
+  drawText(g, '★', 130, 37, 20, 'rgba(243,156,18,0.75)');
 });
 
 // ---------- STREET BACKGROUND & ENVIRONMENT ----------
