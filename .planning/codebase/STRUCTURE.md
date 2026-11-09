@@ -5,7 +5,7 @@
 ## Directory Layout
 
 ```
-xom-tro-sinh-vien/
+via-he/
 ├── server/                      # Node.js + Colyseus 0.18 authoritative server (TypeScript, ESM)
 │   ├── src/
 │   │   ├── index.ts             # Entry point: Express routes + room definition + listen

@@ -1,58 +1,94 @@
-# Bản Đặc Tả Thiết Kế Giao Diện — Phong Cách Hàng Rong Mobile
-**Dự án:** Vỉa Hè Online (Unity 6 / Web / Mobile)  
-**Tài liệu tham chiếu:** [Tải game Hàng Rong Mobile - Cuộc sống đường phố | Game mô phỏng (Thegioididong.com/game-app/hang-rong-mobile-232331)](https://www.thegioididong.com/game-app/hang-rong-mobile-232331)  
-**Phụ trách:** Antigravity (UI/UX Designer & Technical Artist)  
-**Trạng thái:** Bản thiết kế hoàn chỉnh & Mô hình mẫu trực quan (Phase 1)
+# Bản Đặc Tả Bố Cục Giao Diện (đề xuất)
+
+> ## ⚠ Trạng thái: phần **phong cách thị giác** của tài liệu này đã bị thay thế
+>
+> Tài liệu nguồn của style giờ là **`docs/client/art-direction.md`**, và bảng màu /
+> token thật nằm ở **`client/Tools/theme.js`** + **`client/Assets/Scripts/Theme.cs`**.
+>
+> **Vì sao:** bản đặc tả này dựng từ một bài báo mô tả **Hàng Rong Mobile** (bản fan làm
+> lại trên di động), không phải từ **Hàng Rong gốc trên Zing Me**. Nó mô tả theme gỗ
+> vintage + giấy kraft + ruy-băng đỏ. Khi đối chiếu với screenshot và video quay bản gốc
+> (`client/Tools/ui_ref/`, `street_source*.png`), bản gốc **không** như vậy: đó là
+> cartoon bóng, nền trắng và xanh cyan, dock navy, và có **6 skin cửa sổ** khác nhau chứ
+> không phải một.
+>
+> **Phần còn dùng được:** cấu trúc tài liệu, ý tưởng item card dạng lưới, danh sách nút
+> trong dock, hệ tab, và các toạ độ bố cục ở §3 — xem chúng là **đề xuất bố cục**, không
+> phải quan sát từ bản gốc.
+
+**Dự án:** Vỉa Hè Online (Unity 6 / Web / Mobile)
+**Phụ trách ban đầu:** Antigravity (UI/UX Designer & Technical Artist)
+**Nguồn tham chiếu cũ:** một bài viết về bản mobile remake — không dùng cho style nữa
 
 ---
 
-## 1. Tinh Thần Cốt Lõi Của "Hàng Rong Mobile"
+## 1. Tinh Thần Cốt Lõi
 
-Bài viết trên Thế Giới Di Động mô tả về **Hàng Rong Mobile**:
-> *"Hàng Rong Mobile là tựa game mô phỏng kinh doanh đường phố, đưa người chơi trở về những ký ức tuổi thơ gần gũi nhất: từ gánh hàng rong, tiệm tạp hóa, xe bánh mì, ly trà đá vỉa hè... Đồ họa 2D mang đậm phong cách hoạt hình ngộ nghĩnh, hài hước, màu sắc rực rỡ và tái hiện chân thực nhịp sống đường phố Việt Nam."*
+Game mô phỏng kinh doanh đường phố Việt Nam: gánh hàng rong, tiệm tạp hóa, xe bánh mì,
+trà đá vỉa hè. Đồ họa 2D hoạt hình, màu rực, nhịp sống đường phố.
 
-### Điểm Khác Biệt Giữa UI Hiện Tại Và UI Hàng Rong Mobile:
-| Tiêu chí | Giao diện Vỉa Hè Online (Cũ) | Giao diện Hàng Rong Mobile (Mới Thiết Kế) |
+Tinh thần đó giữ nguyên. Chỉ có cách thể hiện là đổi: theo bản gốc Zing Me, không theo
+bản mobile remake.
+
+### Khác biệt so với giao diện cũ của Vỉa Hè Online
+
+| Tiêu chí | Giao diện cũ (đã xoá) | Hướng mới (theo bản gốc Zing Me) |
 | :--- | :--- | :--- |
-| **Bản sắc thị giác (Theme)** | Hiện đại, phẳng, tone xanh dương lạnh lẽo | **Mộc mạc, hoài niệm, ấm áp**: Gỗ vintage, giấy kraft, ruy-băng đỏ, cờ nheo, vàng kim loại |
-| **Khung cửa sổ (Window/Panel)** | Khung xanh viền trắng đơn điệu (`#1c5fa8`) | **Bảng nẹp gỗ bo góc**, ốc vít đồng 4 góc, nền giấy da/giấy kraft ngà sạch sẽ |
-| **Nút bấm (Buttons)** | Nút gradient phẳng, viền mỏng | **Nút kẹo ngọt bo tròn 3D (Candy Glossy Buttons)** có highlight bóng kính và bóng đổ dày đàn hồi |
-| **Thanh trạng thái (Top HUD)** | Các ô chữ nhật xám đen (`rgba(30,20,10,.62)`) | **Cụm huy hiệu viên thuốc viền gỗ vàng**, khung avatar tròn mạ vàng, sao cấp độ nảy khối |
-| **Thanh công cụ đáy (Bottom Dock)**| Hàng nút xếp ngang trên vỉa hè | **Bục gỗ vỉa hè nẹp chỉ vàng**, 8 icon comic chibi nổi bật kèm huy hiệu đỏ thông báo |
-| **Trình bày mặt hàng (Item Cards)** | Dòng chữ dài nằm ngang | **Thẻ bài dạng lưới (Grid Cards)**: Hình món ăn to rõ, đầy đủ Vốn - Giá bán - Lãi - Thời gian |
+| **Bản sắc thị giác** | Hiện đại, phẳng, tone xanh dương lạnh | **Cartoon bóng, màu rực**: nền trắng/kem và xanh cyan, viền nâu-đen mảnh ~2–3px trên mọi thứ |
+| **Khung cửa sổ** | Một khung xanh viền trắng dùng chung (`#1c5fa8`) | **Một frame primitive có tham số skin** — hổ phách cho danh sách/log, xanh dương cho form. Mỗi skin: dải màu dày + keyline sáng bên trong + board lõm |
+| **Nút bấm** | Gradient phẳng, viền mỏng, đổi màu lúc nhấn | **Ba state vẽ thật** (`_normal` / `_pressed` / `_disabled`): gờ tối bên dưới tạo độ dày, gloss nửa trên, nhấn thì hạ xuống và mất gloss |
+| **Nút đóng** | Nút chữ ✕ vuông | **Badge tròn** ghim đè lên góc trên-phải khung |
+| **Số hiển thị** | Chữ trắng | **Vàng hổ phách viền tối**; trong câu, số lợi đọc xanh dương, số chi phí đọc đỏ |
+| **Trình bày mặt hàng** | Dòng chữ dài nằm ngang | **Thẻ bài dạng lưới**: hình món to rõ, đủ Vốn – Giá bán – Lãi – Thời gian |
 
 ---
 
-## 2. Hệ Thống Design Tokens & Bảng Màu Chuẩn
+## 2. Design Tokens — xem `theme.js`, đừng chép số ở đây
 
-### 2.1. Bảng màu vật liệu (Material Palette)
-* **Gỗ Nâu Trầm (Wood Frames & Bevels):**
-  - Viền ngoài tối: `#2b1404` / `#341806`
-  - Bề mặt nẹp gỗ: `#542c10` $\rightarrow$ `#73411b` (Độ dốc bóng tự nhiên)
-  - Viền chỉ nẹp đồng: `#f1c40f` (Vàng brass vintage)
-* **Giấy Kraft & Giấy Da Ngà (Parchment Inner Boards):**
-  - Giấy kraft sáng: `#fffdf5`
-  - Giấy da ngà trung tính: `#fdf8e8` $\rightarrow$ `#f5e8cc`
-  - Đường kẻ chỉ carô/sọc mờ: `#ecd9b6`
-* **Ruy-băng Tiêu Đề Đỏ Hội Hè (Festive Header Ribbons):**
-  - Sắc đỏ rực rỡ: `#ff4757` $\rightarrow$ `#ee5253` $\rightarrow$ `#b33939`
-  - Nếp gấp tối 3D: `#871c1c` / `#4d0e0e`
-  - Đường chỉ thêu vàng: `#fed330`
-* **Bộ Nút Bấm Kẹo Ngọt (Candy Glossy Buttons):**
-  - **Cam Bày Bán / Hành Động Chính:** Gradient `#ffa502` $\rightarrow$ `#ff7f50` $\rightarrow$ `#e65100` $\rightarrow$ `#b23b00`
-  - **Xanh Lá Nhập Hàng / Mua Sắm:** Gradient `#7bed9f` $\rightarrow$ `#2ed573` $\rightarrow$ `#1e9e50` $\rightarrow$ `#147539`
-  - **Xanh Lam Tiện Ích / Xã Hội / Chat:** Gradient `#70a1ff` $\rightarrow$ `#1e90ff` $\rightarrow$ `#0960bd` $\rightarrow$ `#064283`
-  - **Đỏ Hủy / Đóng Bảng:** Gradient `#ff6b81` $\rightarrow$ `#ff4757` $\rightarrow$ `#c0392b` $\rightarrow$ `#96281b`
-  - **Xám Vô Hiệu / Khóa:** Gradient `#dcdde1` $\rightarrow$ `#bdc3c7` $\rightarrow$ `#7f8c8d`
+Bảng màu gỗ/kraft/ruy-băng đỏ trong bản đặc tả gốc đã bị gỡ khỏi mục này: nó mô tả bản
+mobile remake, và việc giữ một bảng màu thứ hai trong tài liệu chính là lý do trước đây
+màu bị hardcode ở hai nơi rồi lệch nhau.
 
-### 2.2. Đường viền và hiệu ứng (Strokes & Shadows)
-* **Đường viền Comic chủ đạo (Outline):** Nâu hạt cà phê `#3a2416` (Độ dày 2.5px - 3.5px tùy kích thước).
-* **Bóng đổ 3D đáy nút (Button Base):** Offset `dy = 4px`, màu `#2b1404`.
-* **Bóng đổ khung Panel (Drop Shadow):** Blur `12px`, offset `dy = 8px`, màu `#1e1005` với opacity 45%.
+**Nguồn duy nhất:**
+
+| Việc | Đọc từ |
+| :--- | :--- |
+| Code vẽ sprite (`sprites.js`) | `client/Tools/theme.js` |
+| Code layout (C#) | `client/Assets/Scripts/Theme.cs` |
+| Lý do đằng sau từng lựa chọn | `docs/client/art-direction.md` |
+
+Tóm tắt những gì hai file đó định nghĩa — **không** phải để chép lại, chỉ để định hướng:
+
+* **Viền (`INK`)** — nâu-đen đậm, dùng cho mọi thứ. Độ dày theo `STROKE`: 2 / 3 / 4.5.
+* **Skin cửa sổ (`SKIN`)** — `amber` và `blue`. Mỗi skin có `frameLight` → `frame` →
+  `frameDark`, một `keyline` sáng, và board bên trong kèm đường kẻ.
+* **Board** — kem (`COLOR.cream`) cho skin hổ phách, xanh rất nhạt cho skin xanh.
+* **Nút (`BUTTON`)** — 5 vai: `green`, `blue`, `red`, `gold`, `gray`. Mỗi vai có `top` /
+  `mid` / `low` / `rim`, dựng ra 3 state vẽ thật.
+* **Chữ hiển thị** — `COLOR.gold` viền tối. Trong câu: `figureGain` xanh dương cho khoản
+  lợi, `figureCost` đỏ cho chi phí.
+* **`RADIUS`, `BORDER`, `SIZE`, `SPACE`, `TYPE`, `SHADOW`** — bán kính bo, bảng border
+  9-slice, kích thước frame sprite, thang khoảng cách, thang cỡ chữ, bóng đổ.
+
+Bản gốc dùng **6 skin cửa sổ** (hổ phách, xanh dương, giấy cuộn, gỗ, overlay, novelty).
+Mới dựng 2 skin đầu — xem `docs/client/art-direction.md` để biết 4 cái còn lại trông
+thế nào khi cần tới.
 
 ---
 
 ## 3. Kiến Trúc Chi Tiết Các Cụm Giao Diện
+
+> **Đọc mục này như đề xuất bố cục, không phải quan sát từ bản gốc.** Toạ độ, kích thước
+> và cách chia cụm vẫn dùng được. Nhưng mọi mô tả vật liệu (nẹp gỗ, ốc vít đồng, giấy
+> kraft, ruy-băng đỏ, ống thủy tinh) thì thay bằng skin trong `theme.js`.
+>
+> Ba chỗ mâu thuẫn trực tiếp với bản gốc, sửa khi dựng:
+> * **Tiêu đề** không phải ruy-băng đỏ có đuôi cá — bản gốc dùng một tấm plate sẫm
+>   (`title_plate`) với chữ vàng viền tối, nằm vắt ngang dải trên của khung.
+> * **Nút đóng** không phải đỏ viền trắng — bản gốc là **badge tròn xanh dương** ghim đè
+>   góc trên-phải (`btn_close`).
+> * **Cụm HUD** không phải viên thuốc nẹp gỗ — bản gốc là huy hiệu trắng viền tối, số
+>   vàng viền tối, thanh EXP dạng capsule mảnh.
 
 ### 3.1. Top HUD (Thanh Trạng Thái Đỉnh)
 Khung canvas tham chiếu chuẩn `1280 x 720 px`:
@@ -114,33 +150,55 @@ Kích thước `840 x 90 px`, bo góc `20px`, nằm ở góc dưới bên trái 
 
 ---
 
-## 4. Các Tệp Triển Khai Được Tạo Mới
+## 4. Tham Chiếu Thị Giác & Mockup
 
-1. **Tệp Vector Mockup Đầy Đủ 1280x720:**  
-   `client/Tools/concept/ui-hang-rong-mockup.svg`  
-   Tái hiện trọn vẹn 100% màn hình game: Phố xá Hà Nội/Sài Gòn, sạp hàng bánh mì của Bác Ba, dù che vỉa hè, bàn ghế nhựa con, khách đòi ăn, tiền bay `+15.000đ`, toàn bộ Top HUD, Bottom Dock, và Cửa sổ popup Nhập hàng.
-2. **Trang Viewer Tương Tác Trực Quan:**  
-   `client/Tools/concept/ui-hang-rong-viewer.html`  
-   Cho phép mở trình duyệt để:
-   - Chuyển đổi các chế độ xem: Toàn cảnh / Chỉ màn hình phố / Chỉ Modal / Chỉ HUD & Dock.
-   - Thu phóng 100% (1280x720), 125%, 150%.
-   - Bấm thử nghiệm trực tiếp 4 loại nút bấm kẹo ngọt (Candy Buttons) với âm thanh tương tác.
-   - Bảng tra cứu Color Swatches.
+> Hai file mockup theo theme gỗ/kraft cũ (`ui-hang-rong-mockup.svg` và `ui-hang-rong-viewer.html`)
+> đã được gỡ bỏ khỏi dự án để tránh nhầm lẫn với kế hoạch Remaster Hàng Rong Zing Me chính thức.
+> 
+> Ảnh tham chiếu thật của bản gốc Zing Me nằm ở `client/Tools/street_source_2.png` và
+> `client/Tools/ui_ref/` (được cắt bằng `python client/Tools/cut_ui.py`).
+> Đặc tả chuẩn được lưu tại `docs/client/art-direction.md`.
 
 ---
 
-## 5. Kế Hoạch Đưa Vào Mã Nguồn Game (Unity & Sprites)
+## 5. Trạng Thái Triển Khai
 
-Khi người dùng duyệt bản thiết kế này, các bước kỹ thuật tiếp theo sẽ bao gồm:
-1. **Cập nhật `client/Tools/sprites.js`**:
-   - `ui_panel`: Vẽ lại bằng Canvas 2D theo dạng bảng nẹp gỗ vintage viền vàng + nền giấy kraft ngà (9-slice `[32, 32, 32, 32]`).
-   - `ui_ribbon`: Vẽ lại ruy-băng đỏ nếp gấp 3D với viền chỉ vàng chanh.
-   - `ui_button_*`: Nâng cấp gradient lên chuẩn Candy Glossy (thêm vệt highlight trắng và đường bóng đáy đậm).
-   - `ui_avatar_frame`: Viền gỗ mạ vàng đính ốc vít.
-   - `ui_bar` & `ui_bar_fill`: Ống thủy tinh phản quang đo EXP tím lavender và Thể lực vàng.
-   - Thêm các icon mới cho Bottom Dock (`icon_truck`, `icon_crate`, `icon_neighbor_badge`).
-2. **Cập nhật `client/Assets/Scripts/UIBuilder.cs`**:
-   - Thêm màu sắc text mới: `TextTitleRed`, `TextWood`, `TextGold`.
-   - Bổ sung hàm tạo `ItemCard` lưới 2 cột cho các cửa sổ Kê bàn, Nhập hàng, Trồng trọt.
-3. **Cập nhật `client/Assets/Scripts/Game.cs`**:
-   - Áp dụng bố cục Top HUD viên thuốc gỗ và Bottom Dock bục gỗ.
+Kế hoạch triển khai cũ ở mục này đã lỗi thời: nó bảo sửa `ui_panel`, `ui_ribbon`,
+`ui_button_*`, `UIBuilder.cs` và `Game.cs` — **tất cả đều đã bị xoá** trong đợt làm lại
+client (xem `docs/client-remaster-plan.md`). Thay bằng trạng thái thật:
+
+### Đã có
+
+| Thành phần | Nơi |
+| :--- | :--- |
+| Design tokens | `client/Tools/theme.js`, `client/Assets/Scripts/Theme.cs` |
+| Frame primitive có tham số skin | `client/Tools/sprites.js`, hàm `windowFrame()` |
+| 25 sprite UI đã export | `client/Assets/Resources/Sprites/` + `sprites.txt` |
+
+25 sprite gồm: `panel_amber`, `panel_blue`, `board_cream`, `board_blue`, `row_card`,
+`slot_item`, `btn_{green,blue,red,gold,gray}_{normal,pressed,disabled}`, `btn_close`,
+`progress_track`, `progress_fill`, `title_plate`.
+
+Tra tên sprite qua `Theme.PanelSprite()`, `Theme.BoardSprite()`, `Theme.ButtonSprite()` —
+đừng viết chuỗi tên thẳng trong code layout.
+
+### Chưa có
+
+1. **Widget kit** dựng trên `Theme.cs`: `Screen`, `Modal`, `ListView` (phải pool row —
+   bản cũ dựng lại toàn bộ row mỗi lần mở, gây GC spike trên Android tầm trung), `Card`,
+   `StatChip`, `IconButton`, `Toast`, `Confirm`, `EmptyState`.
+2. **Icon** — cần ~40 cái, hiện chưa vẽ cái nào. Danh mục trong `docs/client/art-direction.md`.
+3. **Item card** theo §3.2 — vẫn là ý tưởng tốt, dựng bằng `row_card` + `slot_item`.
+4. **Top HUD và Bottom Dock** theo §3.1 và §3.3.
+5. **Scene** (Wave 2) — `smoke-test-game` không pass được cho tới khi có.
+
+### Quy ước phải giữ
+
+* Chữ người chơi đọc giữ tiếng Việt; mọi định danh, tên file, tên sprite bằng tiếng Anh
+  (`CLAUDE.md`).
+* Mỗi nút / icon / nhân vật / đồ vật là **một sprite riêng**, bố cục ghép bằng code.
+  Không bao giờ vẽ nguyên một màn hình thành một ảnh.
+* Lấy từ ảnh tham chiếu là **ngôn ngữ thị giác** — palette, độ dày viền, giải phẫu panel,
+  tỉ lệ. Đồ nội thất giao diện dựng thẳng theo ngôn ngữ đó; còn nhân vật, linh vật, biển
+  hiệu, logo thì **thiết kế mới**, không chép lại từ bản gốc.
+* Sau khi sửa `sprites.js`: chạy `node client/Tools/export-runner.mjs`.

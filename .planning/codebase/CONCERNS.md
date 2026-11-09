@@ -152,7 +152,7 @@ the room as a parameter, leaving the simulation loop in `StreetRoom.ts`.
 
 ### An orphan `node_modules/` sits at the repo root with no `package.json`
 
-`node_modules/` is present at `C:\sources\xom-tro-sinh-vien\node_modules` but there is **no
+`node_modules/` is present at `C:\sources\via-he\node_modules` but there is **no
 root `package.json`**. The only manifest is `server/package.json`.
 
 It is **not** committed: `.gitignore:1` has `node_modules/` and `git ls-files | grep -c node_modules`

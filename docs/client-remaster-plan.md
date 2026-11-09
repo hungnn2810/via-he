@@ -26,18 +26,30 @@ Claude did Step 0 through the start of Wave 1 and handed the client rewrite to A
 - Wave 1 foundation: `client/Tools/theme.js` + `client/Assets/Scripts/Theme.cs`, the window
   frame primitive with a skin parameter in `sprites.js`, and 25 exported UI sprites
 
-**Read these first:** `docs/client/art-direction.md`, then `docs/client/screens.md` for the
-238 Vietnamese strings that must come across verbatim, then `docs/client/world.md` before any
-scene work.
+**Read these first:** `docs/client/art-direction.md` — both the visual sections and the
+**Information architecture** section, which is binding and supersedes the HUD layout recorded
+in `screens.md`. Then `docs/client/screens.md` for the 238 Vietnamese strings that must come
+across verbatim, then `docs/client/world.md` before any scene work.
 
-**Two things to know before editing:**
+**On `screens.md` and the IA:** that file is a record of the *deleted* client, kept for its
+player-facing strings and its message contracts. Its navigation — eight feature buttons along
+the bottom — is not the target. The first rebuilt HUD reproduced it; the Information
+architecture section says what replaces it.
 
-1. `client/Tools/concept/UI_HANG_RONG_SPEC.md` is **superseded for visual style**. It was
-   written from an article about the mobile remake and specifies a vintage wood-and-kraft
-   theme; the original is bright glossy cartoon with six distinct window skins. Its token
-   structure is still a fine skeleton. `docs/client/art-direction.md` is now the reference.
-2. `client/Tools/export-runner.mjs` was fixed to run on Node 16 and to find Edge or Chrome
-   automatically; `node client/Tools/export-runner.mjs` exports the whole sprite set.
+**Two earlier hazards, both now closed out in the files themselves rather than left as
+warnings here:**
+
+1. `client/Tools/concept/UI_HANG_RONG_SPEC.md` has been corrected in place. It carries a
+   status banner saying its visual style is superseded, its duplicate colour table is gone
+   and replaced by a pointer to `theme.js`, its three direct conflicts with the original
+   (red ribbon title, red close button, wooden HUD pills) are called out where they appear,
+   and its implementation plan now describes what exists instead of naming deleted files.
+   Its layout proposals and coordinates remain useful.
+2. The Node requirement is now declared, not folklore: `server/package.json` has
+   `"engines": { "node": ">=22" }` (the server needs `node:sqlite`) and the repo root has an
+   `.nvmrc` pinning 22. `client/Tools/export-runner.mjs` runs on Node 16 and up and finds
+   Chrome or Edge by itself, so `node client/Tools/export-runner.mjs` exports the sprite set
+   on a plain checkout.
 
 **Next, in order:** the widget kit on top of `Theme.cs` (Screen, Modal, ListView with pooled
 rows, Card, StatChip, IconButton, Toast, Confirm), then Wave 2, the street renderer, which is

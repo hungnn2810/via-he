@@ -173,6 +173,102 @@ That gives the kit its real shape: one frame primitive with a skin parameter, no
 window widgets. Pick two skins to build first — amber for lists and blue for forms — since
 between them they cover most of the 41 screens.
 
+## Information architecture
+
+Decided 2026-11-09. Binding, not advisory — the sections above describe how things look, this
+one describes where things live.
+
+The first rebuilt HUD kept the old Vỉa Hè Online layout and reskinned it: eight labelled
+buttons along the bottom (`Dọn hàng`, `Nhân viên`, `Tủ đồ`, `Cửa hàng`, `Nhật ký`, `Xe buýt`,
+`Về nhà`, `Thêm`), the same set recorded in `docs/client/screens.md` for the deleted client.
+The original organises the screen on a different principle, and that principle is what the
+remaster adopts.
+
+**The principle: the scene is the verb, the dock is the place, the cluster is the feature.**
+
+| Zone | Holds | Why |
+| --- | --- | --- |
+| The scene itself | Every core-loop action: tap an empty slot to open a stall, tap a lot to plant or build, tap a customer to invite, tap your own stall to close it | These already exist as `OnEmptySlotTapped`, `OnLotTapped`, `OnOwnStallTapped`, `OnObjectAction` in the street renderer. A bar button that opens the same window is a second route to the same thing |
+| Bottom dock | Where you are and where you can go: district tabs, home, bus, chat | Spatial navigation only |
+| Top-right cluster | Feature entry points, each able to carry a notification count | One place that scales as features land |
+| Top-left block | Who you are and what you hold: level, name, money, resources | Read-only status |
+
+### Top-left: the player block
+
+Level badge, then name, then money, then the resource rows. Flat and scannable, not a single
+composite widget. Sprites: the level badge, `progress_track` + `progress_fill` for XP,
+`chip_navy` for each resource row.
+
+Shows: level and XP, player name, money, and one row each for the resources the economy
+actually tracks — stock against `storeCapacity`, and fame. Nothing that needs a request to
+display.
+
+### Top-right: the feature cluster
+
+A row of icon buttons, each a square icon with an optional red count badge
+(`badge_red`), and a countdown pill beside them for the running season or event.
+
+Seven entries, chosen so that the cluster covers the features the server already supports but
+the old client never exposed (see "What the original HUD says about gameplay" above):
+
+| Icon | Opens | Server side | Badge means |
+| --- | --- | --- | --- |
+| `map` | Bản đồ khu phố | `buyDistrict` | a district is newly affordable |
+| `market` | Chợ sỉ | `marketPrices`, `marketBuy`, `marketCredit` — **never exposed** | credit available to spend |
+| `neighbours` | Hàng xóm | `finishQuest`, `neighbourGift` | quests whose items you already hold |
+| `orders` | Đơn giao | `sendDelivery`, `collectDeliveries` | deliveries finished and unclaimed |
+| `season` | Mùa giải | `season`, `claimSeasonGoal`, `claimSeasonTier` — **never exposed** | rewards claimable |
+| `fortune` | Xem bói | `drawFortune`, `shareFortune` — **never exposed** | today's draw unused |
+| `activities` | Hoạt động xóm phố | `shuttleStart`, `caroStart`, `startWedding`, `vote` | an activity is running |
+
+Everything else — wardrobe, clothes shop, staff, barber, decorations, daily tasks, warehouse,
+profession, vehicles, leaderboard, café — goes in the `Thêm` overflow, opened from the dock.
+Promote an entry out of the overflow only when it earns a badge of its own.
+
+### Bottom dock
+
+A navy bar (`bar_navy`) spanning the width, holding, left to right:
+
+1. `home` — back to your own street
+2. The district tab strip: one tab per district in `DISTRICTS` — four today, `Bãi đất`,
+   `Ven sông`, `Gần chợ`, `Phố cổ`, unlocking at levels 1, 5, 10 and 15. `tab_on` for the one
+   you are in, `tab_off` for the others, `icon_lock` over any district you have not bought.
+   Tapping a locked tab opens the map window rather than failing silently.
+3. `bus` — the street list, for visiting another player's street inside the current district
+4. `more` — the overflow menu
+5. The chat field and its send button
+
+The tab strip is the dock's reason to exist. It is the one control that tells a player the
+world is bigger than the screen they are on.
+
+### What this needs from the server
+
+Per `CLAUDE.md`, a badge that has no data behind it gets added on the server, not invented on
+the client. Three of the seven can be computed from state the client already holds
+(`neighbours`, `orders`, `map`). The rest need something new:
+
+- **`market`** — whether any wholesale credit is unspent. `marketCredit` exists as a message
+  but nothing reports the balance passively.
+- **`season`** — whether a goal or tier is claimable. `season` is a request today; the badge
+  needs either a pushed field on the profile or a cheap count.
+- **`fortune`** — whether today's draw is still unused. No field exists.
+- **District occupancy under each tab** needs nothing new. `StreetSummary` from
+  `/api/streets` already carries `district`, `playerCount` and `stallCount`, so the client
+  rolls the counts up itself. Refresh it on the same cadence as the bus window, not per frame.
+
+Define these on the server first, then build the badges on top. Until they exist, the icons
+ship without badges rather than with made-up ones.
+
+### Migration from the current HUD
+
+- `Hud.BuildBottomBar` loses its eight feature buttons and becomes the dock described above.
+- `Hud.BuildTopBar` gains the cluster on the right.
+- `tab_on`, `tab_off`, `badge_red`, `badge_green`, `badge_blue` and `bar_navy` are already
+  drawn and currently unused by any screen — this is what they were for.
+- The icons listed in the cluster table are not drawn yet. Draw them per the art rules: each
+  one on its own, in the style of the reference, as an original design rather than a copy of
+  the original game's artwork.
+
 ## Reference still missing
 
 The recording closed the earlier gaps — frame, title, close button, list rows, item cells,
