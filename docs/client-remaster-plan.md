@@ -11,6 +11,42 @@ presentation layer was deleted — 9 C# files (2735 lines), all 188 sprites, 3 m
 drawing bodies of `client/Tools/sprites.js` (817 → 62 lines). 400 deletions, not yet committed.
 The client does not build or run until Wave 3. Waves 1-6 below are still to do.
 
+## 0. Where it stands — handoff, 2026-11-09
+
+Claude did Step 0 through the start of Wave 1 and handed the client rewrite to Antigravity.
+
+**Done and committed:**
+
+- Step 0 specs: `docs/client/{protocol,screens,world,sprite-names}.md`, plus
+  `tools/dump-protocol.mjs` to regenerate the protocol table from the server
+- `.planning/codebase/` — seven documents from the GSD codebase map
+- The delete (Route 1): 9 C# files, 188 sprites, 3 manifests
+- `docs/client/art-direction.md` — the visual language, taken from the original Zing Me
+  client, and `client/Tools/cut_ui.py` to cut reference frames into components
+- Wave 1 foundation: `client/Tools/theme.js` + `client/Assets/Scripts/Theme.cs`, the window
+  frame primitive with a skin parameter in `sprites.js`, and 25 exported UI sprites
+
+**Read these first:** `docs/client/art-direction.md`, then `docs/client/screens.md` for the
+238 Vietnamese strings that must come across verbatim, then `docs/client/world.md` before any
+scene work.
+
+**Two things to know before editing:**
+
+1. `client/Tools/concept/UI_HANG_RONG_SPEC.md` is **superseded for visual style**. It was
+   written from an article about the mobile remake and specifies a vintage wood-and-kraft
+   theme; the original is bright glossy cartoon with six distinct window skins. Its token
+   structure is still a fine skeleton. `docs/client/art-direction.md` is now the reference.
+2. `client/Tools/export-runner.mjs` was fixed to run on Node 16 and to find Edge or Chrome
+   automatically; `node client/Tools/export-runner.mjs` exports the whole sprite set.
+
+**Next, in order:** the widget kit on top of `Theme.cs` (Screen, Modal, ListView with pooled
+rows, Card, StatChip, IconButton, Toast, Confirm), then Wave 2, the street renderer, which is
+what `smoke-test-game` needs before anything can run again.
+
+**Not verified:** nothing has been opened in Unity since the delete. The 9-slice borders and
+`Theme.PixelsPerUnitMultiplier` are calculated, not seen. `SpriteLibrary` still logs a missing
+`street_sprites.txt` until the scene art returns.
+
 ## 1. What actually survives
 
 Client code is 3590 lines across 18 files. Removing all three layers leaves this:

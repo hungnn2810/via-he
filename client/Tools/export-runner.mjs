@@ -1,9 +1,11 @@
 import { spawn } from 'node:child_process';
 import http from 'node:http';
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const DIR = import.meta.dirname;
+// import.meta.dirname needs Node 20.11+; this works from Node 16 up.
+const DIR = import.meta.dirname ?? path.dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = path.join(DIR, '..', 'Assets', 'Resources', 'Sprites');
 
 const server = http.createServer((req, res) => {
@@ -37,10 +39,31 @@ const server = http.createServer((req, res) => {
   } catch { res.statusCode = 404; res.end(); }
 });
 
+// Any Chromium will do. Set CHROME_PATH to override.
+function findBrowser() {
+  const candidates = [
+    process.env.CHROME_PATH,
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+    `${process.env.LOCALAPPDATA}\\Google\\Chrome\\Application\\chrome.exe`,
+    'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+    '/usr/bin/google-chrome',
+    '/usr/bin/chromium',
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  ].filter(Boolean);
+  return candidates.find((p) => existsSync(p));
+}
+
 let chrome;
 server.listen(5181, '127.0.0.1', () => {
-  console.log('Export server listening on 5181. Launching Chrome headless...');
-  const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+  const chromePath = findBrowser();
+  if (!chromePath) {
+    console.error('No Chromium browser found. Install Chrome or set CHROME_PATH.');
+    server.close();
+    process.exit(1);
+  }
+  console.log(`Export server listening on 5181. Launching headless ${path.basename(chromePath)}...`);
   chrome = spawn(chromePath, [
     '--headless=new',
     '--disable-gpu',
