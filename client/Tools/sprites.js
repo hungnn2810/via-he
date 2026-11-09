@@ -546,6 +546,309 @@ icon('store', (g) => {
   shine(g, 'M20 23H76');
 });
 
+icon('map', (g) => {
+  // Folded paper map with 3 panels
+  poly(g, [[14, 26], [38, 18], [60, 26], [82, 18], [82, 70], [60, 78], [38, 70], [14, 78]]);
+  fill(g, gradient(g, 14, 18, 82, 78, [[0, '#fff4db'], [0.5, '#fae5be'], [1, '#eed3a2']]), STROKE.thick);
+  stroke(g, 'M38 18V70M60 26V78', 'rgba(43,29,18,0.25)', 3);
+  stroke(g, 'M22 62Q34 40 48 48T74 34', '#e67e22', 4);
+  const pin = 'M48 20C41 20 36 25 36 32C36 41 48 56 48 56C48 56 60 41 60 32C60 25 55 20 48 20Z';
+  const p = new Path2D(pin);
+  g.fillStyle = gradient(g, 36, 20, 60, 56, [[0, '#ff7675'], [1, '#d63031']]);
+  g.fill(p);
+  g.lineWidth = 2.5; g.strokeStyle = INK; g.stroke(p);
+  dot(g, 48, 32, 4, '#ffffff', 0);
+});
+
+icon('market', (g) => {
+  // Green wholesale shopping basket / crate with fresh fruit
+  roundRect(g, 16, 36, 64, 46, 8);
+  fill(g, gradient(g, 0, 36, 0, 82, [[0, '#2ecc71'], [0.6, '#27ae60'], [1, '#1b7a37']]), STROKE.thick);
+  g.beginPath(); g.arc(48, 36, 22, Math.PI, 0);
+  g.lineWidth = STROKE.thick; g.strokeStyle = INK; g.stroke();
+  g.beginPath(); g.arc(48, 36, 22, Math.PI, 0);
+  g.lineWidth = 4; g.strokeStyle = '#f1c40f'; g.stroke();
+  ellipse(g, 38, 32, 12, 12); fill(g, '#ff7675', STROKE.base);
+  ellipse(g, 58, 34, 11, 11); fill(g, '#f39c12', STROKE.base);
+  stroke(g, 'M22 50H74M22 64H74', INK, 2.5);
+  roundRect(g, 32, 54, 32, 16, 4);
+  fill(g, '#ffffff', 2);
+  drawText(g, 'SỈ', 48, 62, 12, '#27ae60', null);
+});
+
+icon('neighbours', (g) => {
+  // Two small friendly houses side by side with a heart
+  poly(g, [[14, 44], [34, 24], [54, 44]]);
+  fill(g, gradient(g, 0, 24, 0, 44, [[0, '#74b9ff'], [1, '#0984e3']]), STROKE.thick);
+  roundRect(g, 20, 44, 28, 38, 4);
+  fill(g, '#fff4e6', STROKE.thick);
+  roundRect(g, 28, 56, 12, 26, 3);
+  fill(g, '#e17055', STROKE.base);
+  poly(g, [[42, 38], [66, 16], [90, 38]]);
+  fill(g, gradient(g, 0, 16, 0, 38, [[0, '#ff7675'], [1, '#d63031']]), STROKE.thick);
+  roundRect(g, 48, 38, 36, 44, 4);
+  fill(g, '#ffeaa7', STROKE.thick);
+  roundRect(g, 60, 52, 14, 30, 3);
+  fill(g, '#0984e3', STROKE.base);
+  const heart = 'M48 24C46 20 42 18 39 20C35 22 36 26 40 30L48 37L56 30C60 26 61 22 57 20C54 18 50 20 48 24Z';
+  const hp = new Path2D(heart);
+  g.fillStyle = '#ff4757'; g.fill(hp);
+  g.lineWidth = 2; g.strokeStyle = INK; g.stroke(hp);
+});
+
+icon('orders', (g) => {
+  // Cardboard parcel box with packing tape & shipping label
+  poly(g, [[48, 14], [82, 32], [48, 50], [14, 32]]);
+  fill(g, gradient(g, 0, 14, 0, 50, [[0, '#ffeaa7'], [1, '#fdcb6e']]), STROKE.thick);
+  poly(g, [[14, 32], [48, 50], [48, 84], [14, 66]]);
+  fill(g, gradient(g, 0, 32, 0, 84, [[0, '#f0a91e'], [1, '#d89216']]), STROKE.thick);
+  poly(g, [[82, 32], [48, 50], [48, 84], [82, 66]]);
+  fill(g, gradient(g, 0, 32, 0, 84, [[0, '#d89216'], [1, '#b57608']]), STROKE.thick);
+  poly(g, [[42, 18], [54, 24], [54, 53], [42, 47]]);
+  fill(g, 'rgba(255,255,255,0.6)', 0);
+  roundRect(g, 54, 48, 20, 16, 2);
+  fill(g, '#ffffff', 1.5);
+  stroke(g, 'M58 53H70M58 58H66', INK, 1.5);
+  stroke(g, 'M10 20L20 20M6 26L16 26', '#e67e22', 3);
+});
+
+icon('season', (g) => {
+  // Golden championship trophy cup
+  roundRect(g, 26, 70, 44, 16, 4);
+  fill(g, gradient(g, 0, 70, 0, 86, [[0, '#2d4570'], [1, '#111c31']]), STROKE.thick);
+  roundRect(g, 42, 54, 12, 18, 2);
+  fill(g, '#f4ad22', STROKE.thick);
+  stroke(g, 'M24 24C12 24 12 44 24 48M72 24C84 24 84 44 72 48', INK, 8);
+  stroke(g, 'M24 24C12 24 12 44 24 48M72 24C84 24 84 44 72 48', '#ffcc3d', 4.5);
+  poly(g, [[22, 18], [74, 18], [66, 46], [48, 56], [30, 46]]);
+  fill(g, gradient(g, 0, 18, 0, 56, [[0, '#fff2a8'], [0.5, '#f4ad22'], [1, '#c97d0a']]), STROKE.thick);
+  star(g, 48, 34, 10, 4.5);
+  fill(g, '#ffffff', 1.5);
+  gloss(g, 26, 20, 44, 16, 6, 0.45);
+});
+
+icon('fortune', (g) => {
+  // Divination bamboo tube with fortune sticks (ống quẻ xăm)
+  stroke(g, 'M34 34L26 12M44 32L44 8M54 32L62 10M62 36L74 16', INK, 6);
+  stroke(g, 'M34 34L26 12M44 32L44 8M54 32L62 10M62 36L74 16', '#ffeaa7', 3.5);
+  dot(g, 26, 12, 3, '#d63031', 0);
+  dot(g, 44, 8, 3, '#d63031', 0);
+  dot(g, 62, 10, 3, '#d63031', 0);
+  dot(g, 74, 16, 3, '#d63031', 0);
+  roundRect(g, 28, 30, 40, 56, 8);
+  fill(g, gradient(g, 0, 30, 0, 86, [[0, '#d35400'], [0.5, '#e67e22'], [1, '#a04000']]), STROKE.thick);
+  stroke(g, 'M28 42H68M28 74H68', '#f1c40f', 4);
+  poly(g, [[48, 48], [58, 58], [48, 68], [38, 58]]);
+  fill(g, '#d63031', STROKE.base);
+  dot(g, 48, 58, 3.5, '#f1c40f', 0);
+});
+
+icon('activities', (g) => {
+  // Vietnamese feathered shuttlecock (quả cầu đá)
+  poly(g, [[48, 36], [28, 8], [38, 32]]);
+  fill(g, gradient(g, 0, 8, 0, 36, [[0, '#ff7675'], [1, '#d63031']]), STROKE.base);
+  poly(g, [[44, 34], [48, 6], [52, 34]]);
+  fill(g, gradient(g, 0, 6, 0, 34, [[0, '#ffeaa7'], [1, '#fdcb6e']]), STROKE.base);
+  poly(g, [[48, 36], [68, 8], [58, 32]]);
+  fill(g, gradient(g, 0, 8, 0, 36, [[0, '#74b9ff'], [1, '#0984e3']]), STROKE.base);
+  roundRect(g, 42, 36, 12, 16, 3);
+  fill(g, '#ffffff', STROKE.base);
+  ellipse(g, 48, 58, 22, 9);
+  fill(g, '#fdcb6e', STROKE.base);
+  ellipse(g, 48, 68, 24, 10);
+  fill(g, gradient(g, 0, 62, 0, 78, [[0, '#ff7675'], [1, '#c0392b']]), STROKE.thick);
+  ellipse(g, 48, 78, 22, 9);
+  fill(g, '#2d3436', STROKE.thick);
+});
+
+icon('cafe', (g) => {
+  // Vietnamese coffee phin over glass of iced milk coffee
+  poly(g, [[26, 42], [70, 42], [64, 84], [32, 84]]);
+  fill(g, gradient(g, 0, 42, 0, 84, [[0, '#593a20'], [0.65, '#7b5333'], [0.75, '#fff6e2'], [1, '#fde6b8']]), STROKE.thick);
+  roundRect(g, 34, 48, 12, 12, 2); fill(g, 'rgba(255,255,255,0.4)', 1.5, '#ffffff');
+  roundRect(g, 50, 52, 11, 11, 2); fill(g, 'rgba(255,255,255,0.4)', 1.5, '#ffffff');
+  roundRect(g, 18, 38, 60, 8, 3);
+  fill(g, gradient(g, 0, 38, 0, 46, [[0, '#eef2f5'], [1, '#8d99a4']]), STROKE.thick);
+  roundRect(g, 28, 18, 40, 22, 4);
+  fill(g, gradient(g, 0, 18, 0, 40, [[0, '#c3ccd3'], [1, '#7f8c8d']]), STROKE.thick);
+  roundRect(g, 26, 14, 44, 6, 2);
+  fill(g, '#eef2f5', STROKE.base);
+  dot(g, 48, 12, 3, '#7f8c8d', STROKE.thin);
+});
+
+icon('barber', (g) => {
+  // Crossed barber scissors & comb
+  poly(g, [[22, 74], [48, 48], [72, 18], [66, 16], [44, 44], [18, 70]]);
+  fill(g, '#dff9fb', STROKE.base);
+  poly(g, [[74, 74], [48, 48], [24, 18], [30, 16], [52, 44], [78, 70]]);
+  fill(g, '#c7ecee', STROKE.base);
+  ellipse(g, 22, 74, 10, 10);
+  fill(g, '#74b9ff', STROKE.thick);
+  ellipse(g, 22, 74, 5, 5); fill(g, '#ffffff', 0);
+  ellipse(g, 74, 74, 10, 10);
+  fill(g, '#ff7675', STROKE.thick);
+  ellipse(g, 74, 74, 5, 5); fill(g, '#ffffff', 0);
+  dot(g, 48, 48, 4, '#f1c40f', STROKE.thin);
+});
+
+icon('crop', (g) => {
+  // Sprouting green seedling from rich soil
+  ellipse(g, 48, 74, 34, 14);
+  fill(g, gradient(g, 0, 60, 0, 88, [[0, '#795548'], [1, '#4e342e']]), STROKE.thick);
+  stroke(g, 'M48 72Q48 50 48 40', '#27ae60', 6);
+  poly(g, [[48, 44], [22, 38], [18, 22], [36, 24], [48, 44]]);
+  fill(g, gradient(g, 18, 22, 48, 44, [[0, '#a8e063'], [1, '#56ab2f']]), STROKE.thick);
+  poly(g, [[48, 40], [68, 30], [78, 14], [76, 32], [48, 40]]);
+  fill(g, gradient(g, 48, 14, 78, 40, [[0, '#a8e063'], [1, '#2ecc71']]), STROKE.thick);
+  dot(g, 30, 26, 2.5, '#ffffff', 0);
+});
+
+icon('kitchen', (g) => {
+  // Sizzling cooking pot / wok with flame
+  poly(g, [[32, 80], [40, 70], [48, 84], [56, 70], [64, 80]]);
+  fill(g, gradient(g, 0, 70, 0, 84, [[0, '#f1c40f'], [1, '#e74c3c']]), STROKE.base);
+  poly(g, [[16, 42], [80, 42], [70, 72], [26, 72]]);
+  fill(g, gradient(g, 0, 42, 0, 72, [[0, '#636e72'], [1, '#2d3436']]), STROKE.thick);
+  stroke(g, 'M16 48C8 48 8 58 16 58M80 48C88 48 88 58 80 58', INK, 5);
+  ellipse(g, 48, 44, 28, 8);
+  fill(g, gradient(g, 0, 36, 0, 52, [[0, '#f39c12'], [1, '#d35400']]), STROKE.base);
+  stroke(g, 'M36 34Q32 24 38 16M48 32Q52 22 46 14M60 34Q64 24 58 16', '#b2bec3', 3.5);
+});
+
+icon('decoration', (g) => {
+  // Traditional Vietnamese red lantern with gold tassels
+  stroke(g, 'M48 10V18', INK, 3);
+  roundRect(g, 36, 18, 24, 6, 2);
+  fill(g, '#f1c40f', STROKE.base);
+  ellipse(g, 48, 46, 28, 24);
+  fill(g, gradient(g, 0, 22, 0, 70, [[0, '#ff7675'], [0.5, '#d63031'], [1, '#961e1e']]), STROKE.thick);
+  ellipse(g, 48, 46, 16, 24);
+  g.lineWidth = 2.5; g.strokeStyle = '#f1c40f'; g.stroke();
+  stroke(g, 'M48 22V70', '#f1c40f', 2.5);
+  roundRect(g, 36, 68, 24, 6, 2);
+  fill(g, '#f1c40f', STROKE.base);
+  poly(g, [[44, 74], [40, 90], [48, 86], [56, 90], [52, 74]]);
+  fill(g, '#f1c40f', STROKE.base);
+});
+
+icon('daily', (g) => {
+  // Daily checklist clipboard with green ticks
+  roundRect(g, 18, 14, 60, 72, 8);
+  fill(g, gradient(g, 0, 14, 0, 86, [[0, '#d35400'], [1, '#a04000']]), STROKE.thick);
+  roundRect(g, 24, 22, 48, 58, 4);
+  fill(g, '#fffaf0', STROKE.base);
+  roundRect(g, 36, 10, 24, 10, 3);
+  fill(g, '#bdc3c7', STROKE.base);
+  roundRect(g, 28, 30, 10, 10, 2); fill(g, '#2ecc71', 1.5);
+  stroke(g, 'M30 35L33 38L37 32', '#ffffff', 2);
+  stroke(g, 'M42 35H64', '#7f8c8d', 3);
+  roundRect(g, 28, 46, 10, 10, 2); fill(g, '#2ecc71', 1.5);
+  stroke(g, 'M30 51L33 54L37 48', '#ffffff', 2);
+  stroke(g, 'M42 51H64', '#7f8c8d', 3);
+  roundRect(g, 28, 62, 10, 10, 2); fill(g, '#dfe6e9', 1.5);
+  stroke(g, 'M42 67H58', '#7f8c8d', 3);
+});
+
+icon('profession', (g) => {
+  // Graduation mortarboard cap & diploma scroll
+  poly(g, [[48, 18], [84, 32], [48, 46], [12, 32]]);
+  fill(g, gradient(g, 0, 18, 0, 46, [[0, '#34495e'], [1, '#2c3e50']]), STROKE.thick);
+  poly(g, [[28, 38], [68, 38], [62, 58], [34, 58]]);
+  fill(g, '#1a252f', STROKE.thick);
+  dot(g, 48, 32, 4, '#f1c40f', 0);
+  stroke(g, 'M48 32Q70 38 72 54', '#f1c40f', 3);
+  roundRect(g, 70, 52, 6, 12, 2); fill(g, '#f1c40f', 0);
+  roundRect(g, 22, 66, 52, 18, 5);
+  fill(g, '#fff9e6', STROKE.thick);
+  roundRect(g, 44, 66, 8, 18, 2);
+  fill(g, '#e74c3c', STROKE.base);
+});
+
+icon('vehicle', (g) => {
+  // Front-facing cute Vietnamese motorbike / scooter
+  stroke(g, 'M26 30L34 38M70 30L62 38', INK, 4);
+  ellipse(g, 24, 28, 6, 6); fill(g, '#74b9ff', STROKE.base);
+  ellipse(g, 72, 28, 6, 6); fill(g, '#74b9ff', STROKE.base);
+  roundRect(g, 24, 36, 48, 8, 4);
+  fill(g, '#34495e', STROKE.thick);
+  ellipse(g, 48, 40, 11, 11);
+  fill(g, gradient(g, 0, 29, 0, 51, [[0, '#ffffff'], [1, '#ffeaa7']]), STROKE.thick);
+  roundRect(g, 30, 48, 36, 26, 8);
+  fill(g, gradient(g, 0, 48, 0, 74, [[0, '#2ecc71'], [1, '#27ae60']]), STROKE.thick);
+  roundRect(g, 42, 70, 12, 18, 5);
+  fill(g, '#2d3436', STROKE.thick);
+  roundRect(g, 38, 66, 20, 8, 4);
+  fill(g, '#27ae60', STROKE.base);
+});
+
+icon('quest', (g) => {
+  // Ancient quest parchment scroll with golden '!' badge
+  roundRect(g, 22, 16, 52, 64, 6);
+  fill(g, gradient(g, 0, 16, 0, 80, [[0, '#fff4db'], [1, '#eed3a2']]), STROKE.thick);
+  roundRect(g, 16, 12, 64, 10, 4); fill(g, '#e0a96d', STROKE.base);
+  roundRect(g, 16, 74, 64, 10, 4); fill(g, '#e0a96d', STROKE.base);
+  stroke(g, 'M32 30H64M32 40H64M32 50H54', '#8c7a63', 3);
+  ellipse(g, 62, 60, 15, 15);
+  fill(g, gradient(g, 0, 45, 0, 75, [[0, '#ff7675'], [1, '#d63031']]), STROKE.thick);
+  drawText(g, '!', 62, 60, 18, '#ffffff', null);
+});
+
+icon('mail', (g) => {
+  // Envelope with a letter peeking out
+  roundRect(g, 16, 26, 64, 48, 6);
+  fill(g, gradient(g, 0, 26, 0, 74, [[0, '#ecf0f1'], [1, '#bdc3c7']]), STROKE.thick);
+  roundRect(g, 24, 16, 48, 32, 4);
+  fill(g, '#ffffff', STROKE.base);
+  stroke(g, 'M30 24H58M30 32H50', '#74b9ff', 2.5);
+  poly(g, [[16, 74], [48, 48], [80, 74]]);
+  fill(g, gradient(g, 0, 48, 0, 74, [[0, '#ffffff'], [1, '#ecf0f1']]), STROKE.thick);
+  poly(g, [[16, 28], [48, 54], [80, 28], [80, 74], [16, 74]]);
+  fill(g, gradient(g, 0, 28, 0, 74, [[0, '#ffffff'], [1, '#dfe6e9']]), STROKE.thick);
+  dot(g, 48, 54, 5, '#e74c3c', STROKE.thin);
+});
+
+icon('settings', (g) => {
+  // Mechanical 6-spoke gear
+  const cx = 48, cy = 48, rOut = 38, rIn = 28, teeth = 6;
+  const pts = [];
+  for (let i = 0; i < teeth * 2; i++) {
+    const a0 = (i * Math.PI) / teeth - 0.2;
+    const a1 = (i * Math.PI) / teeth + 0.2;
+    const r = i % 2 === 0 ? rOut : rIn;
+    pts.push([cx + Math.cos(a0) * r, cy + Math.sin(a0) * r]);
+    pts.push([cx + Math.cos(a1) * r, cy + Math.sin(a1) * r]);
+  }
+  poly(g, pts);
+  fill(g, gradient(g, 0, 10, 0, 86, [[0, '#74b9ff'], [0.5, '#2e86de'], [1, '#1b5b9e']]), STROKE.thick);
+  ellipse(g, cx, cy, 14, 14);
+  fill(g, '#ffffff', STROKE.thick);
+  ellipse(g, cx, cy, 7, 7);
+  fill(g, '#1b5b9e', 0);
+});
+
+icon('sound_on', (g) => {
+  // Speaker cone with sound waves
+  poly(g, [[16, 36], [32, 36], [50, 20], [50, 76], [32, 60], [16, 60]]);
+  fill(g, gradient(g, 0, 20, 0, 76, [[0, '#2ecc71'], [1, '#27ae60']]), STROKE.thick);
+  g.beginPath(); g.arc(52, 48, 14, -Math.PI * 0.3, Math.PI * 0.3);
+  g.lineWidth = STROKE.thick; g.strokeStyle = INK; g.stroke();
+  g.beginPath(); g.arc(52, 48, 14, -Math.PI * 0.3, Math.PI * 0.3);
+  g.lineWidth = 3; g.strokeStyle = '#2ecc71'; g.stroke();
+
+  g.beginPath(); g.arc(52, 48, 26, -Math.PI * 0.32, Math.PI * 0.32);
+  g.lineWidth = STROKE.thick; g.strokeStyle = INK; g.stroke();
+  g.beginPath(); g.arc(52, 48, 26, -Math.PI * 0.32, Math.PI * 0.32);
+  g.lineWidth = 3; g.strokeStyle = '#2ecc71'; g.stroke();
+});
+
+icon('sound_off', (g) => {
+  // Speaker cone with red mute cross
+  poly(g, [[16, 36], [32, 36], [50, 20], [50, 76], [32, 60], [16, 60]]);
+  fill(g, gradient(g, 0, 20, 0, 76, [[0, '#b2bec3'], [1, '#636e72']]), STROKE.thick);
+  stroke(g, 'M60 36L82 58M82 36L60 58', INK, 8);
+  stroke(g, 'M60 36L82 58M82 36L60 58', '#e74c3c', 4.5);
+});
+
 // ---------- UI Frame Sprites ----------
 ui('ui_avatar_frame', [108, 108], [0, 0, 0, 0], (g) => {
   // Outer gold rim

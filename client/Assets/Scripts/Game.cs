@@ -262,6 +262,7 @@ namespace ViaHeOnline
             _hud = Hud.Create(UiRoot.Instance.ScreenLayer, _net);
 
             _hud.OnHomeClicked += () => _ = JoinStreet(null);
+            _hud.OnDistrictSelected += (d) => _ = JoinStreet(null, d);
             _hud.OnStallClicked += () => UiToast.Show("Chạm vào ô vỉa hè trống để dọn hàng");
             _hud.OnStaffClicked += () => UiToast.Show("Nhân viên (mở ở cấp 3)");
             _hud.OnWardrobeClicked += () => UiToast.Show("Tủ đồ (mở ở cấp 2)");

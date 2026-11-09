@@ -45,7 +45,7 @@ namespace ViaHeOnline
 
             // Text label
             float leftPadding = iconSize + Theme.Space2;
-            chip.ValueLabel = Ui.Label(go, initialValue, Theme.TextMd, Theme.Gold,
+            chip.ValueLabel = Ui.Label(go, initialValue, Theme.TextSm, Theme.Gold,
                 TextAlignmentOptions.MidlineRight, Ui.Edge.Thick, name: "Value");
             Ui.Stretch(chip.ValueLabel.rectTransform, leftPadding, 0f, rightPadding, 0f);
 

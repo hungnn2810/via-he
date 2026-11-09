@@ -126,7 +126,10 @@ namespace ViaHeOnline
         {
             Coin, Gem, Energy, Fame, LevelStar, Time, Heart, Lock,
             Check, Plus, Minus, ArrowLeft, Close, Warning, Info,
-            Stall, Staff, Wardrobe, Shop, Log, Bus, Home, More, Banana, Store
+            Stall, Staff, Wardrobe, Shop, Log, Bus, Home, More, Banana, Store,
+            Map, Market, Neighbours, Orders, Season, Fortune, Activities,
+            Cafe, Barber, Crop, Kitchen, Decoration, Daily, Profession, Vehicle,
+            Quest, Mail, Settings, SoundOn, SoundOff
         }
 
         public static string IconSprite(Icon icon) => icon switch
@@ -155,6 +158,26 @@ namespace ViaHeOnline
             Icon.More => "icon_more",
             Icon.Banana => "icon_banana",
             Icon.Store => "icon_store",
+            Icon.Map => "icon_map",
+            Icon.Market => "icon_market",
+            Icon.Neighbours => "icon_neighbours",
+            Icon.Orders => "icon_orders",
+            Icon.Season => "icon_season",
+            Icon.Fortune => "icon_fortune",
+            Icon.Activities => "icon_activities",
+            Icon.Cafe => "icon_cafe",
+            Icon.Barber => "icon_barber",
+            Icon.Crop => "icon_crop",
+            Icon.Kitchen => "icon_kitchen",
+            Icon.Decoration => "icon_decoration",
+            Icon.Daily => "icon_daily",
+            Icon.Profession => "icon_profession",
+            Icon.Vehicle => "icon_vehicle",
+            Icon.Quest => "icon_quest",
+            Icon.Mail => "icon_mail",
+            Icon.Settings => "icon_settings",
+            Icon.SoundOn => "icon_sound_on",
+            Icon.SoundOff => "icon_sound_off",
             _ => "icon_info",
         };
 
