@@ -113,6 +113,16 @@ namespace ViaHeOnline
             if (Catalog == null) Catalog = await room.Request<Catalog>("catalog");
         }
 
+        public async Task Leave()
+        {
+            if (Room != null)
+            {
+                var r = Room;
+                Room = null;
+                await r.Leave();
+            }
+        }
+
         public void Send(string type, Dictionary<string, object> payload = null)
         {
             if (Room == null) return;
