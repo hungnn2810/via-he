@@ -1,4 +1,5 @@
-# Cuts the street art out of client/Tools/street_source.jpg and street_source_2.png into PNGs under Assets/Resources/Sprites.
+# Cuts the walking bystanders and passing riders out of client/Tools/street_source.jpg and street_source_2.png into PNGs
+# under Assets/Resources/Sprites. The street backdrop and scenery now come from client/Tools/import_scene.py.
 # Run: python client/Tools/cut_street.py   (needs numpy, pillow, opencv-python-headless)
 # Writes street_sprites.txt and street_wheels.txt next to the PNGs. It is a separate manifest because exportSprites() rewrites sprites.txt.
 # All coordinates are source image pixels; output is upscaled by SCALE so it fits the 200 px = 1 unit sprite set.
@@ -24,30 +25,16 @@ def upscale(img, k=SCALE):
     return cv2.resize(img, None, fx=k, fy=k, interpolation=cv2.INTER_LANCZOS4)
 
 
+# Bikes cut only to build the traffic riders from; they are not exported on their own.
+PARTS = {'bike_sport', 'bike_cub', 'bike_scooter'}
+
+
 def save(name, img, pivot=(0.5, 0)):
     cut[name] = img
+    if name in PARTS:
+        return
     cv2.imwrite(str(OUT_DIR / f'{name}.png'), img)
     manifest.append(f'{name},{pivot[0]},{pivot[1]},0,0,0,0')
-
-
-def inpaint(img, boxes, radius=5):
-    mask = np.zeros(img.shape[:2], np.uint8)
-    for x0, y0, x1, y1 in boxes:
-        mask[y0:y1, x0:x1] = 255
-    return cv2.inpaint(img, mask, radius, cv2.INPAINT_TELEA)
-
-
-def patch(img, box, shift):
-    """Covers `box` with the pixels `shift` rows below it, with a feathered edge.
-    The pavement darkens towards the shops, so each row is matched to a clean strip of the same row."""
-    x0, y0, x1, y1 = box
-    weight = np.zeros(img.shape[:2], np.float32)
-    weight[y0:y1, x0:x1] = 1
-    weight = cv2.GaussianBlur(weight, (0, 0), 3)[..., None]
-    below = np.roll(img, -shift, axis=0).astype(np.float32)
-    gain = img[:, 166:176].mean(axis=(1, 2)) / below[:, 166:176].mean(axis=(1, 2))
-    below *= cv2.GaussianBlur(gain[:, None], (0, 0), 4)[:, :, None]
-    return (img * (1 - weight) + np.clip(below, 0, 255) * weight).astype(np.uint8)
 
 
 def cut_out(name, outline, sure=(), never=(), pivot=(0.5, 0), flip=False):
@@ -104,78 +91,6 @@ def trace(name, outline, holes=(), smooth=0, pivot=(0.5, 0)):
     cut_origin[name] = (x0, y0)
     feet = np.where(alpha > 128)[0].max() + 2   # the pivot is the bottom edge, so nothing may hang below the feet
     save(name, np.dstack([img, alpha])[:feet], pivot)
-
-
-def circle(cx, cy, r):
-    return [(int(cx + r * np.cos(a)), int(cy + r * np.sin(a))) for a in np.linspace(0, 2 * np.pi, 24, endpoint=False)]
-
-
-def wrap_horizontally(img, overlap):
-    """Cross-fades the right end into the left end so the image tiles without a seam."""
-    w = img.shape[1] - overlap
-    out = img[:, :w].astype(np.float32)
-    fade = np.linspace(0, 1, overlap, dtype=np.float32)[None, :, None]
-    out[:, :overlap] = img[:, :overlap] * fade + img[:, w:] * (1 - fade)
-    return out.astype(np.uint8)
-
-
-# ---------- GROUND ----------
-def ground():
-    # The chair and the litter are covered with clean pavement from just below them
-    clean = patch(patch(src, (50, 298, 110, 332), 36), (118, 298, 166, 346), 48)
-    tile = upscale(wrap_horizontally(clean[302:470, 4:176], 16))
-    save('street_sidewalk', cv2.resize(tile, (tile.shape[1], 530), interpolation=cv2.INTER_AREA), (0, 0))
-
-    # One curb slab between two joints, so the ends already line up
-    curb = src[472:494, 7:148]
-    save('street_curb', cv2.resize(curb, (280, 60), interpolation=cv2.INTER_CUBIC), (0, 0))
-
-    # The road tile holds one gap of the yellow line; the seam falls inside a yellow dash
-    road = wrap_horizontally(src[494:601, 345:790], 24)
-    save('street_road', cv2.resize(road, (road.shape[1] * 450 // road.shape[0], 450), interpolation=cv2.INTER_CUBIC), (0, 0))
-
-
-# ---------- SHOPS ----------
-SHOP_BASE = 302   # bottom of the shop step
-FADE_BASE = 325   # the left end keeps the broker and the market sign, whose feet stand on the sidewalk
-FADE_END = 200
-GABLE_AXIS = 271
-
-
-def shop_row():
-    img = src[:, :700].copy()
-
-    # The right end of the motorbike shop is hidden by a speech bubble and the seller. The facade is symmetric
-    # around x = 555, so that part is rebuilt from the left end.
-    mirrored = img[:, ::-1]
-    def mirror(x0, y0, x1, y1):
-        img[y0:y1, x0:x1] = mirrored[y0:y1, 699 - (1110 - x0):699 - (1110 - x1)]
-    mirror(642, 153, 690, 281)
-    mirror(597, 226, 642, 281)
-
-    # HUD buttons covered the left half of the gable, so it is rebuilt from the right half; the peak is repainted
-    left_end = 2 * GABLE_AXIS - 286
-    img[0:52, 168:left_end + 1] = img[0:52, 286:2 * GABLE_AXIS - 168 + 1][:, ::-1]
-    img[52:66, 160:200] = img[52:66, 2 * GABLE_AXIS - 199:2 * GABLE_AXIS - 159][:, ::-1]
-    img = inpaint(img, [(left_end - 2, 0, 289, 47), (245, 235, 275, 267)], 5)
-    cv2.polylines(img, [np.array([(250, 17), (GABLE_AXIS, 4), (292, 17)])], False, (190, 225, 235), 3, cv2.LINE_AA)
-    cv2.polylines(img, [np.array([(250, 13), (GABLE_AXIS, 0), (292, 13)])], False, (30, 40, 50), 1, cv2.LINE_AA)
-
-    # Rebuild the step with a clean column, except under the baskets and the parked scooters
-    step = src[270:SHOP_BASE, 205:230].mean(axis=1, keepdims=True).astype(np.uint8)
-    for x0, x1, y0 in ((FADE_END, 335, 270), (408, 700, 281)):
-        img[y0:SHOP_BASE, x0:x1] = step[y0 - 270:]
-
-    # Everything above the buildings becomes transparent
-    alpha = np.zeros(img.shape[:2], np.uint8)
-    building = [(0, 63), (168, 63), (GABLE_AXIS, 0), (373, 63), (672, 60), (672, 112), (686, 112), (686, SHOP_BASE), (0, SHOP_BASE)]
-    cv2.fillPoly(alpha, [np.array(building)], 255)
-    alpha[SHOP_BASE - 2:, FADE_END:] = 0   # keeps the people standing below the step from bleeding in when upscaled
-    alpha[SHOP_BASE:FADE_BASE, :FADE_END] = np.linspace(255, 0, FADE_BASE - SHOP_BASE)[:, None]
-
-    rgba = upscale(np.dstack([img, alpha])[:FADE_BASE])
-    for name, x0, x1 in (('shop_job_office', 0, 138), ('shop_market', 138, 424), ('shop_motorbike', 424, 686)):
-        save(name, rgba[:, x0 * SCALE:x1 * SCALE], (0, 0))
 
 
 # ---------- PEOPLE AND BIKES ----------
@@ -266,60 +181,9 @@ def traffic():
 
 
 # ---------- HOME ROW (second source image) ----------
-HOME_BASE = 362   # where the buildings meet the sidewalk
-
-
-def backdrop():
-    # The pole and its speakers cover the middle, so the views left and right of it are joined with a cross-fade
-    left, right = src[45:222, 466:612], src[45:222, 678:794].copy()
-    right[153:] = left[153:, 4:120]   # the street sign covers the river here
-    fade = 24
-    weight = np.linspace(0, 1, fade, dtype=np.float32)[None, :, None]
-    joint = left[:, -fade:] * (1 - weight) + right[:, :fade] * weight
-    view = np.hstack([left[:, :-fade], joint.astype(np.uint8), right[:, fade:]])
-    # Followed by its mirror image, so it repeats without a seam
-    save('bg_river_city', upscale(np.hstack([view, view[:, ::-1]])), (0.5, 0))
-
-
-def fade_bottom(alpha, y0, y1):
-    alpha[y0:y1] = (alpha[y0:y1] * np.linspace(1, 0, y1 - y0)[:, None]).astype(np.uint8)
-    alpha[y1:] = 0
-
-
-def lot(name, x0, x1, top, img=None, bottom=HOME_BASE + 8):
-    """Cuts a piece of the row: `top` is its outline above the sidewalk, in source pixels, left to right."""
-    img = src if img is None else img
-    alpha = np.zeros(img.shape[:2], np.uint8)
-    cv2.fillPoly(alpha, [np.array([(x0, bottom), *top, (x1, bottom)])], 255)
-    fade_bottom(alpha, HOME_BASE, bottom)
-    y0 = min(y for _, y in top)
-    save(name, upscale(np.dstack([img, alpha])[y0:bottom, x0:x1]), (0, 0))
-
-
 def home_row():
-    lot('lot_fence', 58, 206, [(58, 240), (88, 227), (206, 229)])
-
-    # The roof tiles under the HUD arrow are copied from the tiles next to it
-    house = src.copy()
-    house[156:178, 322:356] = house[156:178, 286:320]
-    lot('house_teal', 204, 462, [(204, 240), (204, 214), (222, 214), (222, 182), (214, 181), (214, 174), (262, 157), (408, 157), (452, 174), (452, 181), (442, 182),
-                              (442, 214), (462, 214), (462, 240)], house)
-
-    lot('lot_parking', 462, 632, [(462, 227), (572, 227), (632, 250)])
-
-    # The man in front of the shop is replaced with plain wall from further right
-    barber = src.copy()
-    barber[300:345, 660:684] = src[300:345, 724:748]
-    barber[345:374, 660:672] = src[345:374, 724:736]
-    lot('lot_barber', 660, 800, [(660, 242), (800, 240)], barber)
-
     cut_out('npc_cap_man', [(158, 402), (216, 402), (216, 494), (158, 494)])
     cut_out('npc_girl', [(620, 372), (682, 372), (682, 462), (620, 462)], flip=True)
-    cut_out('prop_boxes', [(345, 412), (392, 412), (410, 420), (460, 440), (458, 472), (345, 472)])
-    cut_out('prop_cafe_sign', [(34, 416), (92, 416), (92, 521), (34, 521)])
-    trace('npc_old_man', [(12, 322), (24, 310), (44, 309), (56, 322), (57, 340), (62, 342), (72, 342), (72, 365), (78, 368), (102, 388), (37, 396), (22, 384), (6, 382), (6, 370), (20, 362)])
-    cut_out('bike_delivery', [(226, 490), (270, 490), (322, 512), (324, 562), (240, 562)],
-            sure=[[(232, 496), (264, 496), (264, 524), (232, 524)], circle(261, 548, 10), circle(310, 548, 10)])
 
 
 # ---------- ANIMATION ----------
@@ -366,12 +230,9 @@ def wheel_spin():
     save('wheel_spin', img, (0.5, 0.5))
 
 
-ground()
-shop_row()
 cutouts()
 traffic()
 src = cv2.imread(str(SOURCE_HOME))
-backdrop()
 home_row()
 walk_frames()
 wheel_spin()

@@ -54,15 +54,33 @@ namespace ViaHeOnline
             _scene = sceneGo.AddComponent<StreetScene>();
             _scene.Init(_net, _cam);
 
-            _scene.OnEmptySlotTapped += (slot) => StallModal.Show(_net, _net?.Room?.State, slot);
             _scene.OnOwnStallTapped += (stall) => StallModal.ShowClose(_net, stall);
             _scene.OnLotTapped += (index) => UiToast.Show($"Ô đất số {index}");
-            _scene.OnObjectAction += (action) => UiToast.Show($"Khu vực: {action}");
+            _scene.OnObjectAction += (action) =>
+            {
+                switch (action)
+                {
+                    case StreetAction.Staff: StaffModal.Show(_net); break;
+                    case StreetAction.Shop: ShopModal.Show(_net); break;
+                    case StreetAction.Wardrobe: WardrobeModal.Show(_net); break;
+                    case StreetAction.Bus: BusModal.Show(_net, (ownerId, dist) => _ = JoinStreet(ownerId, dist)); break;
+                }
+            };
 
             ShowLogin();
+            if (SkipLoginScreen)
+            {
+                // Log in straight away with the saved name and server; the login
+                // screen comes back only if that fails.
+                _loginView.SetActive(false);
+                OnLoginClicked();
+            }
         }
 
         // ---------- Login Screen ----------
+
+        // TEMPORARY: skip the login screen during development. Set to false to bring it back.
+        const bool SkipLoginScreen = true;
 
         void ShowLogin()
         {

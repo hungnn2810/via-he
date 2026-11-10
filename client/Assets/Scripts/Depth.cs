@@ -20,8 +20,8 @@ namespace ViaHeOnline
         public const int Road = -940;
 
         // Overlays & effects (strictly in front of ground objects):
-        public const int Rain = 1200;
-        public const int Traffic = 1300;
+        public const int Rain = 1800;
+        public const int Traffic = 1700;
         public const int FloatMoney = 2000;
         public const int FloatMoneyText = 2001;
         public const int Bubble = 2000;

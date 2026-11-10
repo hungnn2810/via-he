@@ -56,26 +56,31 @@ namespace ViaHeOnline
                     ["hot_sun"] = new[] { "Nắng chang chang thế này xây trát mệt đứt hơi.", "Cho ca trà đá to nhiều đá em ơi!" },
                     ["rain"] = new[] { "Mưa to thế này thợ hồ được nghỉ sớm rồi!" }
                 }),
-            ["npc_old_man"] = PersonWithEvents("Ông Sáu",
+            ["npc_old_vendor"] = PersonWithEvents("Ông Sáu",
                 new[] { "Ngày xưa phố này vắng lắm, toàn đầm chuối...", "Ông còn miếng đất, chăm chỉ gom tiền mà mua!", "Người trẻ bây giờ buôn bán chịu khó ghê.", "Sáng nào ông cũng phải làm ấm trà ngắm phố xá." },
                 new Dictionary<string, string[]>
                 {
                     ["tet"] = new[] { "Tết đến nơi rồi, hoa đào hoa mai nở rực cả xóm!" },
                     ["rain"] = new[] { "Trời mưa lại nhớ ngày xưa ngập đường lội nước..." }
                 }),
-            ["bike_delivery"] = Person("Xe giao hàng", "Thùng đầy hàng rồi!"),
-            ["bike_sport"] = Person("Xe thể thao", "Xe đẹp đó, đừng đụng trầy nha!"),
-            ["bike_cub"] = Person("Xe cub", "Xe cũ mà chạy còn êm."),
-            ["prop_boxes"] = Person("Hàng thanh lý", "Toàn đồ cũ, ai cần thì lấy."),
-            ["prop_cafe_sign"] = Person("Biển cà phê", "Quán sáng nay chưa mở."),
-            ["bus_stop"] = Building("Trạm xe buýt", StreetAction.Bus, "Đi phố khác nào!"),
-            ["shop_job_office"] = Building("Môi giới việc làm", StreetAction.Staff, "Tìm người bán hàng ở đây!"),
-            ["shop_market"] = Building("Chợ đầu mối", StreetAction.Shop, "Quần áo, mũ nón đủ cả!"),
-            ["shop_motorbike"] = Building("Tiệm xe máy", StreetAction.None, "Xe mới sắp về, chờ nha!"),
-            ["house_teal"] = Building("Nhà", StreetAction.Wardrobe, "Thay đồ rồi ra phố nào!"),
-            ["lot_barber"] = Building("Tiệm cắt tóc", StreetAction.None, "Hôm nay thợ nghỉ."),
-            ["lot_parking"] = Building("Bãi giữ xe", StreetAction.None, "Giữ xe năm nghìn."),
-            ["lot_fence"] = Building("Đất bán", StreetAction.None, "Miếng đất này đang rao bán."),
+            // Hand-cut street scene (client/Tools/import_scene.py)
+            ["scene_teal_shop"] = Building("Nhà", StreetAction.Wardrobe, "Thay đồ rồi ra phố nào!"),
+            ["scene_barber_shop"] = Building("Tiệm cắt tóc", StreetAction.None, "Hớt tóc, cạo râu, gội đầu đủ cả!"),
+            ["prop_land_sale_sign"] = Building("Đất bán", StreetAction.None, "Miếng đất này đang rao bán."),
+            ["prop_parked_bikes"] = Building("Bãi giữ xe", StreetAction.None, "Giữ xe năm nghìn."),
+            ["prop_bus_sign"] = Building("Trạm xe buýt", StreetAction.Bus, "Đi phố khác nào!"),
+            ["prop_clearance_boxes"] = Person("Hàng thanh lý", "Toàn đồ cũ, ai cần thì lấy."),
+            ["prop_cafe_board"] = Person("Biển cà phê", "Quán sáng nay chưa mở."),
+            ["prop_delivery_bike"] = Person("Xe giao hàng", "Thùng đầy hàng rồi!"),
+            ["npc_barber"] = Person("Chú Tư hớt tóc",
+                "Hớt tóc không em? Vô đây chú tỉa cho gọn!", "Tiệm chú mở ở đây ba chục năm rồi.",
+                "Cắt xong gội đầu miễn phí nha!", "Tóc dài quá rồi đó, ghé chú đi!"),
+            ["npc_black_jacket"] = Person("Anh Hai",
+                "Đứng đây hóng gió chút thôi.", "Ai cần chở hàng thì kêu anh nha!",
+                "Phố này giờ đông vui quá ha.", "Mới ăn ổ bánh mì xong, no căng!"),
+            ["npc_green_cap_girl"] = Person("Bé Thảo",
+                "Mẹ cho tiền ăn quà rồi nè!", "Hôm nay có món gì mới không anh chị?",
+                "Em đang đợi bạn đi học thêm.", "Nắng quá, thèm cây kem ghê!"),
         };
 
         Info _info;

@@ -5,7 +5,7 @@ no compile error — only a `Missing sprite <name>` warning from `SpriteLibrary`
 before the scene code was deleted.
 
 Every sprite needs a row in `client/Assets/Resources/Sprites/sprites.txt`
-(or `street_sprites.txt`): `name, pivotX, pivotY, left, bottom, right, top`, where the last four
+(or `street_sprites.txt`, `scene_sprites.txt`): `name, pivotX, pivotY, left, bottom, right, top`, where the last four
 are the 9-slice border. The file starts with `ppu,200`.
 
 ## Patterns driven by server data
@@ -14,14 +14,14 @@ are the 9-slice border. The file starts with `ppu,200`.
 | --- | --- | --- | --- |
 | `counter_<product.id>` | `PRODUCTS` in `server/src/data.ts` | 18 | 22 |
 | `wear_<wearable.id>` | `WEARABLES` | 10 | 10 |
-| `deco_<decoration.id>` + `deco_trophy` fallback | `DECORATIONS` | 5 | 5 |
-| `building_<BuildingType>` + `building_scaffold` | `BuildingType` union | 6 | 7 |
-| `crop_<crop>_<1..3>` and `banana_stage_<1..3>` | `CROPS` | 3 x 3 | 3 x 3 |
-| `bg_land_<district>` | `DISTRICTS` index | 4 | 4 |
+| `deco_<decoration.id>` | `DECORATIONS` | 1 (`deco_peach_tree`) | 5 |
 | `vehicle_<vehicle>` (`walk` has none) | `VEHICLES` | 3 | 3 |
 | `body_`, `hair_`, `hairback_`, `brows_`, `lips_`, `cheeks_`, `earrings_` + index | `LOOK_OPTIONS` | layered | — |
 | `umbrella_<colour>` | client map, see below | 6 | 6 |
-| `slot_owner` / `slot_empty` | `ownerSlots` threshold | 2 | 2 |
+
+Removed with the street remaster (bg_street replaced the backdrop, and lots and slots are no longer drawn):
+`building_*`, `crop_*`, `banana_stage_*`, `lot_*`, `slot_owner` / `slot_empty`, `bg_land_*`, the other `deco_*`.
+Lots, buildings and crops still exist on the server, so their art has to be drawn again before the street shows them.
 
 ### Gaps to close during the remaster
 
@@ -31,10 +31,6 @@ Missing counters — the product exists in `PRODUCTS` but has no stall art:
 - `counter_pinwheel`
 - `counter_plastic_sandals`
 - `counter_t_shirt`
-
-Missing building:
-
-- `building_cafe` (the `cafe` type is in `BuildingType`; only `prop_cafe_sign` exists today)
 
 ### Umbrella colour map
 
@@ -60,11 +56,10 @@ colour either.
 - `*_step1` / `*_step2` — walk frames for bodies and NPCs.
 - `ui_*` — frames and widget art used by the UI kit.
 - `icon_*` — bottom-bar and row icons.
-- `bg_*` — parallax backdrops.
-- `street_*`, `road`, `sidewalk`, `curb` — street bands, drawn tiled.
-- `prop_*`, `deco_*` — scenery.
-- `lot_*` — lot states.
-- `traffic_*`, `bike_*` — client-side decoration, no server state.
+- `bg_*` — backdrops; `bg_street` is the whole street (city, river, wall, sidewalk, road).
+- `scene_*`, `prop_*` — hand-cut street scenery from `client/Tools/import_scene.py`.
+- `deco_*` — festival decorations.
+- `traffic_*` — passing riders, client-side decoration, no server state.
 
 ## UI sprites being replaced
 

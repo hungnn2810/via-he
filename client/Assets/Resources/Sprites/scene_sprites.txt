@@ -1,0 +1,17 @@
+bg_street,0.5,0,0,0,0,0
+bg_road,0.5,1,0,0,0,0
+scene_teal_shop,0.5,0,0,0,0,0
+scene_side_house,0.5,0,0,0,0,0
+scene_barber_shop,0.5,0,0,0,0,0
+scene_district_pole,0.5,0,0,0,0,0
+prop_scissors_sign,0.5,0.5,0,0,0,0
+prop_clearance_boxes,0.5,0,0,0,0,0
+prop_parked_bikes,0.5,0,0,0,0,0
+prop_cafe_board,0.5,0,0,0,0,0
+prop_land_sale_sign,0.5,0.5,0,0,0,0
+prop_delivery_bike,0.5,0,0,0,0,0
+prop_bus_sign,0.5,0,0,0,0,0
+npc_black_jacket,0.5,0,0,0,0,0
+npc_barber,0.5,0,0,0,0,0
+npc_old_vendor,0.5,0,0,0,0,0
+npc_green_cap_girl,0.5,0,0,0,0,0

@@ -1,5 +1,6 @@
 // Loads the sprite set in Resources/Sprites as Sprites with pivot and 9-slice border:
-// sprites.txt lists the art drawn by client/Tools/sprites.js, street_sprites.txt the art cut by client/Tools/cut_street.py.
+// sprites.txt lists the art drawn by client/Tools/sprites.js, street_sprites.txt the art cut by client/Tools/cut_street.py,
+// scene_sprites.txt the hand-cut street scene imported by client/Tools/import_scene.py.
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace ViaHeOnline
             _sprites = new Dictionary<string, Sprite>();
             LoadList("sprites");
             LoadList("street_sprites");
+            LoadList("scene_sprites");
         }
 
         static void LoadList(string file)

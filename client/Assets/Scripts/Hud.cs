@@ -17,19 +17,6 @@ namespace ViaHeOnline
         const int TutorialDone = 10;
         static readonly string[] DistrictNames = { "Bãi đất", "Ven sông", "Gần chợ", "Phố cổ" };
 
-        static readonly string[] TutorialLines =
-        {
-            "Chào bạn! Chào mừng đến với Vỉa Hè Online. Hãy chạm vào ô vỉa hè trống để dọn sạp nhé.",
-            "Chọn món hàng muốn bán và số lượng, sau đó bấm Dọn hàng.",
-            "Khách qua lại trên phố rồi! Chạm vào khách đi ngang để mời họ ghé sạp.",
-            "Bán giỏi lắm! Tiền thu được sẽ giúp bạn nâng cấp sạp và nhập thêm hàng mới.",
-            "Ghé Chợ Đầu Mối để nhập thêm nhiều mặt hàng đa dạng với giá sỉ tốt.",
-            "Thuê thêm nhân viên phụ bán để sạp hàng tiếp tục phục vụ khách ngay cả khi bạn vắng mặt.",
-            "Xây quán cho phố đông vui nào. Chạm ô đất trống, chọn Quán trà đá.",
-            "Hàng xóm đang cần giao lưu đấy. Bấm Xe buýt để sang thăm một phố khác nhé.",
-            "Về phố mình thôi. Khách hàng vẫn đang chờ ủng hộ sạp của bạn.",
-            "Chuẩn bị hàng hoá đầy đủ trước khi nghỉ ngơi để sạp luôn đắt khách nhé.",
-        };
 
         Network _net;
         Profile _profile;
@@ -116,7 +103,6 @@ namespace ViaHeOnline
         {
             BuildTopBar();
             BuildMinigameButton();
-            BuildTutorialStrip();
             BuildBottomDock();
         }
 
@@ -348,28 +334,6 @@ namespace ViaHeOnline
             {
                 _kickButton.transform.parent.gameObject.SetActive(visible);
             }
-        }
-
-        void BuildTutorialStrip()
-        {
-            var stripRt = Ui.Rect("TutorialStrip", transform);
-            Ui.Place(stripRt, Ui.BottomLeft, new Vector2(560f, 96f), new Vector2(Theme.Space3, 96f), Ui.BottomLeft);
-            _tutorialStrip = stripRt;
-
-            var bg = Ui.Img(stripRt, "Bg", Theme.PanelSprite(Theme.Skin.Amber));
-            Ui.Stretch(bg.rectTransform);
-
-            var leaderRt = Ui.Img(stripRt, "LeaderPortrait", "npc_leader");
-            if (leaderRt)
-            {
-                Ui.Place(leaderRt.rectTransform, Ui.MiddleLeft, new Vector2(76f, 76f), new Vector2(Theme.Space3, 0f), Ui.MiddleLeft);
-            }
-
-            _tutorialText = Ui.Label(stripRt, "", Theme.TextMd, Theme.TextDark,
-                TextAlignmentOptions.MidlineLeft, Ui.Edge.None, wrap: true, name: "TutorialText");
-            Ui.Stretch(_tutorialText.rectTransform, 92f, Theme.Space2, Theme.Space3, Theme.Space2);
-
-            _tutorialStrip.gameObject.SetActive(false);
         }
 
         // =========================================================================
@@ -918,7 +882,6 @@ namespace ViaHeOnline
         {
             if (!home && step == 7) return "Ghé thăm phố bạn bè để giao lưu và bày sạp ké, cả hai cùng có thưởng.";
             if (!home && step == 8) return "Cảm ơn bạn! Bấm Về nhà để quay lại phố mình.";
-            if (step >= 0 && step < TutorialLines.Length) return TutorialLines[step];
             return "";
         }
 
