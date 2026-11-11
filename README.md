@@ -122,7 +122,8 @@ to regenerate the C# classes in `client/Assets/Scripts/Schema/`.
 | `client/Assets/Scripts/CharacterCreator.cs` | First-run character creation screen |
 | `client/Assets/Scripts/SoundFx.cs` | Sound effects synthesized at runtime |
 | `client/Assets/Scripts/SpriteLibrary.cs`, `Draw.cs`, `UIBuilder.cs` | Sprite loading, scene and UI building |
-| `client/Assets/Resources/Sprites/` | PNG sprite set + `sprites.txt` (pivots, 9-slice borders) |
+| `client/Assets/Resources/Sprites/` | PNG sprite set in folders by kind (`character/`, `ui/`, `icons/`, `npc/`, `scene/`, `stalls/`, `vehicles/`, `wearables/`) + `sprites.txt` (pivots, 9-slice borders); folder rules in `client/Tools/sprite-folders.json` |
+| `client/Assets/Art/Outfits/` | Source art for the female character's outfits: hair, tops, bottoms, shoes + `outfits.json` (see `docs/client/outfits.md`) |
 | `client/Tools/sprites.js` | Drawing code for the whole sprite set (see above) |
 
 ## Next steps

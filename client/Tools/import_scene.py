@@ -1,13 +1,15 @@
 # Imports the hand-cut street scene art (one transparent image per prop, building or bystander) into Assets/Resources/Sprites.
 # Run: python client/Tools/import_scene.py <folder with the source images>   (needs pillow)
 # Each image is trimmed to its visible pixels, capped in size and saved under an English sprite name.
-# Writes scene_sprites.txt next to the PNGs; SpriteLibrary loads it after sprites.txt and street_sprites.txt.
+# PNGs go into the folder sprite-folders.json gives each name; scene_sprites.txt is written at the Sprites root, its rows start with that folder; SpriteLibrary loads it after sprites.txt and street_sprites.txt.
 # The scene is laid out in StreetScene.cs. Sizes there are world heights, so the pixel size chosen here only sets sharpness.
 import sys
 import unicodedata
 from pathlib import Path
 
 from PIL import Image
+
+from sprite_paths import png_path, sprite_id
 
 HERE = Path(__file__).resolve().parent
 OUT_DIR = HERE.parent / 'Assets' / 'Resources' / 'Sprites'
@@ -79,8 +81,8 @@ def main():
         elif name != 'bg_street':
             img = trim(img)
         img.thumbnail((longest, longest), Image.LANCZOS)
-        img.save(OUT_DIR / f'{name}.png', optimize=True)
-        manifest.append(f'{name},{pivot[0]},{pivot[1]},0,0,0,0')
+        img.save(png_path(OUT_DIR, name), optimize=True)
+        manifest.append(f'{sprite_id(name)},{pivot[0]},{pivot[1]},0,0,0,0')
         print(f'{name}: {img.size[0]}x{img.size[1]}')
     (OUT_DIR / 'scene_sprites.txt').write_text('\n'.join(manifest) + '\n', encoding='utf-8')
 

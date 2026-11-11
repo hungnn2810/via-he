@@ -299,11 +299,11 @@
             <!-- Sprite vẽ lại -->
             <div class="char-column">
               <div class="char-frame" id="frame-male-sprite">
-                <img class="layer" id="male-body-img" src="../../Assets/Resources/Sprites/body_male.png">
-                <img class="layer" src="../../Assets/Resources/Sprites/cheeks_2.png"> <!-- Băng dán cá nhân -->
-                <img class="layer" src="../../Assets/Resources/Sprites/brows_0.png">
-                <img class="layer" src="../../Assets/Resources/Sprites/lips_0.png">
-                <img class="layer" src="../../Assets/Resources/Sprites/hair_male_0.png">
+                <img class="layer" id="male-body-img" src="../../Assets/Resources/Sprites/character/body_male.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/character/cheeks_2.png"> <!-- Băng dán cá nhân -->
+                <img class="layer" src="../../Assets/Resources/Sprites/character/brows_0.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/character/lips_0.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/character/hair_male_0.png">
               </div>
               <div class="char-label">Sprite Vẽ Lại Trong Project</div>
             </div>
@@ -344,13 +344,13 @@
             <!-- Sprite vẽ lại -->
             <div class="char-column">
               <div class="char-frame" id="frame-female-sprite">
-                <img class="layer" src="../../Assets/Resources/Sprites/hairback_female_0.png">
-                <img class="layer" id="female-body-img" src="../../Assets/Resources/Sprites/body_female.png">
-                <img class="layer" src="../../Assets/Resources/Sprites/earrings_1.png">
-                <img class="layer" src="../../Assets/Resources/Sprites/cheeks_1.png">
-                <img class="layer" src="../../Assets/Resources/Sprites/brows_0.png">
-                <img class="layer" src="../../Assets/Resources/Sprites/lips_0.png">
-                <img class="layer" src="../../Assets/Resources/Sprites/hair_female_0.png"> <!-- Kẹp cỏ 4 lá xanh -->
+                <img class="layer" src="../../Assets/Resources/Sprites/character/hairback_female_0.png">
+                <img class="layer" id="female-body-img" src="../../Assets/Resources/Sprites/character/body_female.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/character/earrings_1.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/character/cheeks_1.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/character/brows_0.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/character/lips_0.png">
+                <img class="layer" src="../../Assets/Resources/Sprites/character/hair_female_0.png"> <!-- Kẹp cỏ 4 lá xanh -->
               </div>
               <div class="char-label">Sprite Vẽ Lại Trong Project</div>
             </div>
@@ -513,11 +513,11 @@
         <!-- Nam đứng -->
         <div style="text-align: center;">
           <div class="char-frame">
-            <img class="layer" id="street-male-body" src="../../Assets/Resources/Sprites/body_male.png">
-            <img class="layer" src="../../Assets/Resources/Sprites/cheeks_2.png">
-            <img class="layer" src="../../Assets/Resources/Sprites/brows_0.png">
-            <img class="layer" src="../../Assets/Resources/Sprites/lips_0.png">
-            <img class="layer" src="../../Assets/Resources/Sprites/hair_male_0.png">
+            <img class="layer" id="street-male-body" src="../../Assets/Resources/Sprites/character/body_male.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/character/cheeks_2.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/character/brows_0.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/character/lips_0.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/character/hair_male_0.png">
           </div>
           <div style="font-weight: 800; font-size: 13px; margin-top: 8px;">Nam Mặc Định</div>
           <div style="font-size: 11px; color: #574436;">Áo ba lỗ · Quần đùi xanh · Dép tổ ong</div>
@@ -526,13 +526,13 @@
         <!-- Nữ đứng -->
         <div style="text-align: center;">
           <div class="char-frame">
-            <img class="layer" src="../../Assets/Resources/Sprites/hairback_female_0.png">
-            <img class="layer" id="street-female-body" src="../../Assets/Resources/Sprites/body_female.png">
-            <img class="layer" src="../../Assets/Resources/Sprites/earrings_1.png">
-            <img class="layer" src="../../Assets/Resources/Sprites/cheeks_1.png">
-            <img class="layer" src="../../Assets/Resources/Sprites/brows_0.png">
-            <img class="layer" src="../../Assets/Resources/Sprites/lips_0.png">
-            <img class="layer" src="../../Assets/Resources/Sprites/hair_female_0.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/character/hairback_female_0.png">
+            <img class="layer" id="street-female-body" src="../../Assets/Resources/Sprites/character/body_female.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/character/earrings_1.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/character/cheeks_1.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/character/brows_0.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/character/lips_0.png">
+            <img class="layer" src="../../Assets/Resources/Sprites/character/hair_female_0.png">
           </div>
           <div style="font-weight: 800; font-size: 13px; margin-top: 8px;">Nữ Mặc Định</div>
           <div style="font-size: 11px; color: #574436;">Croptop cam đào · Denim short · Kẹp cỏ 4 lá</div>
@@ -581,10 +581,10 @@
     function setPose(poseIdx) {
       currentPose = poseIdx;
       const suffix = poses[poseIdx];
-      document.getElementById('male-body-img').src = `../../Assets/Resources/Sprites/body_male${suffix}.png`;
-      document.getElementById('female-body-img').src = `../../Assets/Resources/Sprites/body_female${suffix}.png`;
-      document.getElementById('street-male-body').src = `../../Assets/Resources/Sprites/body_male${suffix}.png`;
-      document.getElementById('street-female-body').src = `../../Assets/Resources/Sprites/body_female${suffix}.png`;
+      document.getElementById('male-body-img').src = `../../Assets/Resources/Sprites/character/body_male${suffix}.png`;
+      document.getElementById('female-body-img').src = `../../Assets/Resources/Sprites/character/body_female${suffix}.png`;
+      document.getElementById('street-male-body').src = `../../Assets/Resources/Sprites/character/body_male${suffix}.png`;
+      document.getElementById('street-female-body').src = `../../Assets/Resources/Sprites/character/body_female${suffix}.png`;
 
       [0, 1, 2].forEach(i => {
         document.getElementById(`btn-pose-${i}`).classList.toggle('active', i === poseIdx);

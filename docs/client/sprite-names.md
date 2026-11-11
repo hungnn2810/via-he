@@ -5,8 +5,28 @@ no compile error — only a `Missing sprite <name>` warning from `SpriteLibrary`
 before the scene code was deleted.
 
 Every sprite needs a row in `client/Assets/Resources/Sprites/sprites.txt`
-(or `street_sprites.txt`, `scene_sprites.txt`): `name, pivotX, pivotY, left, bottom, right, top`, where the last four
+(or `street_sprites.txt`, `scene_sprites.txt`): `folder/name, pivotX, pivotY, left, bottom, right, top`, where the last four
 are the 9-slice border. The file starts with `ppu,200`.
+
+## Folders
+
+The PNGs are sorted by kind. The folder comes from the name prefix, by the rules in `client/Tools/sprite-folders.json`
+(first match wins). The generators apply it when they write, so the manifests and the files always agree.
+The folder is part of the manifest id only (`character/body_female`); code asks for the bare name (`body_female`),
+so a sprite name is unique across all folders and moving a sprite never changes the code that uses it.
+
+| Folder | Prefixes |
+| --- | --- |
+| `character/` | `body_`, `hair_`, `hairback_`, `brows_`, `lips_`, `cheeks_`, `earrings_`, `shadow` |
+| `wearables/` | `wear_` |
+| `npc/` | `npc_` |
+| `stalls/` | `counter_`, `umbrella_` |
+| `vehicles/` | `vehicle_`, `traffic_`, `wheel_` |
+| `scene/` | `bg_`, `scene_`, `prop_`, `deco_` |
+| `icons/` | `icon_` |
+| `ui/` | `badge_`, `bar_`, `board_`, `btn_`, `chip_`, `coin`, `divider`, `panel_`, `progress_`, `row_`, `scroll_`, `slot_`, `tab_`, `title_`, `toast_`, `tooltip_`, `ui_` |
+
+A new prefix needs a rule there, or its PNG lands in the `Sprites/` root. The manifests and `street_wheels.txt` stay in the root.
 
 ## Patterns driven by server data
 

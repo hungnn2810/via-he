@@ -22,7 +22,10 @@ node client/Tools/export-server.mjs
 ```
 
 Run it in the background. It serves the preview page at `http://localhost:5181/` and accepts
-`POST /save?name=<file>`, writing each file into `client/Assets/Resources/Sprites/`. If port 5181
+`POST /save?name=<file>`, writing each PNG into `client/Assets/Resources/Sprites/<folder>/`, where the
+folder comes from the sprite's name prefix (`client/Tools/sprite-folders.json`: `body_` → `character/`,
+`icon_` → `icons/`, `ui_`/`btn_` → `ui/`, …). A prefix that matches no rule lands in the Sprites root, so
+add a rule there when you introduce a new prefix. If port 5181
 is taken, stop the old export server rather than switching ports — the page uses relative URLs so
 a second instance works but is easy to confuse.
 
@@ -49,12 +52,13 @@ and run `exportSprites()` — but that is the last resort.
 ### 3. Check the result
 
 ```bash
-ls client/Assets/Resources/Sprites/*.png | wc -l      # sprite count
+find client/Assets/Resources/Sprites -name '*.png' | wc -l   # sprite count
 head -1 client/Assets/Resources/Sprites/sprites.txt   # must read: ppu,200
 ```
 
 `sprites.txt` is what Unity actually reads (`SpriteLibrary.cs`): one line per sprite,
-`name,pivotX,pivotY,border left,bottom,right,top`. `exportSprites()` rewrites it every run, so a
+`folder/name,pivotX,pivotY,border left,bottom,right,top` (for example `character/body_female,...`; code
+still asks `SpriteLibrary` for the bare name `body_female`). `exportSprites()` rewrites it every run, so a
 sprite deleted from `sprites.js` drops out of the list by itself — but **nobody deletes the stale
 PNG**, so remove it by hand unless you want it in the build.
 

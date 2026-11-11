@@ -1,5 +1,5 @@
 # Cuts the walking bystanders and passing riders out of client/Tools/street_source.jpg and street_source_2.png into PNGs
-# under Assets/Resources/Sprites. The street backdrop and scenery now come from client/Tools/import_scene.py.
+# under Assets/Resources/Sprites (each into the folder sprite-folders.json gives it; manifest rows start with that folder). The street backdrop and scenery now come from client/Tools/import_scene.py.
 # Run: python client/Tools/cut_street.py   (needs numpy, pillow, opencv-python-headless)
 # Writes street_sprites.txt and street_wheels.txt next to the PNGs. It is a separate manifest because exportSprites() rewrites sprites.txt.
 # All coordinates are source image pixels; output is upscaled by SCALE so it fits the 200 px = 1 unit sprite set.
@@ -7,6 +7,8 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+
+from sprite_paths import png_path, sprite_id
 
 HERE = Path(__file__).resolve().parent
 SOURCE = HERE / 'street_source.jpg'
@@ -33,8 +35,8 @@ def save(name, img, pivot=(0.5, 0)):
     cut[name] = img
     if name in PARTS:
         return
-    cv2.imwrite(str(OUT_DIR / f'{name}.png'), img)
-    manifest.append(f'{name},{pivot[0]},{pivot[1]},0,0,0,0')
+    cv2.imwrite(str(png_path(OUT_DIR, name)), img)
+    manifest.append(f'{sprite_id(name)},{pivot[0]},{pivot[1]},0,0,0,0')
 
 
 def cut_out(name, outline, sure=(), never=(), pivot=(0.5, 0), flip=False):

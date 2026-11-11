@@ -1,8 +1,9 @@
 import { spawn } from 'node:child_process';
 import http from 'node:http';
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { saveSprite } from './sprite-paths.mjs';
 
 // import.meta.dirname needs Node 20.11+; this works from Node 16 up.
 const DIR = import.meta.dirname ?? path.dirname(fileURLToPath(import.meta.url));
@@ -14,9 +15,8 @@ const server = http.createServer((req, res) => {
     let body = '';
     req.on('data', (c) => (body += c));
     req.on('end', () => {
-      mkdirSync(OUT_DIR, { recursive: true });
       const name = path.basename(u.searchParams.get('name') || 'x').replace(/[^a-z0-9_.-]/gi, '');
-      writeFileSync(path.join(OUT_DIR, name), name.endsWith('.png') ? Buffer.from(body.split(',')[1], 'base64') : body);
+      saveSprite(OUT_DIR, name, body); // PNGs go into the folder their prefix says, see sprite-folders.json
       res.end('ok');
     });
     return;
