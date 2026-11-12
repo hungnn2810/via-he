@@ -41,13 +41,6 @@ namespace ViaHeOnline
                     ["hot_sun"] = new[] { "Nắng chảy mỡ thế này, cho cốc trà đá giải nhiệt nào!", "Đội mũ vào em ơi, nắng rát hết cả mặt!" },
                     ["rush_hour"] = new[] { "Giờ tan tầm kẹt xe từ đầu ngõ tới đây!", "Tranh thủ bán đi, người ta đi làm về đông lắm!" }
                 }),
-            ["npc_girl"] = PersonWithEvents("Bé Na",
-                new[] { "Nóng quá, thèm ly trà đá!", "Có gì ngon không anh chị ơi?", "Món xôi ở đây thơm nức mũi!", "Hôm nay học xong sớm ra phố chơi!", "Cuối tuần phố mình nhộn nhịp ghê!" },
-                new Dictionary<string, string[]>
-                {
-                    ["rain"] = new[] { "Trời mưa lạnh thế này ăn chè chuối nóng là đỉnh nhất!", "Mưa rơi ướt hết cả tập vở rồi!" },
-                    ["night_market"] = new[] { "Chợ đêm lung linh quá, đi dạo một vòng sắm đồ thôi!", "Tối nay đông vui như trẩy hội ấy!" }
-                }),
             ["npc_firefighter"] = Person("Lính cứu hỏa", "Dọn hàng nhớ tắt bếp than nha!", "Phố này an toàn là trên hết!", "Bình chữa cháy để ngay ngắn nhé các bác!", "Vỉa hè gọn gàng thế này xe dễ vào!"),
             ["npc_worker"] = PersonWithEvents("Chú thợ hồ",
                 new[] { "Đường này đào hoài chưa xong!", "Nghỉ tay chút đã.", "Làm từ sáng tới giờ đói mờ mắt.", "Bác chủ quầy xới cho bát xôi đầy đặn tí nhé!", "Lao động là vinh quang, mà mệt quá anh em ơi!" },
@@ -78,9 +71,6 @@ namespace ViaHeOnline
             ["npc_black_jacket"] = Person("Anh Hai",
                 "Đứng đây hóng gió chút thôi.", "Ai cần chở hàng thì kêu anh nha!",
                 "Phố này giờ đông vui quá ha.", "Mới ăn ổ bánh mì xong, no căng!"),
-            ["npc_green_cap_girl"] = Person("Bé Thảo",
-                "Mẹ cho tiền ăn quà rồi nè!", "Hôm nay có món gì mới không anh chị?",
-                "Em đang đợi bạn đi học thêm.", "Nắng quá, thèm cây kem ghê!"),
         };
 
         Info _info;

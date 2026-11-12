@@ -1,4 +1,4 @@
-// UI kit, ink-and-wash style. Matches the painted outfit art in client/Assets/Art/Outfits:
+// UI kit, ink-and-wash style. Matches the painted outfit art in client/Assets/Resources/Sprites/outfits:
 // a thin near-black ink line, soft watercolour washes with darker edges, gold trim and
 // traditional motifs (clouds, lotus, plum blossom) on lacquer, silk and paper.
 //

@@ -13,7 +13,7 @@ export function spriteFolder(name) {
   return rule ? rule[1] : '';
 }
 
-/** Manifest id for a sprite: 'character/body_female'. */
+/** Manifest id for a sprite: 'npc/npc_worker'. */
 export function spriteId(name) {
   const folder = spriteFolder(name);
   return folder ? `${folder}/${name}` : name;

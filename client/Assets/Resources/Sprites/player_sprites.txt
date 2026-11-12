@@ -1,0 +1,12 @@
+player/player_male,0.5,0,0,0,0,0
+player/player_male_wave,0.5,0,0,0,0,0
+player/player_male_arms_crossed,0.5,0,0,0,0,0
+player/player_male_step1,0.5,0,0,0,0,0
+player/player_male_step2,0.5,0,0,0,0,0
+player/player_male_step3,0.5,0,0,0,0,0
+player/player_male_step4,0.5,0,0,0,0,0
+player/player_male_happy,0.5,0,0,0,0,0
+player/player_male_sad,0.5,0,0,0,0,0
+player/player_male_angry,0.5,0,0,0,0,0
+player/player_male_surprised,0.5,0,0,0,0,0
+player/player_male_tired,0.5,0,0,0,0,0

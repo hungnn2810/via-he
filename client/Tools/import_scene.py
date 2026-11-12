@@ -42,7 +42,6 @@ SPRITES = [
     ('05-nguoi-ao-den', 'npc_black_jacket', 600, (0.5, 0)),
     ('07-ong-cat-toc', 'npc_barber', 600, (0.5, 0)),
     ('08-ong-gia-ban-rong', 'npc_old_vendor', 600, (0.5, 0)),
-    ('be gai mu xanh', 'npc_green_cap_girl', 600, (0.5, 0)),
 ]
 
 

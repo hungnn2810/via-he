@@ -19,6 +19,7 @@ namespace ViaHeOnline
             LoadList("sprites");
             LoadList("street_sprites");
             LoadList("scene_sprites");
+            LoadList("player_sprites");
         }
 
         static void LoadList(string file)

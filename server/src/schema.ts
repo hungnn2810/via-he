@@ -81,6 +81,7 @@ export class StreetState extends Schema {
   @type('string') weatherName = '';
   @type('string') weatherDialogue = '';   // bystander line key for this weather (rain, hot_sun), empty for none
   @type('float64') weatherEndsAt = 0;
+  @type('string') skyBoost = '';          // products customers crave now because of the time of day and weather, comma separated
   @type('string') communityId = '';
   @type('uint32') communityProgress = 0;
   @type('uint32') communityTarget = 0;

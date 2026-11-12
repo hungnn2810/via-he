@@ -765,6 +765,8 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     const minute = clock.gameMinute - (clock.gameMinute % 5);
     if (st.gameMinute !== minute) st.gameMinute = minute;
     if (st.dayPhase !== clock.phase.id) { st.dayPhase = clock.phase.id; st.dayPhaseName = clock.phase.name; }
+    const boost = [...new Set(mergeRules([clock.phase, weather.event]).boost ?? [])].join(',');
+    if (st.skyBoost !== boost) st.skyBoost = boost;
     if (st.weather === weather.id && st.weatherName === weather.name && st.weatherEndsAt === weather.endsAt) return;
     const startsRaining = st.weather !== weather.id && !!weather.event.rules.autoWater;
     st.weather = weather.id;

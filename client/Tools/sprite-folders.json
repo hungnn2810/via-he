@@ -1,16 +1,9 @@
 {
-  "comment": "Which folder under Assets/Resources/Sprites a sprite goes in, by name prefix (first match wins). Read by sprite-paths.mjs and sprite_paths.py. A sprite that matches nothing stays in the Sprites root. Sprite ids never change, only their folder; the manifests list the folder, e.g. character/body_female.",
+  "comment": "Which folder under Assets/Resources/Sprites a sprite goes in, by name prefix (first match wins). Read by sprite-paths.mjs and sprite_paths.py. A sprite that matches nothing stays in the Sprites root. Sprite ids never change, only their folder; the manifests list the folder, e.g. npc/npc_worker.",
   "rules": [
-    ["body_", "character"],
-    ["hair_", "character"],
-    ["hairback_", "character"],
-    ["brows_", "character"],
-    ["lips_", "character"],
-    ["cheeks_", "character"],
-    ["earrings_", "character"],
-    ["shadow", "character"],
     ["wear_", "wearables"],
     ["npc_", "npc"],
+    ["player_", "player"],
     ["counter_", "stalls"],
     ["umbrella_", "stalls"],
     ["vehicle_", "vehicles"],

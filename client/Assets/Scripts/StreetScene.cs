@@ -35,6 +35,14 @@ namespace ViaHeOnline
         const float QueueY = -2.35f;
         const float MotorbikeY = -5.7f;   // on the asphalt, above the bottom HUD bar
         const float PlayerScale = 0.85f;
+        // Standing people get taller toward the road, like the hand-placed street NPCs in Scenery:
+        // npc_barber is 1.7 tall at the wall (feet at WallBaseY - 0.5), npc_black_jacket 2.2 on the sidewalk (feet at -3.33).
+        const float BackPersonY = WallBaseY - 0.5f, BackPersonHeight = 1.7f;
+        const float FrontPersonY = -3.33f, FrontPersonHeight = 2.2f;
+
+        /// World height of a standing adult whose feet are at y, matching the street NPCs at that depth.
+        static float PersonHeightAt(float y) =>
+            Mathf.LerpUnclamped(BackPersonHeight, FrontPersonHeight, (y - BackPersonY) / (FrontPersonY - BackPersonY));
         const float CustomerScale = 0.8f;
         const float SellerScale = 0.82f;
         const float MotorbikeMinSpeed = 2.8f;
@@ -56,7 +64,6 @@ namespace ViaHeOnline
             ("npc_old_vendor", 2.2f, WallBaseY - 0.55f, 1.58f),
             ("npc_barber", 16.95f, WallBaseY - 0.5f, 1.7f),
             ("prop_clearance_boxes", 10.7f, -2.87f, 1.19f),
-            ("npc_green_cap_girl", 16.2f, -2.95f, 1.81f),
             ("npc_black_jacket", 5.65f, -3.33f, 2.2f),
             ("prop_cafe_board", 2.67f, -3.9f, 2.05f),
             ("prop_bus_sign", 18.8f, CurbY + 0.05f, 1.2f),
@@ -84,7 +91,7 @@ namespace ViaHeOnline
 
         static readonly Dictionary<string, string[]> GroupLooks = new Dictionary<string, string[]>
         {
-            ["homemaker"] = new[] { "npc_girl", "npc_farmer" },
+            ["homemaker"] = new[] { "npc_farmer" },
             ["student"] = new[] { "npc_cap_man", "npc_worker" },
         };
 
@@ -92,7 +99,6 @@ namespace ViaHeOnline
         const float LotWidth = 4.5f, LotSpacing = LotWidth, LotStartX = 1f + LotWidth / 2f, LotHalfWidth = LotWidth / 2f;
         const float LotY = WallBaseY - 0.15f, LotSoilY = LotY + 0.3f, CropScale = 0.75f;
         const float LotLabelHeight = 0.55f;
-        const int RainDrops = 70;
         const float LotScale = 0.72f;
 
         public static readonly Dictionary<string, string> UmbrellaColor = new Dictionary<string, string>
@@ -115,7 +121,7 @@ namespace ViaHeOnline
         readonly List<PassingBike> _motorbikes = new List<PassingBike>();
         readonly List<LotView> _lots = new List<LotView>();
         readonly List<GameObject> _decorations = new List<GameObject>();
-        readonly List<Transform> _rain = new List<Transform>();
+        WeatherView _weather;
         string _decorationKey = "";
 
         public event Action<Stall> OnOwnStallTapped;
@@ -142,6 +148,8 @@ namespace ViaHeOnline
         public void Init(Network net, Camera cam)
         {
             _net = net;
+            if (!_weather) _weather = gameObject.AddComponent<WeatherView>();   // Init runs again on reconnect
+            _weather.Init(cam, WallBaseY, ViewBottom, StallY, id => net?.GetProduct(id)?.name);
             _cam = cam;
             StreetObject.GetActiveEvent = () =>
             {
@@ -164,80 +172,8 @@ namespace ViaHeOnline
             SyncStalls(st);
             SyncDecorations(st);
             SyncPlayers(st);
-            SyncRain(st);
-            SyncSky(st);
+            _weather.Sync(st, _length);
             FitCamera();
-        }
-
-        // ---------- Time of day and weather light ----------
-
-        // In-game hour → light laid over the street (rgb tint, a = strength). 29 is 5 a.m. of the next day.
-        static readonly (float Hour, Color Light)[] DayLight =
-        {
-            (5f, new Color(0.25f, 0.3f, 0.6f, 0.32f)),     // before dawn
-            (7f, new Color(1f, 0.82f, 0.6f, 0.08f)),       // warm morning
-            (10f, new Color(1f, 1f, 1f, 0f)),
-            (15.5f, new Color(1f, 1f, 1f, 0f)),
-            (17.5f, new Color(1f, 0.55f, 0.25f, 0.18f)),   // sunset
-            (19f, new Color(0.15f, 0.18f, 0.45f, 0.32f)),  // dusk
-            (23f, new Color(0.05f, 0.07f, 0.25f, 0.42f)),  // night
-            (29f, new Color(0.25f, 0.3f, 0.6f, 0.32f)),
-        };
-
-        static readonly Dictionary<string, Color> WeatherLight = new Dictionary<string, Color>
-        {
-            ["cloudy"] = new Color(0.5f, 0.55f, 0.6f, 0.12f),
-            ["rain"] = new Color(0.32f, 0.38f, 0.5f, 0.24f),
-            ["hot"] = new Color(1f, 0.85f, 0.4f, 0.1f),
-        };
-
-        SpriteRenderer _dayTint, _weatherTint;
-        Color _dayTarget = Color.clear, _weatherTarget = Color.clear;
-
-        void SyncSky(StreetState st)
-        {
-            if (!_dayTint)
-            {
-                _dayTint = Draw.Block(transform, "DayTint", Draw.Square, Color.clear, Vector2.zero, Vector2.one, Depth.SkyTint);
-                _weatherTint = Draw.Block(transform, "WeatherTint", Draw.Square, Color.clear, Vector2.zero, Vector2.one, Depth.SkyTint + 1);
-            }
-            // An empty phase means a server without the day clock: keep full daylight
-            _dayTarget = string.IsNullOrEmpty(st.dayPhase) ? Color.clear : LightAt(st.gameMinute / 60f);
-            _weatherTarget = WeatherLight.TryGetValue(st.weather ?? "", out var w) ? w : Color.clear;
-        }
-
-        static Color LightAt(float hour)
-        {
-            if (hour < DayLight[0].Hour) hour += 24f;
-            for (int i = 1; i < DayLight.Length; i++)
-            {
-                var (h, c) = DayLight[i];
-                if (hour > h) continue;
-                var (h0, c0) = DayLight[i - 1];
-                return Color.Lerp(c0, c, Mathf.InverseLerp(h0, h, hour));
-            }
-            return DayLight[DayLight.Length - 1].Light;
-        }
-
-        // Fades the tints toward their targets and keeps them covering the camera view
-        void UpdateSky()
-        {
-            if (!_dayTint || !_cam) return;
-            float k = Mathf.Clamp01(Time.deltaTime * 0.6f);
-            _dayTint.color = Lerp(_dayTint.color, _dayTarget, k);
-            _weatherTint.color = Lerp(_weatherTint.color, _weatherTarget, k);
-            float h = _cam.orthographicSize * 2f + 1f, wdt = h * _cam.aspect + 1f;
-            var pos = new Vector3(_cam.transform.position.x, _cam.transform.position.y, 0f);
-            _dayTint.transform.position = _weatherTint.transform.position = pos;
-            _dayTint.transform.localScale = _weatherTint.transform.localScale = new Vector3(wdt, h, 1f);
-        }
-
-        // Fading from clear keeps the target's colour so the tint does not flash grey
-        static Color Lerp(Color from, Color to, float k)
-        {
-            if (from.a <= 0.001f) from = new Color(to.r, to.g, to.b, 0f);
-            if (to.a <= 0.001f) to = new Color(from.r, from.g, from.b, 0f);
-            return Color.Lerp(from, to, k);
         }
 
         void EnsureBackground(StreetState st)
@@ -248,7 +184,7 @@ namespace ViaHeOnline
             _background = go.transform;
 
             // Sky fills whatever a tall screen shows above the backdrop.
-            Draw.Sized(_background, "bg_sky", new Vector2(_length / 2f, 4f), new Vector2(_length + 8f, 20f), Depth.Sky, SpriteDrawMode.Tiled);
+            if (SpriteLibrary.Has("bg_sky")) Draw.Sized(_background, "bg_sky", new Vector2(_length / 2f, 4f), new Vector2(_length + 8f, 20f), Depth.Sky, SpriteDrawMode.Tiled);
 
             // One painted backdrop: city, river, wall, sidewalk, curb and road.
             var bg = SpriteLibrary.Get("bg_street");
@@ -377,9 +313,11 @@ namespace ViaHeOnline
                 }
 
                 c.SetName(p.name, Color.white);
-                c.Target = new Vector3((float)p.targetX / WorldScale, PlayerY, 0f);
+                // Follow the server's walked position (it moves at BALANCE.playerSpeed), not the click target.
+                c.Target = new Vector3((float)p.x / WorldScale, PlayerY, 0f);
                 if (!string.IsNullOrEmpty(p.look)) c.SetAppearance(p.look, p.outfit);
                 else c.SetLook(p.name.GetHashCode());
+                c.FitHeight(PersonHeightAt(PlayerY));
                 c.SetVehicle(p.vehicle);
             }
 
@@ -395,26 +333,6 @@ namespace ViaHeOnline
             foreach (var k in removed) _players.Remove(k);
         }
 
-        void SyncRain(StreetState st)
-        {
-            bool raining = st.weather == "rain" || (!string.IsNullOrEmpty(st.@event) && st.@event.Contains("rain"));
-            if (raining && _rain.Count == 0)
-            {
-                for (int i = 0; i < RainDrops; i++)
-                {
-                    var drop = Draw.Block(transform, "Rain", Draw.Square, new Color(0.7f, 0.85f, 1f, 0.5f),
-                        new Vector2(UnityEngine.Random.Range(0f, _length), UnityEngine.Random.Range(ViewBottom, 5f)),
-                        new Vector2(0.02f, 0.35f), Depth.Rain).transform;
-                    _rain.Add(drop);
-                }
-            }
-            else if (!raining && _rain.Count > 0)
-            {
-                foreach (var r in _rain) if (r) Destroy(r.gameObject);
-                _rain.Clear();
-            }
-        }
-
         public void FitCamera()
         {
             if (!_cam) return;
@@ -426,8 +344,6 @@ namespace ViaHeOnline
         void Update()
         {
             RunMotorbikes();
-            UpdateRain();
-            UpdateSky();
             if (_net?.Room?.State != null) HandleTap(_net.Room.State);
         }
 
@@ -450,21 +366,6 @@ namespace ViaHeOnline
                 {
                     if (bike) Destroy(bike.gameObject);
                     _motorbikes.RemoveAt(i);
-                }
-            }
-        }
-
-        void UpdateRain()
-        {
-            if (_rain.Count == 0) return;
-            for (int i = 0; i < _rain.Count; i++)
-            {
-                var drop = _rain[i];
-                if (!drop) continue;
-                drop.position += new Vector3(-0.06f, -0.25f, 0f);
-                if (drop.position.y < ViewBottom)
-                {
-                    drop.position = new Vector3(UnityEngine.Random.Range(0f, _length), 5f, 0f);
                 }
             }
         }

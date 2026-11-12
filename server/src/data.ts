@@ -257,7 +257,7 @@ export const BALANCE = {
   firstSlotX: 220,
   lastSlotMargin: 220,
   sidewalkFeePct: 10,        // the owner gets this % of visitors' revenue
-  playerSpeed: 300,          // units / second
+  playerSpeed: 140,          // units / second
   maxStamina: 20,            // stamina spent on inviting customers
   staminaRegenSeconds: 6,    // regain 1 stamina every ... seconds
   inviteRange: 250,          // max distance to invite a customer

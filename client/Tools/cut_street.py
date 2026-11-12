@@ -28,7 +28,10 @@ def upscale(img, k=SCALE):
 
 
 # Bikes cut only to build the traffic riders from; they are not exported on their own.
-PARTS = {'bike_sport', 'bike_cub', 'bike_scooter'}
+# The removed street sprites are still cut (npc_tattooed_man rides traffic_scooter) but not exported.
+PARTS = {'bike_sport', 'bike_cub', 'bike_scooter',
+         'npc_tattooed_man', 'npc_tattooed_man_step1', 'npc_tattooed_man_step2',
+         'npc_girl', 'npc_girl_step1', 'npc_girl_step2', 'wheel_spin'}
 
 
 def save(name, img, pivot=(0.5, 0)):

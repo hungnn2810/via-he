@@ -14,4 +14,3 @@ scene/prop_bus_sign,0.5,0,0,0,0,0
 npc/npc_black_jacket,0.5,0,0,0,0,0
 npc/npc_barber,0.5,0,0,0,0,0
 npc/npc_old_vendor,0.5,0,0,0,0,0
-npc/npc_green_cap_girl,0.5,0,0,0,0,0

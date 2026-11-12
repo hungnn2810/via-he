@@ -78,12 +78,16 @@ namespace ViaHeOnline
             Ui.Place(plate.rectTransform, Ui.TopCenter, new Vector2(160f, 32f), new Vector2(0f, -Theme.Space2), Ui.TopCenter);
             Ui.Label(plate.transform, "XEM TRƯỚC", Theme.TextXs, Theme.TextDark, TextAlignmentOptions.Midline, Ui.Edge.None);
 
-            // Ground pedestal / shadow ellipse under character feet
-            var shadow = Ui.Rect("PedestalShadow", stageBox);
-            Ui.Place(shadow, Ui.BottomCenter, new Vector2(170f, 32f), new Vector2(0f, Theme.Space4), Ui.BottomCenter);
-            var shadowImg = shadow.gameObject.AddComponent<Image>();
-            Ui.SetSprite(shadowImg, "shadow");
-            shadowImg.color = new Color(1f, 1f, 1f, 0.75f);
+            // Ground pedestal / shadow ellipse under character feet (skipped while the shadow sprite is absent,
+            // since a UI Image without a sprite draws a white box)
+            if (SpriteLibrary.Has("shadow"))
+            {
+                var shadow = Ui.Rect("PedestalShadow", stageBox);
+                Ui.Place(shadow, Ui.BottomCenter, new Vector2(170f, 32f), new Vector2(0f, Theme.Space4), Ui.BottomCenter);
+                var shadowImg = shadow.gameObject.AddComponent<Image>();
+                Ui.SetSprite(shadowImg, "shadow");
+                shadowImg.color = new Color(1f, 1f, 1f, 0.75f);
+            }
 
             // Portrait container
             _previewBox = Ui.Rect("PortraitHolder", stageBox);

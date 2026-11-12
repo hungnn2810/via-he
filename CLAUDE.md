@@ -16,7 +16,7 @@ The product name "Vỉa Hè Online" (namespace `ViaHeOnline`) is a proper noun a
 
 - `server/`: Node.js + Colyseus 0.18 (TypeScript). It runs all game rules.
 - `client/`: Unity 6 project. The scene and UI are built entirely in code.
-- `client/Assets/Resources/` holds what the game loads by name at runtime (`Sprites/` is generator output with a fixed name contract). `client/Assets/Art/` holds source art that is not loaded yet, e.g. the female outfit set in `Art/Outfits/` (see `docs/client/outfits.md`).
+- `client/Assets/Resources/` holds what the game loads by name at runtime (`Sprites/` is generator output with a fixed name contract). The female outfit set (not wired to wearables yet) is in `Resources/Sprites/outfits/` (see `docs/client/outfits.md`).
 - `server/src/schema.ts` is the synced state. After editing it, run `npm run schema-cs` in `server/` to regenerate `client/Assets/Scripts/Schema/`.
 - Message names and payload keys must match between `server/src/rooms/StreetRoom.ts` and `client/Assets/Scripts/Network.cs` / `Models.cs`.
 - Shared agent skills live in `.agents/skills/` (Codex and Antigravity). Edit them there, then run `node tools/sync-skills.mjs` to update the copy in `.claude/skills/` (Claude Code).

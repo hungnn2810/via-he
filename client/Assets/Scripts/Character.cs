@@ -1,5 +1,5 @@
 // A character on the street: NPCs are one sprite cut from the street art,
-// players are layers stacked from the character creator.
+// players are one whole-body sprite per pose (player_<gender>), or layers stacked from the character creator.
 // Manages walking animation, shadow, speech bubbles, tags, and layer order.
 // See docs/client/world.md.
 using System.Collections.Generic;
@@ -11,9 +11,11 @@ namespace ViaHeOnline
 {
     public class Character : MonoBehaviour
     {
-        static readonly string[] Looks = { "npc_worker", "npc_farmer", "npc_firefighter", "npc_tattooed_man", "npc_broker", "npc_cap_man", "npc_girl" };
+        static readonly string[] Looks = { "npc_worker", "npc_farmer", "npc_firefighter", "npc_broker", "npc_cap_man" };
         const float SpriteScale = 1.1f;
         const float WalkRock = 2f;
+        // World units covered by one step; walk frames advance by distance so feet do not slide.
+        const float StepLength = 0.5f;
         const float Breath = 0.012f;
 
         Transform _body;
@@ -23,7 +25,7 @@ namespace ViaHeOnline
         readonly List<GameObject> _layers = new List<GameObject>();
         string _appearance = "", _vehicleName = "";
         SpriteRenderer _vehicle;
-        string _look = Looks[0];
+        string _look = Looks[0], _frame;
         int _step;
         float _happyUntil, _surprisedUntil;
         OutlinedText _name;
@@ -86,6 +88,27 @@ namespace ViaHeOnline
             SetStep(_step, true);
         }
 
+        // Gap above the head to the name tag, the speech bubble frame and the bubble text, in local units.
+        const float NameGap = 0.27f, BubbleGap = 0.44f, BubbleTextGap = 0.72f;
+        float _bodyScale = SpriteScale;
+
+        /// Scales the body so the standing sprite is `worldHeight` tall in the world, whatever its pixel size,
+        /// and moves the name tag and speech bubble to sit just above the head.
+        public void FitHeight(float worldHeight)
+        {
+            var sprite = SpriteLibrary.Get(_look);
+            float parent = transform.lossyScale.y;
+            if (!sprite || parent <= 0f) return;
+            _bodyScale = worldHeight / parent / sprite.bounds.size.y;
+
+            float top = sprite.bounds.size.y * _bodyScale;
+            if (_name) _name.transform.localPosition = new Vector3(0f, top + NameGap, 0f);
+            if (_subLabelBg) _subLabelBg.transform.localPosition = new Vector3(0f, top + NameGap, 0f);
+            if (_subLabel) _subLabel.transform.localPosition = new Vector3(0f, top + NameGap, 0f);
+            if (_bubbleBg) _bubbleBg.transform.localPosition = new Vector3(0f, top + BubbleGap, 0f);
+            if (_bubble) _bubble.transform.localPosition = new Vector3(0f, top + BubbleTextGap, 0f);
+        }
+
         public void SetVehicle(string vehicle)
         {
             if (vehicle == _vehicleName) return;
@@ -130,7 +153,15 @@ namespace ViaHeOnline
             if (worn.Length > 2 && !string.IsNullOrEmpty(worn[2])) Add("wear_" + worn[2], Depth.LayerPants);
             if (worn.Length > 3 && !string.IsNullOrEmpty(worn[3])) Add("wear_" + worn[3], Depth.LayerAccessory);
 
-            string body = c.Length > 0 && !string.IsNullOrEmpty(c[0]) ? $"body_{c[0]}" : Looks[0];
+            // Whole-body player art (player_<gender>, client/Tools/import_player.py) wins over the layered body_<gender>;
+            // with neither, the player stands in as a street look.
+            string bodyGender = c.Length > 0 ? c[0] : "";
+            string body = Looks[0];
+            if (!string.IsNullOrEmpty(bodyGender))
+            {
+                if (SpriteLibrary.Has($"player_{bodyGender}")) body = $"player_{bodyGender}";
+                else if (SpriteLibrary.Has($"body_{bodyGender}")) body = $"body_{bodyGender}";
+            }
             return (body, layers);
         }
 
@@ -167,11 +198,49 @@ namespace ViaHeOnline
             }
         }
 
+        /// Sprite for a walk step (0 = standing). A standing look with a _surprised or _happy pose shows it
+        /// while Surprise() or Cheer() runs.
+        string Frame(int step)
+        {
+            CacheFrames();
+            if (step > 0) return _frames[step];
+            if (Time.time < _surprisedUntil && _hasSurprised) return _frames[6];
+            if (Time.time < _happyUntil && _hasHappy) return _frames[5];
+            return _look;
+        }
+
+        // Frame names of the current look, built once per look so Update does not allocate strings:
+        // 0 standing, 1-4 walk steps, 5 happy, 6 surprised.
+        string[] _frames;
+        bool _hasStep4, _hasHappy, _hasSurprised;
+
+        void CacheFrames()
+        {
+            if (_frames != null && _frames[0] == _look) return;
+            _frames = new[] { _look, _look + "_step1", _look + "_step2", _look + "_step3", _look + "_step4", _look + "_happy", _look + "_surprised" };
+            _hasStep4 = SpriteLibrary.Has(_frames[4]);
+            _hasHappy = SpriteLibrary.Has(_frames[5]);
+            _hasSurprised = SpriteLibrary.Has(_frames[6]);
+        }
+
         void SetStep(int step, bool force = false)
         {
-            if (step == _step && !force) return;
+            var frame = Frame(step);
+            if (step == _step && frame == _frame && !force) return;
             _step = step;
-            if (_sprite) _sprite.sprite = SpriteLibrary.Get(step > 0 ? $"{_look}_step{step}" : _look);
+            _frame = frame;
+            if (_sprite) _sprite.sprite = SpriteLibrary.Get(frame);
+        }
+
+        /// Walk step for the bob phase: four drawn frames when the look has _step4, otherwise the two-step
+        /// cycle with the standing pose in between.
+        static readonly int[] TwoStepCycle = { 1, 0, 2, 0 };
+
+        int WalkStep()
+        {
+            CacheFrames();
+            int phase = (int)(_bob / (Mathf.PI / 2f)) % 4;
+            return _hasStep4 ? phase + 1 : TwoStepCycle[phase];
         }
 
         public void Cheer(float seconds = 1.2f) => _happyUntil = Time.time + seconds;
@@ -219,8 +288,9 @@ namespace ViaHeOnline
             transform.position = next;
 
             bool walking = IsWalking;
-            _bob = walking ? _bob + Time.deltaTime * 11f : 0;
-            SetStep(walking ? new[] { 1, 0, 2, 0 }[(int)(_bob / (Mathf.PI / 2f)) % 4] : 0);
+            // One step is half a bob cycle (pi), so the stride matches the distance moved.
+            _bob = walking ? _bob + Mathf.Abs(next.x - p.x) / StepLength * Mathf.PI : 0;
+            SetStep(walking ? WalkStep() : 0);
 
             float hop = Time.time < _happyUntil ? Mathf.Abs(Mathf.Sin((_happyUntil - Time.time) * 12f)) * 0.12f : 0f;
             if (_body)
@@ -230,7 +300,7 @@ namespace ViaHeOnline
 
                 float stretch = Time.time < _surprisedUntil ? 1f + Mathf.Abs(Mathf.Sin((_surprisedUntil - Time.time) * 10f)) * 0.08f : 1f;
                 if (!walking) stretch += Mathf.Sin(Time.time * 2f + _breathPhase) * Breath;
-                _body.localScale = new Vector3(_facing * SpriteScale, SpriteScale * stretch, 1f);
+                _body.localScale = new Vector3(_facing * _bodyScale, _bodyScale * stretch, 1f);
             }
 
             if (SortByDepth && _group) _group.sortingOrder = Depth.Of(next.y);

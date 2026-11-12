@@ -23,7 +23,7 @@ node client/Tools/export-server.mjs
 
 Run it in the background. It serves the preview page at `http://localhost:5181/` and accepts
 `POST /save?name=<file>`, writing each PNG into `client/Assets/Resources/Sprites/<folder>/`, where the
-folder comes from the sprite's name prefix (`client/Tools/sprite-folders.json`: `body_` → `character/`,
+folder comes from the sprite's name prefix (`client/Tools/sprite-folders.json`: `npc_` → `npc/`,
 `icon_` → `icons/`, `ui_`/`btn_` → `ui/`, …). A prefix that matches no rule lands in the Sprites root, so
 add a rule there when you introduce a new prefix. If port 5181
 is taken, stop the old export server rather than switching ports — the page uses relative URLs so
@@ -57,8 +57,8 @@ head -1 client/Assets/Resources/Sprites/sprites.txt   # must read: ppu,200
 ```
 
 `sprites.txt` is what Unity actually reads (`SpriteLibrary.cs`): one line per sprite,
-`folder/name,pivotX,pivotY,border left,bottom,right,top` (for example `character/body_female,...`; code
-still asks `SpriteLibrary` for the bare name `body_female`). `exportSprites()` rewrites it every run, so a
+`folder/name,pivotX,pivotY,border left,bottom,right,top` (for example `npc/npc_worker,...`; code
+still asks `SpriteLibrary` for the bare name `npc_worker`). `exportSprites()` rewrites it every run, so a
 sprite deleted from `sprites.js` drops out of the list by itself — but **nobody deletes the stale
 PNG**, so remove it by hand unless you want it in the build.
 

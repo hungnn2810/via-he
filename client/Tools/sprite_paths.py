@@ -15,7 +15,7 @@ def sprite_folder(name):
 
 
 def sprite_id(name):
-    """Manifest id for a sprite: 'character/body_female'."""
+    """Manifest id for a sprite: 'npc/npc_worker'."""
     folder = sprite_folder(name)
     return f'{folder}/{name}' if folder else name
 

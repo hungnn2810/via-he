@@ -44,7 +44,7 @@ namespace ViaHeOnline
             bike._halfWidth = sr.bounds.size.x / 2f;
             if (Random.value < 0.45f) bike._shout = VendorShouts[Random.Range(0, VendorShouts.Length)];
 
-            foreach (var wheel in Wheels(sprite))
+            if (SpriteLibrary.Has("wheel_spin")) foreach (var wheel in Wheels(sprite))
             {
                 var spin = Draw.Put(sr.transform, "wheel_spin", new Vector2(wheel.x, wheel.y) / SpriteLibrary.PPU, 1f, order + 1);
                 float size = wheel.z / SpokeRadius;
