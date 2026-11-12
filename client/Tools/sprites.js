@@ -11,6 +11,7 @@
 // manifest mechanism are left. Add sprites back with `add(...)` / `layer(...)`, then run the
 // export-sprites skill. Naming rules are in docs/client/sprite-names.md.
 import { INK, COLOR, SKIN, BUTTON, BADGE, TOAST, PROGRESS, RADIUS, BORDER, SIZE, STROKE } from './theme.js';
+import { registerUiKit } from './ui-kit.js';
 
 export const PPU = 200;
 const OUTLINE = INK;
@@ -74,9 +75,10 @@ function gloss(g, x, y, w, h, r, strength = 0.38) {
   g.restore();
 }
 
-// The UI kit (window frames, buttons, bars, badges, toasts, icons) was removed on 2026-11-12
-// to be redrawn in a new style. Register new pieces with ui(...) here; names and 9-slice borders
-// the layout code expects are in client/Assets/Scripts/Theme.cs.
+// The UI kit (window frames, buttons, bars, badges, toasts, icons) lives in ui-kit.js, drawn in
+// the ink-and-wash style of the outfit art. Names and 9-slice borders the layout code expects are
+// in client/Assets/Scripts/Theme.cs.
+registerUiKit(add);
 
 // ---------- Scene Sprites ----------
 // STALLS: Umbrella and counter

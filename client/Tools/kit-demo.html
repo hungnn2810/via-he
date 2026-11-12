@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><title>UI kit demo</title>
+<!-- Preview only: composes the kit sprites with CSS 9-slice to judge the style. Nothing here ships;
+     the real layout is built in C#. Serve with export-server.mjs and open /kit-demo.html. -->
+<style>
+  body { margin: 0; font: 15px "Times New Roman", serif; color: #3a2a18; background: #cfe3e6; }
+  .stage { position: relative; width: 1280px; height: 720px; margin: 0 auto; overflow: hidden;
+    background: linear-gradient(#bfe0ea 0 55%, #d8c9a8 55% 100%); }
+  .abs { position: absolute; }
+  .slice { box-sizing: border-box; border-style: solid; }
+  .txt { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+  .gold { color: #ffe08a; text-shadow: 0 0 2px #3a1608, 1px 1px 0 #3a1608, -1px 1px 0 #3a1608, 1px -1px 0 #3a1608, -1px -1px 0 #3a1608; }
+  .light { color: #fbf1dc; text-shadow: 1px 1px 0 #211915, -1px 1px 0 #211915, 1px -1px 0 #211915, -1px -1px 0 #211915; }
+  img.i { width: 48px; height: 48px; }
+  .grid { display: grid; grid-template-columns: repeat(15, 64px); gap: 6px; padding: 16px; background: #f6ead2; width: max-content; margin: 16px auto; border: 2px solid #211915; border-radius: 8px; }
+  .grid div { text-align: center; font-size: 9px; }
+  .grid img { width: 56px; height: 56px; }
+</style></head><body>
+<div class="stage" id="stage"></div>
+<div class="grid" id="icons"></div>
+<script type="module">
+import { SPRITES } from './sprites.js';
+const url = {}, spec = {};
+for (const s of SPRITES) { const c = document.createElement('canvas'); c.width = s.w; c.height = s.h; s.draw(c.getContext('2d')); url[s.name] = c.toDataURL(); spec[s.name] = s; }
+const stage = document.getElementById('stage');
+const K = 1 / 1.6; // Theme.PixelsPerUnitMultiplier: sprite px -> screen px
+function el(html, x, y, parent = stage) { const d = document.createElement('div'); d.className = 'abs'; d.style.left = x + 'px'; d.style.top = y + 'px'; d.innerHTML = html; parent.append(d); return d.firstElementChild ?? d; }
+// 9-slice box from a sprite with border [l, b, r, t]
+function box(name, x, y, w, h, inner = '', parent = stage) {
+  const [l, b, r, t] = spec[name].border ?? [0, 0, 0, 0];
+  const d = document.createElement('div'); d.className = 'abs slice';
+  Object.assign(d.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px',
+    borderImage: `url(${url[name]}) ${t} ${r} ${b} ${l} fill`, borderWidth: `${t * K}px ${r * K}px ${b * K}px ${l * K}px` });
+  d.innerHTML = inner; parent.append(d); return d;
+}
+const img = (name, x, y, s = 48, parent = stage) => { const i = document.createElement('img'); i.src = url[name]; Object.assign(i.style, { position: 'absolute', left: x + 'px', top: y + 'px', width: s + 'px', height: s + 'px' }); parent.append(i); return i; };
+const label = (t, cls = 'gold', size = 18) => `<div class="txt ${cls}" style="font-size:${size}px">${t}</div>`;
+
+// ---- top-left player block ----
+img('ui_avatar_frame', 16, 12, 72);
+box('chip_navy', 96, 16, 200, 36, '');
+img('icon_coin', 92, 10, 46); el(`<div class="light" style="font:bold 20px "Times New Roman"">1.250.000</div>`, 142, 22);
+box('progress_track', 96, 60, 200, 18); box('progress_fill', 98, 61, 130, 16);
+box('chip_navy', 96, 84, 120, 32); img('icon_fame', 92, 78, 42); el(`<div class="light" style="font:bold 16px "Times New Roman"">320</div>`, 138, 90);
+box('chip_navy', 222, 84, 120, 32); img('icon_heart', 218, 78, 42); el(`<div class="light" style="font:bold 16px "Times New Roman"">56</div>`, 264, 90);
+el(`<div class="gold" style="font:bold 22px "Times New Roman"">12</div>`, 40, 38);
+
+// ---- top-right feature cluster ----
+['map', 'market', 'neighbours', 'orders', 'season', 'fortune', 'activities'].forEach((n, i) => {
+  const x = 760 + i * 62; img('icon_' + n, x, 14, 54);
+  if (i % 2 === 0) { box('badge_red', x + 36, 10, 28, 20, label(i + 1, 'light', 13)); }
+});
+box('chip_navy', 1196 - 10, 22, 90, 34, label('01:01:51', 'light', 14));
+
+// ---- amber list window ----
+const win = box('panel_amber', 120, 150, 520, 400);
+box('title_plate', 120 + 150, 132, 220, 44, label('Nhật ký buôn bán', 'gold', 20));
+img('btn_close', 120 + 494, 138, 42);
+['Bán 12 bát phở', 'Nhập 30 bó rau', 'Hàng xóm ghé thăm', 'Mua đất Ven sông'].forEach((t, i) => {
+  const r = box(i === 1 ? 'row_selected' : 'row_card', 150, 200 + i * 66, 460, 58);
+  img(['icon_kitchen', 'icon_market', 'icon_neighbours', 'icon_map'][i], 160, 205 + i * 66, 44);
+  el(`<div style="font:bold 17px "Times New Roman"">${t}</div>`, 214, 218 + i * 66);
+  box('btn_green_normal', 500, 207 + i * 66, 96, 42, label('Nhận', 'light', 16));
+});
+box('btn_gold_normal', 200, 486, 150, 46, label('Nhận hết', 'light', 18));
+box('btn_red_normal', 380, 486, 150, 46, label('Đóng', 'light', 18));
+
+// ---- blue window with item slots ----
+box('panel_blue', 680, 150, 460, 360);
+box('title_plate', 680 + 120, 132, 220, 44, label('Kho hàng', 'gold', 20));
+img('btn_close', 680 + 434, 138, 42);
+const items = ['banana', 'crop', 'cafe', 'gem', 'coin', 'decoration', 'orders', 'store', 'wardrobe', 'lock'];
+items.forEach((n, i) => { const x = 715 + (i % 5) * 80, y = 196 + Math.floor(i / 5) * 80; box('slot_item', x, y, 70, 70); img('icon_' + n, x + 11, y + 11, 48); });
+box('tooltip_body', 730, 372, 250, 54, `<div class="txt" style="font-size:15px">Chuối tiêu: 12 nải</div>`);
+img('tooltip_tail', 760, 424, 22).style.height = '14px';
+box('btn_blue_normal', 715, 444, 120, 44, label('Bán', 'light', 17));
+box('btn_blue_pressed', 845, 444, 120, 44, label('Nhấn', 'light', 17));
+box('btn_gray_disabled', 975, 444, 120, 44, label('Khoá', 'light', 17));
+
+// ---- toasts ----
+[['toast_info', 'info', 'Chào bạn!'], ['toast_success', 'check', 'Đã bán xong'], ['toast_warning', 'warning', 'Sắp hết hàng'], ['toast_error', 'close', 'Không đủ tiền']].forEach(([n, ic, t], i) => {
+  box(n, 680 + (i % 2) * 230, 530 + Math.floor(i / 2) * 44, 220, 38, `<div class="txt ${i ? 'light' : ''}" style="font-size:15px;padding-left:34px">${t}</div>`);
+  img('icon_' + ic, 684 + (i % 2) * 230, 532 + Math.floor(i / 2) * 44, 30);
+});
+
+// ---- bottom dock ----
+box('bar_navy', 0, 636, 1280, 84);
+img('icon_home', 18, 650, 54);
+['Bãi đất', 'Ven sông', 'Gần chợ', 'Phố cổ'].forEach((t, i) => {
+  box(i === 0 ? 'tab_on' : 'tab_off', 90 + i * 130, 652, 120, 50, label(t, i === 0 ? 'light' : '', 16));
+  if (i === 3) img('icon_lock', 90 + i * 130 + 92, 646, 30);
+});
+img('icon_bus', 640, 650, 54); img('icon_more', 704, 650, 54);
+box('board_cream', 776, 656, 380, 44, `<div style="padding:10px 6px;color:#8c7a63">Nhập tin nhắn...</div>`);
+box('btn_jade' in url ? 'btn_jade_normal' : 'btn_green_normal', 1164, 656, 100, 44, label('Gửi', 'light', 16));
+box('ui_ribbon', 170, 578, 400, 40, label('Lên cấp 12!', 'gold', 20));
+
+// ---- every icon ----
+const grid = document.getElementById('icons');
+for (const s of SPRITES.filter((s) => s.name.startsWith('icon_'))) grid.insertAdjacentHTML('beforeend', `<div><img src="${url[s.name]}"><br>${s.name.slice(5)}</div>`);
+window.DEMO_READY = true;
+</script></body></html>
