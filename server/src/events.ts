@@ -28,13 +28,16 @@ export interface GameEvent {
   to?: string;             // dated: ISO end
 }
 
-// Random events picked per street
+// Random events picked per street. Rain and hot sun are weather now (see weather.ts).
 export const STREET_EVENTS: GameEvent[] = [
-  { id: 'rain', name: 'Trời mưa', seconds: 420, rules: { spawnFactor: 0.7, autoWater: true, boost: ['sweet_soup', 'sticky_rice'] } },
-  { id: 'hot_sun', name: 'Nắng gắt', seconds: 600, rules: { boost: ['iced_tea', 'popsicle'] } },
   { id: 'rush_hour', name: 'Giờ tan tầm', seconds: 300, rules: { spawnFactor: 1.5 } },
   { id: 'tourist_group', name: 'Đoàn du khách', seconds: 180, minFame: 100, rules: { tourists: true } },
   { id: 'shipper_order', name: 'Đơn hàng của anh shipper', seconds: 900, rules: { order: { quantity: 15, reward: 150000 } } },
+];
+
+// Only reachable through the neighbourhood meeting vote (MEETING_CHOICES)
+const VOTE_ONLY_EVENTS: GameEvent[] = [
+  { id: 'hot_sun', name: 'Trà đá bán chạy', rules: { boost: ['iced_tea', 'popsicle'] } },
 ];
 
 // Scheduled for every street. Hours use Vietnam time.
@@ -86,7 +89,7 @@ export function scheduledEvent(now = Date.now()): GameEvent | null {
   if (manual && now < manualUntil) return manual;
   const local = new Date(now + VIETNAM_OFFSET);
   if (local.getUTCDay() === 5 && local.getUTCHours() >= 18 && local.getUTCHours() < 22) {
-    const voted = STREET_EVENTS.find((e) => e.id === meeting.winner(weekIndex(now) - 1));
+    const voted = [...STREET_EVENTS, ...VOTE_ONLY_EVENTS].find((e) => e.id === meeting.winner(weekIndex(now) - 1));
     if (voted) return voted;
   }
   const weekly = SCHEDULED_EVENTS.find((e) => e.weekday === local.getUTCDay() && local.getUTCHours() >= e.hours![0] && local.getUTCHours() < e.hours![1]);

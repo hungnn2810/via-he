@@ -74,6 +74,13 @@ export class StreetState extends Schema {
   @type('string') eventProducts = '';     // seasonal products on sale, comma separated
   @type('string') eventDecorations = '';  // decorations on sale, comma separated
   @type('string') eventGift = '';         // label of the gift action
+  @type('string') dayPhase = '';          // morning | noon | afternoon | evening
+  @type('string') dayPhaseName = '';
+  @type('uint16') gameMinute = 0;         // in-game time of day, 0..1439, in steps of 5
+  @type('string') weather = '';           // sunny | cloudy | hot | rain
+  @type('string') weatherName = '';
+  @type('string') weatherDialogue = '';   // bystander line key for this weather (rain, hot_sun), empty for none
+  @type('float64') weatherEndsAt = 0;
   @type('string') communityId = '';
   @type('uint32') communityProgress = 0;
   @type('uint32') communityTarget = 0;

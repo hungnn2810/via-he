@@ -21,6 +21,7 @@ namespace ViaHeOnline
 
         // Overlays & effects (strictly in front of ground objects):
         public const int Rain = 1800;
+        public const int SkyTint = 1750;    // time-of-day and weather light over the whole street
         public const int Traffic = 1700;
         public const int FloatMoney = 2000;
         public const int FloatMoneyText = 2001;

@@ -143,7 +143,11 @@ namespace ViaHeOnline
         {
             _net = net;
             _cam = cam;
-            StreetObject.GetActiveEvent = () => net?.Room?.State?.@event ?? "";
+            StreetObject.GetActiveEvent = () =>
+            {
+                var st = net?.Room?.State;
+                return st == null ? "" : $"{st.@event},{st.weatherDialogue}";
+            };
         }
 
         public static float SlotX(int slot, StreetState st) =>
@@ -161,7 +165,79 @@ namespace ViaHeOnline
             SyncDecorations(st);
             SyncPlayers(st);
             SyncRain(st);
+            SyncSky(st);
             FitCamera();
+        }
+
+        // ---------- Time of day and weather light ----------
+
+        // In-game hour → light laid over the street (rgb tint, a = strength). 29 is 5 a.m. of the next day.
+        static readonly (float Hour, Color Light)[] DayLight =
+        {
+            (5f, new Color(0.25f, 0.3f, 0.6f, 0.32f)),     // before dawn
+            (7f, new Color(1f, 0.82f, 0.6f, 0.08f)),       // warm morning
+            (10f, new Color(1f, 1f, 1f, 0f)),
+            (15.5f, new Color(1f, 1f, 1f, 0f)),
+            (17.5f, new Color(1f, 0.55f, 0.25f, 0.18f)),   // sunset
+            (19f, new Color(0.15f, 0.18f, 0.45f, 0.32f)),  // dusk
+            (23f, new Color(0.05f, 0.07f, 0.25f, 0.42f)),  // night
+            (29f, new Color(0.25f, 0.3f, 0.6f, 0.32f)),
+        };
+
+        static readonly Dictionary<string, Color> WeatherLight = new Dictionary<string, Color>
+        {
+            ["cloudy"] = new Color(0.5f, 0.55f, 0.6f, 0.12f),
+            ["rain"] = new Color(0.32f, 0.38f, 0.5f, 0.24f),
+            ["hot"] = new Color(1f, 0.85f, 0.4f, 0.1f),
+        };
+
+        SpriteRenderer _dayTint, _weatherTint;
+        Color _dayTarget = Color.clear, _weatherTarget = Color.clear;
+
+        void SyncSky(StreetState st)
+        {
+            if (!_dayTint)
+            {
+                _dayTint = Draw.Block(transform, "DayTint", Draw.Square, Color.clear, Vector2.zero, Vector2.one, Depth.SkyTint);
+                _weatherTint = Draw.Block(transform, "WeatherTint", Draw.Square, Color.clear, Vector2.zero, Vector2.one, Depth.SkyTint + 1);
+            }
+            // An empty phase means a server without the day clock: keep full daylight
+            _dayTarget = string.IsNullOrEmpty(st.dayPhase) ? Color.clear : LightAt(st.gameMinute / 60f);
+            _weatherTarget = WeatherLight.TryGetValue(st.weather ?? "", out var w) ? w : Color.clear;
+        }
+
+        static Color LightAt(float hour)
+        {
+            if (hour < DayLight[0].Hour) hour += 24f;
+            for (int i = 1; i < DayLight.Length; i++)
+            {
+                var (h, c) = DayLight[i];
+                if (hour > h) continue;
+                var (h0, c0) = DayLight[i - 1];
+                return Color.Lerp(c0, c, Mathf.InverseLerp(h0, h, hour));
+            }
+            return DayLight[DayLight.Length - 1].Light;
+        }
+
+        // Fades the tints toward their targets and keeps them covering the camera view
+        void UpdateSky()
+        {
+            if (!_dayTint || !_cam) return;
+            float k = Mathf.Clamp01(Time.deltaTime * 0.6f);
+            _dayTint.color = Lerp(_dayTint.color, _dayTarget, k);
+            _weatherTint.color = Lerp(_weatherTint.color, _weatherTarget, k);
+            float h = _cam.orthographicSize * 2f + 1f, wdt = h * _cam.aspect + 1f;
+            var pos = new Vector3(_cam.transform.position.x, _cam.transform.position.y, 0f);
+            _dayTint.transform.position = _weatherTint.transform.position = pos;
+            _dayTint.transform.localScale = _weatherTint.transform.localScale = new Vector3(wdt, h, 1f);
+        }
+
+        // Fading from clear keeps the target's colour so the tint does not flash grey
+        static Color Lerp(Color from, Color to, float k)
+        {
+            if (from.a <= 0.001f) from = new Color(to.r, to.g, to.b, 0f);
+            if (to.a <= 0.001f) to = new Color(from.r, from.g, from.b, 0f);
+            return Color.Lerp(from, to, k);
         }
 
         void EnsureBackground(StreetState st)
@@ -321,7 +397,7 @@ namespace ViaHeOnline
 
         void SyncRain(StreetState st)
         {
-            bool raining = !string.IsNullOrEmpty(st.@event) && st.@event.Contains("rain");
+            bool raining = st.weather == "rain" || (!string.IsNullOrEmpty(st.@event) && st.@event.Contains("rain"));
             if (raining && _rain.Count == 0)
             {
                 for (int i = 0; i < RainDrops; i++)
@@ -351,6 +427,7 @@ namespace ViaHeOnline
         {
             RunMotorbikes();
             UpdateRain();
+            UpdateSky();
             if (_net?.Room?.State != null) HandleTap(_net.Room.State);
         }
 

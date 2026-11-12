@@ -64,60 +64,81 @@ namespace ViaHeOnline.Schema {
 		public string eventGift = "";
 
 		[global::Colyseus.Schema.Type(17, "string")]
-		public string communityId = "";
+		public string dayPhase = "";
 
-		[global::Colyseus.Schema.Type(18, "uint32")]
-		public uint communityProgress = 0;
+		[global::Colyseus.Schema.Type(18, "string")]
+		public string dayPhaseName = "";
 
-		[global::Colyseus.Schema.Type(19, "uint32")]
-		public uint communityTarget = 0;
+		[global::Colyseus.Schema.Type(19, "uint16")]
+		public ushort gameMinute = 0;
 
 		[global::Colyseus.Schema.Type(20, "string")]
-		public string decorations = "";
+		public string weather = "";
 
 		[global::Colyseus.Schema.Type(21, "string")]
-		public string shuttlePlayers = "";
+		public string weatherName = "";
 
 		[global::Colyseus.Schema.Type(22, "string")]
-		public string shuttleTurn = "";
+		public string weatherDialogue = "";
 
 		[global::Colyseus.Schema.Type(23, "float64")]
-		public double shuttleDeadline = 0;
+		public double weatherEndsAt = 0;
 
-		[global::Colyseus.Schema.Type(24, "uint16")]
-		public ushort shuttleScore = 0;
+		[global::Colyseus.Schema.Type(24, "string")]
+		public string communityId = "";
 
-		[global::Colyseus.Schema.Type(25, "string")]
-		public string caroBoard = "";
+		[global::Colyseus.Schema.Type(25, "uint32")]
+		public uint communityProgress = 0;
 
-		[global::Colyseus.Schema.Type(26, "string")]
-		public string caroX = "";
+		[global::Colyseus.Schema.Type(26, "uint32")]
+		public uint communityTarget = 0;
 
 		[global::Colyseus.Schema.Type(27, "string")]
-		public string caroO = "";
+		public string decorations = "";
 
 		[global::Colyseus.Schema.Type(28, "string")]
-		public string caroTurn = "";
+		public string shuttlePlayers = "";
 
 		[global::Colyseus.Schema.Type(29, "string")]
+		public string shuttleTurn = "";
+
+		[global::Colyseus.Schema.Type(30, "float64")]
+		public double shuttleDeadline = 0;
+
+		[global::Colyseus.Schema.Type(31, "uint16")]
+		public ushort shuttleScore = 0;
+
+		[global::Colyseus.Schema.Type(32, "string")]
+		public string caroBoard = "";
+
+		[global::Colyseus.Schema.Type(33, "string")]
+		public string caroX = "";
+
+		[global::Colyseus.Schema.Type(34, "string")]
+		public string caroO = "";
+
+		[global::Colyseus.Schema.Type(35, "string")]
+		public string caroTurn = "";
+
+		[global::Colyseus.Schema.Type(36, "string")]
 		public string caroWinner = "";
 
-		[global::Colyseus.Schema.Type(30, "uint16")]
+		[global::Colyseus.Schema.Type(37, "uint16")]
 		public ushort weddingProgress = 0;
 
-		[global::Colyseus.Schema.Type(31, "float64")]
+		[global::Colyseus.Schema.Type(38, "float64")]
 		public double weddingEndsAt = 0;
 
-		[global::Colyseus.Schema.Type(32, "map", typeof(global::Colyseus.Schema.MapSchema<Player>))]
+		[global::Colyseus.Schema.Type(39, "map", typeof(global::Colyseus.Schema.MapSchema<Player>))]
 		public global::Colyseus.Schema.MapSchema<Player> players = new global::Colyseus.Schema.MapSchema<Player>();
 
-		[global::Colyseus.Schema.Type(33, "map", typeof(global::Colyseus.Schema.MapSchema<Stall>))]
+		[global::Colyseus.Schema.Type(40, "map", typeof(global::Colyseus.Schema.MapSchema<Stall>))]
 		public global::Colyseus.Schema.MapSchema<Stall> stalls = new global::Colyseus.Schema.MapSchema<Stall>();
 
-		[global::Colyseus.Schema.Type(34, "map", typeof(global::Colyseus.Schema.MapSchema<Customer>))]
+		[global::Colyseus.Schema.Type(41, "map", typeof(global::Colyseus.Schema.MapSchema<Customer>))]
 		public global::Colyseus.Schema.MapSchema<Customer> customers = new global::Colyseus.Schema.MapSchema<Customer>();
 
-		[global::Colyseus.Schema.Type(35, "map", typeof(global::Colyseus.Schema.MapSchema<LotState>))]
+		[global::Colyseus.Schema.Type(42, "map", typeof(global::Colyseus.Schema.MapSchema<LotState>))]
 		public global::Colyseus.Schema.MapSchema<LotState> lots = new global::Colyseus.Schema.MapSchema<LotState>();
 	}
 }

@@ -20,6 +20,7 @@
     "test:goods": "tsx test/goods.ts",
     "test:regulars": "tsx test/regulars.ts",
     "test:season": "tsx test/season.ts",
+    "test:weather": "tsx test/weather.ts",
     "schema-cs": "schema-codegen src/schema.ts --csharp --namespace ViaHeOnline.Schema --output ../client/Assets/Scripts/Schema"
   },
   "dependencies": {

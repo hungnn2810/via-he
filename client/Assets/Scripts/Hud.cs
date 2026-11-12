@@ -36,6 +36,7 @@ namespace ViaHeOnline
         UiIconButton _btnMap, _btnMarket, _btnNeighbours, _btnOrders, _btnSeason, _btnFortune, _btnActivities;
         UiBadge _badgeMap, _badgeNeighbours, _badgeOrders;
         TextMeshProUGUI _countdownLabel;
+        TextMeshProUGUI _skyLabel;
         TextMeshProUGUI _streetNameLabel;
 
         // Minigame
@@ -301,6 +302,28 @@ namespace ViaHeOnline
                 TextAlignmentOptions.MidlineRight, Ui.Edge.Thin, name: "CountdownText");
             _countdownLabel.overflowMode = TextOverflowModes.Overflow;
             Ui.Stretch(_countdownLabel.rectTransform, 24f, 0f, Theme.Space2, 0f);
+
+            // Time of day and weather, hanging under the cluster
+            var skyPill = Ui.Rect("SkyPill", rightGroup);
+            Ui.Place(skyPill, Ui.BottomRight, new Vector2(220f, 28f), new Vector2(0f, -4f), Ui.TopRight);
+            var skyBg = skyPill.gameObject.AddComponent<Image>();
+            Ui.SetSprite(skyBg, Theme.ChipSprite());
+            _skyLabel = Ui.Label(skyPill, "", Theme.TextXs, Color.white,
+                TextAlignmentOptions.Center, Ui.Edge.Thin, name: "SkyText");
+            _skyLabel.overflowMode = TextOverflowModes.Overflow;
+            Ui.Stretch(_skyLabel.rectTransform, Theme.Space2, 0f, Theme.Space2, 0f);
+            skyPill.gameObject.SetActive(false);
+        }
+
+        void RefreshSky()
+        {
+            if (!_skyLabel || _state == null) return;
+            bool has = !string.IsNullOrEmpty(_state.dayPhase);
+            _skyLabel.transform.parent.gameObject.SetActive(has);
+            if (!has) return;
+            int m = _state.gameMinute;
+            string text = $"{_state.dayPhaseName} {m / 60:D2}:{m % 60:D2} · {_state.weatherName}";
+            if (_skyLabel.text != text) _skyLabel.text = text;
         }
 
         UiIconButton AddClusterButton(Transform parent, Theme.Icon icon, string tooltip, Action onClick)
@@ -947,6 +970,8 @@ namespace ViaHeOnline
             {
                 _ = RefreshDistrictOccupancyAsync();
             }
+
+            RefreshSky();
 
             // Countdown timer update
             if (_countdownLabel)

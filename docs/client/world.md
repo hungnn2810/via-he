@@ -20,6 +20,19 @@ From `server/src/schema.ts`:
 | `isPublic` | boolean | `StreetState` — server-owned public district |
 | `shard` | `uint16` | `StreetState` — which copy of a crowded public district |
 | `lots` | `MapSchema<LotState>` | `StreetState` |
+| `dayPhase`, `dayPhaseName` | string | `StreetState` — `morning` / `noon` / `afternoon` / `evening` |
+| `gameMinute` | `uint16` | `StreetState` — in-game time of day, 0..1439, steps of 5 |
+| `weather`, `weatherName` | string | `StreetState` — `sunny` / `cloudy` / `hot` / `rain` |
+| `weatherDialogue` | string | `StreetState` — bystander line key (`rain`, `hot_sun`) or empty |
+| `weatherEndsAt` | `float64` | `StreetState` — when the current weather spell may change |
+
+## Time of day and weather
+
+`server/src/weather.ts` works both out from the clock alone, so every street shows the same sky. One game
+day is 44 real minutes (morning 12, noon 8, afternoon 10, evening 14); the weather can change every 10
+minutes. Each phase and weather adds `EventRules` (boosted products, spawn factor; rain waters gardens).
+The client lays two full-view tints at `Depth.SkyTint` (day light from `gameMinute`, weather colour),
+draws rain when `weather == "rain"`, and the HUD shows `Sáng 07:30 · Nắng đẹp` under the feature cluster.
 
 Positions arrive in **server units**. Everything else below is client-side.
 
@@ -162,7 +175,7 @@ That prefix is part of the contract.
 
 ## Client-side decoration, no server state
 
-Passing motorbikes (`RunMotorbikes`), bystanders between slots, parked bikes, and the rain
-effect (`RunRain`) are purely local. Bystander and parked-bike choice is `gap / 2 % count`
+Passing motorbikes (`RunMotorbikes`), bystanders between slots and parked bikes are purely local.
+The rain effect and the sky tints are local drawing driven by `weather` and `gameMinute`. Bystander and parked-bike choice is `gap / 2 % count`
 over the `Bystanders` and `ParkedBikes` arrays; stall umbrella colour comes from a client-side
 `UmbrellaColor` map keyed by `productId`, defaulting to `red`.

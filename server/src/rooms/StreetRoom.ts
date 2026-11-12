@@ -14,6 +14,7 @@ import {
   refreshDaily, refreshOrders, removeFriend, sendDelivery, storeCapacity, takeFromStore, traderBonusPct, upgrade, useVehicle, waterCrop,
 } from '../world.js';
 import { meetingOpen, mergeRules, pickStreetEvent, scheduledEvent, seasonalEvent, weekIndex, type GameEvent } from '../events.js';
+import { currentWeather, dayClock } from '../weather.js';
 import { NEIGHBOURS, finishQuest, giveNeighbourGift, questEvent } from '../stories.js';
 import { emptyBoard, hasFive, npcMove, placeMark, shuttleReward } from '../activities.js';
 import { FORTUNES, checkEmote, drawFortune, fortuneView, fortuneXp, shareFortune } from '../fortune.js';
@@ -752,11 +753,29 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     return [seasonalEvent(), scheduledEvent(), this.streetEvent].filter((e): e is GameEvent => !!e);
   }
 
+  // Events plus the time of day and the weather, which change demand the same way
   private activeRules() {
-    return mergeRules(this.activeEvents());
+    return mergeRules([...this.activeEvents(), dayClock().phase, currentWeather().event]);
+  }
+
+  private runSky(now: number) {
+    const st = this.state;
+    const clock = dayClock(now);
+    const weather = currentWeather(now);
+    const minute = clock.gameMinute - (clock.gameMinute % 5);
+    if (st.gameMinute !== minute) st.gameMinute = minute;
+    if (st.dayPhase !== clock.phase.id) { st.dayPhase = clock.phase.id; st.dayPhaseName = clock.phase.name; }
+    if (st.weather === weather.id && st.weatherName === weather.name && st.weatherEndsAt === weather.endsAt) return;
+    const startsRaining = st.weather !== weather.id && !!weather.event.rules.autoWater;
+    st.weather = weather.id;
+    st.weatherName = weather.name;
+    st.weatherDialogue = weather.dialogue;
+    st.weatherEndsAt = weather.endsAt;
+    if (startsRaining) this.rainOnGarden(now);
   }
 
   private runEvents(now: number) {
+    this.runSky(now);
     if (this.streetEvent && now >= this.streetEventEndsAt) {
       this.streetEvent = null;
       this.orderProgress.clear();
