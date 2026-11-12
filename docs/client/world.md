@@ -17,9 +17,25 @@ From `server/src/schema.ts`:
 | `slotCount` | `uint8` | `StreetState`, default 8 |
 | `ownerSlots` | `uint8` | `StreetState`, default 2 |
 | `district` | number | `StreetState` |
+| `isPublic` | boolean | `StreetState` — server-owned public district |
+| `shard` | `uint16` | `StreetState` — which copy of a crowded public district |
 | `lots` | `MapSchema<LotState>` | `StreetState` |
 
 Positions arrive in **server units**. Everything else below is client-side.
+
+## Districts
+
+- A player owns 1 to 10 districts (`MAX_DISTRICTS`). District 1 (`Bãi đất`, index 0) is free and is the
+  street scene described in this file. The rest are bought in order with `buyDistrict`; price, level and
+  fame come from `DISTRICTS` in `server/src/data.ts` and reach the client in `catalog.districts`.
+- Joining your own district: `joinOrCreate('street', { ownerId, district })`. Other players' districts the
+  same way, through `GET /api/streets`.
+- **Public districts** (`PUBLIC_DISTRICTS`: `public-market`, `public-plaza`) belong to the server. Anyone
+  can sell there: `ownerSlots` is 0, `slotCount` is `BALANCE.publicSlots` (12), there is no sidewalk fee,
+  no farming or building, and friend/gift actions are refused. Join with
+  `joinOrCreate('street', { ownerId: 'public-market', district: 0, shard })`, where `shard` comes from
+  `GET /api/public` (the first shard with fewer than `BALANCE.roomShardClients` players, else a new one).
+  `StreetState.isPublic` is true there, so the scene skips the `KHU PHỐ 1` pole.
 
 ## Scale
 

@@ -281,6 +281,8 @@ namespace ViaHeOnline
 
             _hud.OnHomeClicked += () => _ = JoinStreet(null);
             _hud.OnDistrictSelected += (d) => _ = JoinStreet(null, d);
+            _hud.OnPublicDistrictSelected += (id) => _ = JoinPublicDistrict(id);
+            _hud.OnMapClicked += () => MapModal.Show(_net, (d) => _ = JoinStreet(null, d), (id) => _ = JoinPublicDistrict(id));
             _hud.OnStallClicked += () => StallModal.Show(_net, _net?.Room?.State, -1);
             _hud.OnStaffClicked += () => StaffModal.Show(_net);
             _hud.OnWardrobeClicked += () => WardrobeModal.Show(_net);
@@ -296,9 +298,18 @@ namespace ViaHeOnline
             }
         }
 
-        async Task JoinStreet(string ownerId, int district = 0)
+        // The server picks the shard with room, so ask it before joining
+        async Task JoinPublicDistrict(string id)
         {
-            await _net.JoinStreet(ownerId, district);
+            var list = await _net.ListPublicDistricts();
+            var target = list?.Find(d => d.ownerId == id);
+            if (target == null) { UiToast.Show("Khu phố chung đang bận, thử lại sau.", Theme.ToastTone.Info); return; }
+            await JoinStreet(target.ownerId, 0, target.shard);
+        }
+
+        async Task JoinStreet(string ownerId, int district = 0, int shard = -1)
+        {
+            await _net.JoinStreet(ownerId, district, shard);
             var room = _net.Room;
             if (room != null)
             {

@@ -66,6 +66,8 @@ export class StreetState extends Schema {
   @type('uint32') fame = 0;
   @type('uint8') district = 0;
   @type('string') districtName = '';
+  @type('boolean') isPublic = false;  // server-owned district: no owner, no sidewalk fee, all slots open
+  @type('uint16') shard = 0;          // which copy of a crowded public district this room is
   @type('string') event = '';         // active event id
   @type('string') eventName = '';
   @type('float64') eventEndsAt = 0;

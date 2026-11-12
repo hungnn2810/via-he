@@ -191,7 +191,7 @@ namespace ViaHeOnline
             foreach (var (sprite, x, y, height) in Scenery) AddScenery(sprite, x, y, height);
 
             // The pole carries the "KHU PHỐ 1" street sign, so it only stands on the first district.
-            if (st.district == 0) AddScenery("scene_district_pole", 16.3f, WallBaseY - 0.3f, 6.5f);
+            if (st.district == 0 && !st.isPublic) AddScenery("scene_district_pole", 16.3f, WallBaseY - 0.3f, 6.5f);
             AddScenery("prop_scissors_sign", 16.85f, 1.0f, 0.6f, Depth.Of(WallBaseY - 0.3f));
             AddScenery("prop_land_sale_sign", 3.9f, -0.1f, 0.75f, Depth.Of(WallBaseY));
         }
@@ -261,7 +261,7 @@ namespace ViaHeOnline
 
         void SyncDecorations(StreetState st)
         {
-            string key = $"{st.district}_{st.@event}";
+            string key = $"{st.district}_{st.isPublic}_{st.@event}";
             if (_decorationKey == key) return;
             _decorationKey = key;
 

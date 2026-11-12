@@ -100,6 +100,7 @@ Server accepts 68 messages, pushes 16, exposes 13 HTTP routes.
 
 - `POST /api/login`
 - `GET /api/streets`
+- `GET /api/public`
 - `GET /api/log`
 - `GET /api/leaderboard`
 - `POST /api/recover`

@@ -97,8 +97,14 @@ namespace ViaHeOnline
             return await Client.Http.Get<List<StreetSummary>>("api/streets?token=" + Uri.EscapeDataString(Account.token));
         }
 
-        // Join someone's street (your own by default)
-        public async Task JoinStreet(string ownerId = null, int district = 0)
+        // Public districts with the shard a new visitor should join
+        public async Task<List<StreetSummary>> ListPublicDistricts()
+        {
+            return await Client.Http.Get<List<StreetSummary>>("api/public?token=" + Uri.EscapeDataString(Account.token));
+        }
+
+        // Join someone's street (your own by default). shard is only used by public districts (see ListPublicDistricts).
+        public async Task JoinStreet(string ownerId = null, int district = 0, int shard = -1)
         {
             if (Room != null)
             {
@@ -106,12 +112,14 @@ namespace ViaHeOnline
                 Room = null;
                 await old.Leave();
             }
-            Room = await Client.JoinOrCreate<StreetState>("street", new Dictionary<string, object>
+            var options = new Dictionary<string, object>
             {
                 ["token"] = Account.token,
                 ["ownerId"] = ownerId ?? Account.id,
                 ["district"] = district,
-            });
+            };
+            if (shard >= 0) options["shard"] = shard;
+            Room = await Client.JoinOrCreate<StreetState>("street", options);
             var room = Room;
             room.OnMessage<Profile>("profile", p => { Profile = p; _profileReceivedAt = Time.realtimeSinceStartup; OnProfileChanged?.Invoke(p); });
             room.OnMessage<ErrorMessage>("error", m => OnError?.Invoke(m.text));

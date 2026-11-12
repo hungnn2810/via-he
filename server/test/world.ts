@@ -5,7 +5,8 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 process.env.DATA_DIR = mkdtempSync(path.join(tmpdir(), 'via-he-test-'));
-const { BALANCE, FAME } = await import('../src/data.js');
+const D = await import('../src/data.js');
+const { BALANCE, FAME } = D;
 const P = await import('../src/profile.js');
 const W = await import('../src/world.js');
 const E = await import('../src/events.js');
@@ -61,6 +62,20 @@ p.tutorial = 10;
 W.plantCrop(p, 1, 0, 'banana', t0);
 check(lotsOf(1)[0].readyAt === t0 + 1800 * 900, 'The river district grows crops 10% faster');
 W.clearCrop(p, 1, 0);
+
+// A player can own at most MAX_DISTRICTS districts, bought in order; the first one is free and already owned
+const x = login('world-expander-device', 'Mở rộng');
+check(D.MAX_DISTRICTS === 10 && D.DISTRICTS.length === 10 && D.DISTRICTS[0].cost === 0, 'There are 10 districts and the first is free');
+check(x.districts.length === 1, 'A new player owns only district 1');
+x.level = 99; x.fame = 1e9; x.money = 1e12;
+while (x.districts.length < D.MAX_DISTRICTS) W.buyDistrict(x);
+check(x.districts.length === 10 && x.districts.every((d) => d.lots.length === 4), 'A player can expand up to 10 districts');
+refuses(() => W.buyDistrict(x), 'đủ các khu phố', 'The 11th district is refused');
+check(D.DISTRICTS.every((d, i) => i === 0 || (d.cost > D.DISTRICTS[i - 1].cost && d.unlockLevel > D.DISTRICTS[i - 1].unlockLevel)), 'District prices and levels rise');
+check(D.PUBLIC_DISTRICTS.length > 0 && D.PUBLIC_DISTRICTS.every((d) => d.id.startsWith('public-')), 'Public districts have public- ids');
+P.ensurePublicStreets();
+check(D.PUBLIC_DISTRICTS.every((d) => getProfile(d.id)?.isNpc), 'Public districts get a server-owned profile that is flagged isNpc');
+check(!P.randomStreets('nobody', 100).some((s) => s.id.startsWith('public-')), 'Public districts are never listed as random streets');
 
 // Cooking
 p.money = 5_000_000; p.level = 6; p.store = {};

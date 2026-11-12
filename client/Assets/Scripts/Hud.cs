@@ -15,7 +15,11 @@ namespace ViaHeOnline
     public class Hud : MonoBehaviour
     {
         const int TutorialDone = 10;
-        static readonly string[] DistrictNames = { "Bãi đất", "Ven sông", "Gần chợ", "Phố cổ" };
+        static readonly string[] DistrictNames =
+        {
+            "Bãi đất", "Ven sông", "Gần chợ", "Phố cổ", "Cổng trường",
+            "Bến xe buýt", "Chợ đêm", "Bờ hồ", "Phố ẩm thực", "Phố đi bộ",
+        };
 
 
         Network _net;
@@ -43,8 +47,13 @@ namespace ViaHeOnline
         int _lastTutorial = -1;
 
         // Bottom dock elements
-        readonly DistrictTabItem[] _districtTabs = new DistrictTabItem[4];
-        readonly int[] _districtPlayerCounts = new int[4];
+        // Tabs 0..MaxDistricts-1 are the player's own districts (the first is free), the rest are server-owned public districts
+        const int MaxDistricts = 10;
+        static readonly string[] PublicDistrictIds = { "public-market", "public-plaza" };
+        static readonly string[] PublicDistrictNames = { "Chợ trung tâm", "Quảng trường" };
+        const int TabCount = MaxDistricts + 2;
+        readonly DistrictTabItem[] _districtTabs = new DistrictTabItem[TabCount];
+        readonly int[] _districtPlayerCounts = new int[TabCount];
         float _lastOccupancyFetchTime = -999f;
         TMP_InputField _chatInput;
 
@@ -63,6 +72,7 @@ namespace ViaHeOnline
         public event Action OnBusClicked;
         public event Action OnMenuClicked;
         public event Action<int> OnDistrictSelected;
+        public event Action<string> OnPublicDistrictSelected;
 
         // Feature cluster events
         public event Action OnMapClicked;
@@ -371,11 +381,21 @@ namespace ViaHeOnline
             leHome.preferredWidth = 46f;
             leHome.preferredHeight = 46f;
 
-            // 2. District tabs strip (4 tabs: Bãi đất, Ven sông, Gần chợ, Phố cổ)
-            var tabsContainer = Ui.Rect("DistrictTabs", navBox);
-            var leTabs = tabsContainer.gameObject.AddComponent<LayoutElement>();
+            // 2. District tabs strip: up to 10 own districts then the public ones, in a sideways scroll view
+            var tabsViewport = Ui.Rect("DistrictTabs", navBox);
+            var leTabs = tabsViewport.gameObject.AddComponent<LayoutElement>();
             leTabs.preferredWidth = 420f;
             leTabs.preferredHeight = 46f;
+            tabsViewport.gameObject.AddComponent<RectMask2D>();
+            var tabsHit = tabsViewport.gameObject.AddComponent<Image>(); // invisible, lets the strip catch drags between tabs
+            tabsHit.color = new Color(0f, 0f, 0f, 0f);
+
+            var tabsContainer = Ui.Rect("Content", tabsViewport);
+            tabsContainer.anchorMin = new Vector2(0f, 0f);
+            tabsContainer.anchorMax = new Vector2(0f, 1f);
+            tabsContainer.pivot = new Vector2(0f, 0.5f);
+            tabsContainer.offsetMin = Vector2.zero;
+            tabsContainer.offsetMax = Vector2.zero;
 
             var hTabs = tabsContainer.gameObject.AddComponent<HorizontalLayoutGroup>();
             hTabs.spacing = 4f;
@@ -383,9 +403,20 @@ namespace ViaHeOnline
             hTabs.childControlHeight = true;
             hTabs.childForceExpandWidth = false;
             hTabs.childForceExpandHeight = false;
-            hTabs.childAlignment = TextAnchor.MiddleCenter;
+            hTabs.childAlignment = TextAnchor.MiddleLeft;
 
-            for (int i = 0; i < 4; i++)
+            var fitTabs = tabsContainer.gameObject.AddComponent<ContentSizeFitter>();
+            fitTabs.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var scrollTabs = tabsViewport.gameObject.AddComponent<ScrollRect>();
+            scrollTabs.viewport = tabsViewport;
+            scrollTabs.content = tabsContainer;
+            scrollTabs.horizontal = true;
+            scrollTabs.vertical = false;
+            scrollTabs.movementType = ScrollRect.MovementType.Clamped;
+            scrollTabs.scrollSensitivity = 28f;
+
+            for (int i = 0; i < TabCount; i++)
             {
                 _districtTabs[i] = CreateDistrictTab(tabsContainer, i);
             }
@@ -414,9 +445,12 @@ namespace ViaHeOnline
             BuildChatBar(dockRt);
         }
 
+        static bool IsPublicTab(int index) => index >= MaxDistricts;
+        static string TabName(int index) => IsPublicTab(index) ? PublicDistrictNames[index - MaxDistricts] : DistrictNames[index];
+
         DistrictTabItem CreateDistrictTab(Transform parent, int index)
         {
-            var tabRt = Ui.Rect("Tab_" + DistrictNames[index], parent);
+            var tabRt = Ui.Rect("Tab_" + TabName(index), parent);
             var le = tabRt.gameObject.AddComponent<LayoutElement>();
             le.preferredWidth = 100f;
             le.preferredHeight = 44f;
@@ -425,7 +459,7 @@ namespace ViaHeOnline
             Ui.Stretch(bg.rectTransform);
 
             // Title occupies top 52%
-            var title = Ui.Label(tabRt, DistrictNames[index], Theme.TextSm, Theme.TextDark,
+            var title = Ui.Label(tabRt, TabName(index), Theme.TextSm, Theme.TextDark,
                 TextAlignmentOptions.Center, Ui.Edge.None, name: "Title");
             title.overflowMode = TextOverflowModes.Overflow;
             title.rectTransform.anchorMin = new Vector2(0f, 0.42f);
@@ -445,7 +479,7 @@ namespace ViaHeOnline
             // Lock overlay at top-right
             var lockImg = Ui.Img(tabRt, "Lock", Theme.IconSprite(Theme.Icon.Lock));
             Ui.Place(lockImg.rectTransform, Ui.TopRight, new Vector2(18f, 18f), new Vector2(-3f, -3f), Ui.TopRight);
-            lockImg.gameObject.SetActive(index > 0);
+            lockImg.gameObject.SetActive(index > 0 && !IsPublicTab(index));
 
             var item = new DistrictTabItem
             {
@@ -464,6 +498,12 @@ namespace ViaHeOnline
         void OnDistrictTabTapped(int index)
         {
             SoundFx.Tap();
+            if (IsPublicTab(index))
+            {
+                if (_state != null && _state.isPublic && _state.ownerId == PublicDistrictIds[index - MaxDistricts]) return;
+                OnPublicDistrictSelected?.Invoke(PublicDistrictIds[index - MaxDistricts]);
+                return;
+            }
             bool isPurchased = index == 0 || (_profile != null && _profile.districts != null && index < _profile.districts.Count);
             if (!isPurchased)
             {
@@ -472,7 +512,7 @@ namespace ViaHeOnline
             }
             else
             {
-                if (_state != null && _state.district == index) return;
+                if (_state != null && !_state.isPublic && _state.district == index) return;
                 OnDistrictSelected?.Invoke(index);
             }
         }
@@ -718,15 +758,18 @@ namespace ViaHeOnline
         void RefreshDistrictTabs()
         {
             int currentDistrict = _state != null ? _state.district : 0;
+            bool inPublic = _state != null && _state.isPublic;
             int purchasedCount = _profile != null && _profile.districts != null ? _profile.districts.Count : 1;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < TabCount; i++)
             {
                 var tab = _districtTabs[i];
                 if (tab == null) continue;
 
-                bool isCurrent = currentDistrict == i;
-                bool isPurchased = i == 0 || i < purchasedCount;
+                bool isCurrent = IsPublicTab(i)
+                    ? inPublic && _state.ownerId == PublicDistrictIds[i - MaxDistricts]
+                    : !inPublic && currentDistrict == i;
+                bool isPurchased = IsPublicTab(i) || i == 0 || i < purchasedCount;
 
                 Ui.SetSprite(tab.Background, Theme.TabSprite(isCurrent));
                 tab.TitleLabel.color = isCurrent ? Theme.TextDark : (isPurchased ? Theme.TextDark : Theme.TextMuted);
@@ -744,14 +787,23 @@ namespace ViaHeOnline
             try
             {
                 var streets = await _net.ListStreets();
+                var publicDistricts = await _net.ListPublicDistricts();
                 if (streets != null)
                 {
                     Array.Clear(_districtPlayerCounts, 0, _districtPlayerCounts.Length);
                     foreach (var s in streets)
                     {
-                        if (s.district >= 0 && s.district < 4)
+                        if (s.district >= 0 && s.district < MaxDistricts)
                         {
                             _districtPlayerCounts[s.district] += s.playerCount;
+                        }
+                    }
+                    if (publicDistricts != null)
+                    {
+                        foreach (var s in publicDistricts)
+                        {
+                            int slot = Array.IndexOf(PublicDistrictIds, s.ownerId);
+                            if (slot >= 0) _districtPlayerCounts[MaxDistricts + slot] = s.playerCount;
                         }
                     }
                     RefreshDistrictTabs();
@@ -770,34 +822,11 @@ namespace ViaHeOnline
             // 1. Map badge: next district is newly affordable
             int mapBadge = 0;
             int ownedDistricts = _profile.districts != null ? _profile.districts.Count : 1;
-            if (ownedDistricts < 4)
+            // The price list comes from the server catalog; no badge until it has loaded
+            if (ownedDistricts < MaxDistricts && _net?.Catalog?.districts != null && ownedDistricts < _net.Catalog.districts.Count)
             {
-                int nextDistrict = ownedDistricts;
-                long cost = nextDistrict switch
-                {
-                    1 => 1500000L,
-                    2 => 8000000L,
-                    3 => 30000000L,
-                    _ => 0L
-                };
-                int reqLevel = nextDistrict switch
-                {
-                    1 => 5,
-                    2 => 10,
-                    3 => 15,
-                    _ => 1
-                };
-                long reqFame = nextDistrict == 3 ? 300L : 0L;
-
-                if (_net?.Catalog?.districts != null && nextDistrict < _net.Catalog.districts.Count)
-                {
-                    var d = _net.Catalog.districts[nextDistrict];
-                    cost = d.cost;
-                    reqLevel = d.unlockLevel;
-                    reqFame = d.needsFame;
-                }
-
-                if (_profile.money >= cost && _profile.level >= reqLevel && _profile.fame >= reqFame)
+                var d = _net.Catalog.districts[ownedDistricts];
+                if (_profile.money >= d.cost && _profile.level >= d.unlockLevel && _profile.fame >= d.needsFame)
                 {
                     mapBadge = 1;
                 }
@@ -855,7 +884,7 @@ namespace ViaHeOnline
             if (_state == null) return;
 
             bool isHome = OnHomeStreet;
-            string streetTitle = isHome
+            string streetTitle = isHome || _state.isPublic
                 ? _state.districtName
                 : $"{_state.ownerName} · {_state.districtName}";
             if (_streetNameLabel) _streetNameLabel.text = streetTitle ?? "";

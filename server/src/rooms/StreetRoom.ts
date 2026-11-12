@@ -4,8 +4,8 @@ import { Room, type Client } from '@colyseus/core';
 import { randomUUID } from 'node:crypto';
 import { StreetState, Player, Stall, Customer, LotState } from '../schema.js';
 import {
-  BALANCE, BUILDINGS, CROPS, CUSTOMER_GROUPS, DAILY_TASKS, DECORATIONS, DISTRICTS, FAME, LOOK_OPTIONS, MEETING_CHOICES, NPC_STREETS, ORDER_KINDS,
-  PRODUCTS, PROFESSIONS, RECIPES, TOURIST, VEHICLES, getProduct, groupOfProduct, WEARABLES, WEAR_SLOTS, type BuildingType, type WearSlot,
+  BALANCE, BUILDINGS, CROPS, CUSTOMER_GROUPS, DAILY_TASKS, DECORATIONS, DISTRICTS, FAME, LOOK_OPTIONS, MAX_DISTRICTS, MEETING_CHOICES, NPC_STREETS,
+  ORDER_KINDS, PRODUCTS, PROFESSIONS, PUBLIC_DISTRICTS, RECIPES, TOURIST, VEHICLES, getProduct, getPublicDistrict, groupOfProduct, WEARABLES, WEAR_SLOTS, type BuildingType, type WearSlot,
 } from '../data.js';
 import {
   addFame, addFriend, addProfessionWork, awardFinishedBuildings, build, buyDecoration, buyDistrict, buyVehicle, chooseProfession,
@@ -61,6 +61,8 @@ export class StreetRoom extends Room<{ state: StreetState }> {
 
   private owner!: Profile;
   private district = 0;
+  private shard = 0;
+  private publicDef: ReturnType<typeof getPublicDistrict>; // set when this room is a server-owned public district
   private passedStalls = new Map<string, Set<number>>(); // customer → slots already passed (each stall gets one try)
   private waitingSince = new Map<string, number>();      // customer → when it started waiting at a stall
   private pendingProfiles = new Set<string>();
@@ -76,22 +78,28 @@ export class StreetRoom extends Room<{ state: StreetState }> {
   private incidents!: IncidentManager;
   private secondPortions = new Set<string>();      // regulars who already got their second portion this visit
 
-  onCreate(options: { ownerId?: string; district?: number }) {
+  private get isPublic() { return !!this.publicDef; }
+
+  onCreate(options: { ownerId?: string; district?: number; shard?: number }) {
     const owner = options.ownerId && getProfile(options.ownerId);
     if (!owner) throw new Error('Street does not exist');
     const district = Number(options.district) || 0;
-    if (!owner.districts[district]) throw new Error('District does not exist');
+    if (!owner.districts[district] || district >= MAX_DISTRICTS) throw new Error('District does not exist');
     this.owner = owner;
     this.district = district;
+    this.publicDef = getPublicDistrict(owner.id);
+    this.shard = this.publicDef ? Math.max(0, Math.floor(Number(options.shard)) || 0) : 0;
     this.cafe = new CafeSeats(district);
     this.state.district = district;
-    this.state.districtName = DISTRICTS[district].name;
+    this.state.districtName = this.publicDef ? this.publicDef.name : DISTRICTS[district].name;
+    this.state.isPublic = this.isPublic;
+    this.state.shard = this.shard;
     this.state.ownerId = owner.id;
     this.state.ownerName = owner.name;
     this.state.ownerLevel = owner.level;
     this.state.length = BALANCE.streetLength;
-    this.state.slotCount = BALANCE.slotsPerStreet;
-    this.state.ownerSlots = BALANCE.ownerSlots;
+    this.state.slotCount = this.isPublic ? BALANCE.publicSlots : BALANCE.slotsPerStreet;
+    this.state.ownerSlots = this.isPublic ? 0 : BALANCE.ownerSlots;
     this.nextStreetEventAt = Date.now() + BALANCE.streetEventEverySeconds * 1000 * (0.5 + Math.random());
     this.incidents = new IncidentManager({
       owner,
@@ -101,10 +109,11 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       broadcast: (type, payload) => this.broadcast(type, payload),
       changed: (p) => { markDirty(p); this.sendProfile(p.id); },
     });
-    if (owner.isNpc) tendNpcGarden(owner);
+    const npcStreet = owner.isNpc && !this.isPublic;
+    if (npcStreet) tendNpcGarden(owner);
     this.syncStreet();
     this.updateMetadata();
-    if (owner.isNpc) this.openNpcStalls();
+    if (npcStreet) this.openNpcStalls();
 
     this.onMessage('move', (c: StreetClient, m: { x: number }) => {
       const p = this.state.players.get(c.sessionId);
@@ -257,6 +266,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     });
     this.handle('buyDecoration', (pr, _c, m: { id: string }) => { this.requireOwnStreet(pr); buyDecoration(pr, m.id, this.activeRules()); });
     this.handle('giveGift', (pr) => {
+      this.requirePlayerStreet();
       giveGift(pr, this.owner, this.activeRules());
       this.trackSeason(pr, 'help', 1, this.owner.id);
       addLogEntry(this.owner, { type: 'help', who: pr.name, amount: BALANCE.giftReward });
@@ -270,7 +280,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.handle('claimCommunity', (pr) => claimCommunity(pr, seasonalEvent()?.id ?? '', this.activeRules()));
     this.handle('pauseStalls', (pr) => this.incidents.pauseStalls(pr));
     this.handle('joinCleanup', (pr) => this.incidents.joinCleanup(pr));
-    this.handle('addFriend', (pr) => addFriend(pr, this.owner.id));
+    this.handle('addFriend', (pr) => { this.requirePlayerStreet(); addFriend(pr, this.owner.id); });
     this.handle('removeFriend', (pr, _c, m: { friendId: string }) => removeFriend(pr, m.friendId));
     this.handle('report', (pr, _c, m: { targetId: string; reason: string }) => {
       addReport(pr.id, String(m.targetId || '').slice(0, 64), String(m.reason || '').slice(0, 200));
@@ -305,7 +315,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     });
     this.onMessage('regulars', () => regularsView(this.owner, this.district));
     this.onMessage('catalog', () => ({ products: PRODUCTS, wearables: WEARABLES, balance: BALANCE, lookOptions: LOOK_OPTIONS, dailyTasks: DAILY_TASKS, decorations: DECORATIONS,
-      districts: DISTRICTS, meetingChoices: MEETING_CHOICES,
+      districts: DISTRICTS, publicDistricts: PUBLIC_DISTRICTS, maxDistricts: MAX_DISTRICTS, meetingChoices: MEETING_CHOICES,
       crops: Object.entries(CROPS).map(([id, c]) => ({ id, ...c })),
       recipes: Object.entries(RECIPES).map(([id, r]) => ({ id, ...r, inputList: Object.entries(r.inputs).map(([item, amount]) => ({ item, amount })) })),
       professions: Object.entries(PROFESSIONS).map(([id, p]) => ({ id, ...p })),
@@ -366,7 +376,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     refreshDaily(profile);
     refreshOrders(profile);
     track(profile.id, 'session');
-    if (!p.isOwner) {
+    if (!p.isOwner && !this.isPublic) {
       addLogEntry(this.owner, { type: 'visit', who: profile.name, amount: 0 });
       recordVisit(this.owner, profile);
       questEvent(profile, 'visit', '');
@@ -535,10 +545,10 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       if (p.speech && now - p.speechAt > 5000) p.speech = '';
     });
 
-    if (this.owner.isNpc && tendNpcGarden(this.owner, now)) this.syncStreet();
+    if (this.owner.isNpc && !this.isPublic && tendNpcGarden(this.owner, now)) this.syncStreet();
     this.runEvents(now);
     this.incidents.tick(now);
-    this.spawnCustomer(dt * (this.activeRules().spawnFactor ?? 1) * (this.owner.isNpc ? 1 : footTraffic(this.owner, this.district)));
+    this.spawnCustomer(dt * (this.activeRules().spawnFactor ?? 1) * this.trafficFactor());
     this.runActivities(now);
 
     for (const k of [...st.customers.values()]) {
@@ -607,7 +617,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     this.closeCheckTimer += dt;
     if (this.closeCheckTimer >= 5) {
       this.closeCheckTimer = 0;
-      if (this.clients.length === 0 && (st.stalls.size === 0 || this.owner.isNpc)) this.disconnect();
+      if (this.clients.length === 0 && (st.stalls.size === 0 || (this.owner.isNpc && !this.isPublic))) this.disconnect();
     }
   }
 
@@ -627,7 +637,8 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     const pickFrom = (list: string[]) => list[Math.floor(Math.random() * list.length)];
     const boosted = (rules.boost ?? []).filter((id) => onSale.includes(id));
     const first = pickFrom(boosted.length && Math.random() < 0.6 ? boosted : onSale.length && Math.random() < 0.75 ? onSale : possible);
-    const touristChance = rules.tourists ? 0.6 : Math.max(this.owner.fame >= FAME.touristsAt ? 0.1 : 0, (DISTRICTS[this.district].touristPct ?? 0) / 100);
+    const touristPct = this.publicDef ? this.publicDef.touristPct : DISTRICTS[this.district].touristPct ?? 0;
+    const touristChance = rules.tourists ? 0.6 : Math.max(this.owner.fame >= FAME.touristsAt ? 0.1 : 0, touristPct / 100);
     k.group = Math.random() < touristChance ? TOURIST : groupOfProduct(first);
     const wants = new Set([first]);
     if (Math.random() < 0.35) {
@@ -684,7 +695,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     const revenue = Math.round(s.price * touristPct * (1 + (stats.moneyPct + traderBonusPct(profile)) / 100) * (100 + regularPct) / 100);
     const isOwner = profile.id === this.owner.id;
     const feePct = this.activeRules().sidewalkFeePct ?? BALANCE.sidewalkFeePct;
-    const fee = isOwner ? 0 : Math.round(revenue * feePct / 100);
+    const fee = isOwner || this.isPublic ? 0 : Math.round(revenue * feePct / 100);
     s.remaining--;
     profile.money += revenue - fee;
     profile.totalSales += revenue;
@@ -699,7 +710,7 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     markDirty(profile);
     this.sendProfile(profile.id);
 
-    if (!isOwner) {
+    if (!isOwner && !this.isPublic) {
       this.owner.money += fee;
       addLogEntry(this.owner, { type: 'co_selling', who: profile.name, amount: revenue });
       addLogEntry(profile, { type: 'sidewalk_fee', who: this.owner.name, amount: fee });
@@ -964,6 +975,17 @@ export class StreetRoom extends Room<{ state: StreetState }> {
     if (profile.id !== this.owner.id) throw new GameError('Chỉ làm được ở vườn nhà mình');
   }
 
+  // Friends, gifts and fame go to a street's owner, and a public district has no player owner
+  private requirePlayerStreet() {
+    if (this.isPublic) throw new GameError('Khu phố chung không có chủ phố');
+  }
+
+  // Customers per second multiplier: a player's street grows with its buildings, a public district has a fixed crowd
+  private trafficFactor() {
+    if (this.publicDef) return this.publicDef.trafficPct / 100;
+    return this.owner.isNpc ? 1 : footTraffic(this.owner, this.district);
+  }
+
   private grantXp(profile: Profile, xp: number) {
     if (!addXp(profile, fortuneXp(profile, xp))) return;
     this.state.players.forEach((p) => { if (p.id === profile.id) p.level = profile.level; });
@@ -1004,6 +1026,8 @@ export class StreetRoom extends Room<{ state: StreetState }> {
       ownerName: this.owner.name,
       ownerLevel: this.owner.level,
       district: this.district,
+      isPublic: this.isPublic,
+      shard: this.shard,
       playerCount: this.state.players.size,
       stallCount: this.state.stalls.size,
     }).catch(() => {});

@@ -5,7 +5,7 @@ import { createHmac, randomBytes, randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import {
-  BALANCE, LOOK_OPTIONS, NPC_STREETS, SURNAMES, GIVEN_NAMES, TRAITS, WEARABLES, getWearable, hireCost, xpToLevelUp,
+  BALANCE, LOOK_OPTIONS, NPC_STREETS, PUBLIC_DISTRICTS, SURNAMES, GIVEN_NAMES, TRAITS, WEARABLES, getWearable, hireCost, xpToLevelUp,
   type BuildingType, type Trait, type WearSlot,
 } from './data.js';
 import type { MarketState } from './market.js';
@@ -141,7 +141,7 @@ const qGet = db.prepare('SELECT data FROM players WHERE id = ?');
 const qByDevice = db.prepare('SELECT id FROM players WHERE device_id = ?');
 const qSave = db.prepare(`INSERT INTO players (id, device_id, name, level, data, updated_at) VALUES (?, ?, ?, ?, ?, ?)
   ON CONFLICT(id) DO UPDATE SET name = excluded.name, level = excluded.level, data = excluded.data, updated_at = excluded.updated_at`);
-const qRandom = db.prepare('SELECT id, name, level FROM players WHERE id != ? ORDER BY RANDOM() LIMIT ?');
+const qRandom = db.prepare("SELECT id, name, level FROM players WHERE id != ? AND id NOT LIKE 'public-%' ORDER BY RANDOM() LIMIT ?");
 const qAll = db.prepare('SELECT id FROM players');
 const qMoveDevice = db.prepare('UPDATE players SET device_id = ? WHERE id = ?');
 const qClearDevice = db.prepare('UPDATE players SET device_id = NULL WHERE device_id = ?');
@@ -325,6 +325,22 @@ export function ensureNpcStreets() {
     if (getProfile(street.id)) continue;
     const profile: Profile = {
       id: street.id, name: street.name, money: 0, level: 5, xp: 0, stamina: 0, appearance: null,
+      freeSeeds: 0, tutorial: TUTORIAL_DONE, tutorialPaced: true, ...worldDefaults(), isNpc: true, outfit: {}, wardrobe: [],
+      employees: [], candidates: [], log: [], totalSales: 0, createdAt: Date.now(),
+    };
+    cache.set(profile.id, profile);
+    markDirty(profile);
+  }
+  flushNow();
+}
+
+// Public districts need an owner profile for the room to hang its state on; it is flagged isNpc so it never shows up in
+// leaderboards, friend lists, fortunes or seasons, and never earns anything
+export function ensurePublicStreets() {
+  for (const district of PUBLIC_DISTRICTS) {
+    if (getProfile(district.id)) continue;
+    const profile: Profile = {
+      id: district.id, name: district.name, money: 0, level: 1, xp: 0, stamina: 0, appearance: null,
       freeSeeds: 0, tutorial: TUTORIAL_DONE, tutorialPaced: true, ...worldDefaults(), isNpc: true, outfit: {}, wardrobe: [],
       employees: [], candidates: [], log: [], totalSales: 0, createdAt: Date.now(),
     };

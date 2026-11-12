@@ -7,18 +7,20 @@ import path from 'node:path';
 import { StreetRoom } from './rooms/StreetRoom.js';
 import { timingSafeEqual } from 'node:crypto';
 import {
-  allProfiles, analyticsSummary, voteWinner, ensureNpcStreets, flushNow, getProfile, linkAccount, linkedPlayer, listReports, login, markDirty,
+  allProfiles, analyticsSummary, voteWinner, ensureNpcStreets, ensurePublicStreets, flushNow, getProfile, linkAccount, linkedPlayer, listReports, login, markDirty,
   npcStreetList, randomStreets, recoverAccount, signToken, track, verifyToken,
 } from './profile.js';
 import { rolloverSeason, seasonIndex } from './world.js';
 import { meeting, startManualEvent } from './events.js';
 import { verifySocialToken } from './social.js';
 import { leaderboard } from './season.js';
+import { BALANCE, PUBLIC_DISTRICTS } from './data.js';
 
 const PORT = Number(process.env.PORT) || 2567;
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || '';
 
 ensureNpcStreets();
+ensurePublicStreets();
 meeting.winner = voteWinner;
 setInterval(() => rolloverSeason(), 3_600_000).unref();
 
@@ -50,7 +52,7 @@ const server = new Server({
       if (!id) return res.status(401).json({ error: 'Đăng nhập lại' });
       const rooms = await matchMaker.query({ name: 'street' });
       const open = rooms
-        .filter((r) => r.metadata?.ownerId && r.metadata.ownerId !== id)
+        .filter((r) => r.metadata?.ownerId && r.metadata.ownerId !== id && !r.metadata.isPublic)
         .map((r) => ({ ...r.metadata, isOpen: true }))
         .sort((a, b) => b.playerCount - a.playerCount)
         .slice(0, 20);
@@ -64,6 +66,24 @@ const server = new Server({
         .map((s) => ({ ...s, isFriend: !!me?.friends.includes(s.ownerId) }))
         .sort((a, b) => Number(b.isFriend) - Number(a.isFriend));
       res.json(friendsFirst);
+    });
+
+    // Public districts, each with the shard a new visitor should join: the first one with room, else a new one
+    app.get('/api/public', async (req, res) => {
+      if (!verifyToken(req.query.token)) return res.status(401).json({ error: 'Đăng nhập lại' });
+      const rooms = await matchMaker.query({ name: 'street' });
+      res.json(PUBLIC_DISTRICTS.map((d) => {
+        const shards = rooms.filter((r) => r.metadata?.ownerId === d.id);
+        const open = shards.filter((r) => (r.metadata.playerCount ?? 0) < BALANCE.roomShardClients).sort((a, b) => a.metadata.shard - b.metadata.shard)[0];
+        const taken = new Set(shards.map((r) => Number(r.metadata.shard)));
+        let free = 0;
+        while (taken.has(free)) free++;
+        return {
+          ownerId: d.id, ownerName: d.name, district: 0, isPublic: true,
+          shard: open ? Number(open.metadata.shard) : free,
+          playerCount: shards.reduce((n, r) => n + (r.metadata.playerCount ?? 0), 0),
+        };
+      }));
     });
 
     // Your own activity log (also part of the profile sent in the room; this is a quick read before joining a street)
@@ -135,8 +155,9 @@ const server = new Server({
   },
 });
 
-// One room per district: joinOrCreate('street', { ownerId, district }) joins that exact street
-server.define('street', StreetRoom).filterBy(['ownerId', 'district']);
+// One room per district: joinOrCreate('street', { ownerId, district }) joins that exact street.
+// Public districts add `shard` (from /api/public) so a crowd spreads over several copies of the same district.
+server.define('street', StreetRoom).filterBy(['ownerId', 'district', 'shard']);
 
 server.listen(PORT).then(() => console.log(`Vỉa Hè Online: ws://localhost:${PORT}`));
 

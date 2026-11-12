@@ -185,6 +185,13 @@ namespace ViaHeOnline
         public long needsFame;
     }
 
+    // A server-owned district anyone can enter; the street id is the ownerId to join with
+    public class PublicDistrictInfo
+    {
+        public string id;
+        public string name;
+    }
+
     public class CropInfo
     {
         public string id;
@@ -289,6 +296,8 @@ namespace ViaHeOnline
         public List<TaskInfo> dailyTasks = new List<TaskInfo>();
         public List<DecorationInfo> decorations = new List<DecorationInfo>();
         public List<DistrictInfo> districts = new List<DistrictInfo>();
+        public List<PublicDistrictInfo> publicDistricts = new List<PublicDistrictInfo>();
+        public int maxDistricts = 10;
         public List<CropInfo> crops = new List<CropInfo>();
         public List<RecipeInfo> recipes = new List<RecipeInfo>();
         public List<ProfessionInfo> professions = new List<ProfessionInfo>();
@@ -314,10 +323,12 @@ namespace ViaHeOnline
         public string ownerName;
         public int ownerLevel;
         public int district;
+        public int shard;
         public int playerCount;
         public int stallCount;
         public bool isOpen;
         public bool isFriend;
+        public bool isPublic;
     }
 
     public class LeaderboardEntry

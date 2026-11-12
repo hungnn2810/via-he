@@ -15,9 +15,9 @@ async function login(name: string) {
   return r.json() as Promise<{ token: string; id: string; name: string }>;
 }
 
-async function joinStreet(account: { token: string }, ownerId: string, district = 0) {
+async function joinStreet(account: { token: string }, ownerId: string, district = 0, shard?: number) {
   const client = new Client(URL);
-  const room = await client.joinOrCreate<any>('street', { token: account.token, ownerId, district });
+  const room = await client.joinOrCreate<any>('street', { token: account.token, ownerId, district, ...(shard === undefined ? {} : { shard }) });
   const ctx = { room, profile: null as any, errors: [] as string[], sales: 0 };
   room.onMessage('profile', (p) => { ctx.profile = p; });
   room.onMessage('error', (m) => { ctx.errors.push(m.text); });
@@ -170,6 +170,34 @@ check(Array.isArray(board.top) && board.top.some((s: any) => s.ownerId === a.id)
 // Bus street list
 const streets = await (await fetch(`${URL}/api/streets?token=${encodeURIComponent(b.token)}`)).json();
 check(streets.some((s: any) => s.ownerId === a.id && s.isOpen), "Bình sees An's street in the bus list");
+
+check(!streets.some((s: any) => String(s.ownerId).startsWith('public-')), 'Public districts are not in the visit-a-friend bus list');
+
+// Public districts: server-owned, every slot open, no sidewalk fee, a separate listing
+const publicList = await (await fetch(`${URL}/api/public?token=${encodeURIComponent(b.token)}`)).json();
+const market = publicList.find((d: any) => d.ownerId === 'public-market');
+check(Array.isArray(publicList) && market?.isPublic && market.shard === 0, 'The public district list offers shard 0 of the market');
+const c = await login('Cường'); // a separate account: joining another room would kick An's session
+const M = await joinStreet(c, market.ownerId, 0, market.shard);
+check(M.room.state.isPublic && M.room.state.ownerSlots === 0 && M.room.state.slotCount === 12 && M.room.state.districtName === 'Chợ trung tâm', 'A public district has 12 open slots and its own name');
+const M2 = await joinStreet(b, market.ownerId, 0, market.shard);
+check(M2.room.roomId === M.room.roomId, 'Two players meet in the same public district shard');
+M.room.send('openStall', { slot: 0, productId: 'iced_tea', quantity: 5 });
+await wait(300);
+check(M.room.state.stalls.has('0') && !M.errors.length, 'Any player can open a stall in slot 0 of a public district');
+M.room.send('addFriend', {});
+await wait(200);
+check(M.errors.some((t) => t.includes('không có chủ phố')), 'A public district cannot be added as a friend');
+M.room.send('plant', { lot: 0, crop: 'banana' });
+await wait(200);
+check(M.errors.some((t) => t.includes('vườn nhà mình')), 'Nobody can farm in a public district');
+M.room.send('closeStall', { slot: 0 });
+await wait(200);
+await M2.room.leave();
+const shardTwo = await joinStreet(b, market.ownerId, 0, 1);
+check(shardTwo.room.roomId !== M.room.roomId && shardTwo.room.state.shard === 1, 'Another shard is a separate room');
+await shardTwo.room.leave();
+await M.room.leave();
 
 await A.room.leave();
 console.log(failures ? `\n${failures} checks failed` : '\nAll checks passed');

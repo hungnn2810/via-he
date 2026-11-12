@@ -133,7 +133,22 @@ export const DISTRICTS: { name: string; cost: number; unlockLevel: number; needs
   { name: 'Ven sông', cost: 1500000, unlockLevel: 5, growPct: 10 },
   { name: 'Gần chợ', cost: 8000000, unlockLevel: 10, customerPct: 20 },
   { name: 'Phố cổ', cost: 30000000, unlockLevel: 15, needsFame: 300, touristPct: 30 },
+  { name: 'Cổng trường', cost: 60000000, unlockLevel: 18, needsFame: 500, customerPct: 30 },
+  { name: 'Bến xe buýt', cost: 100000000, unlockLevel: 20, needsFame: 700, customerPct: 40 },
+  { name: 'Chợ đêm', cost: 160000000, unlockLevel: 23, needsFame: 1000, customerPct: 40, touristPct: 20 },
+  { name: 'Bờ hồ', cost: 250000000, unlockLevel: 26, needsFame: 1500, growPct: 10, touristPct: 40 },
+  { name: 'Phố ẩm thực', cost: 400000000, unlockLevel: 30, needsFame: 2200, customerPct: 60 },
+  { name: 'Phố đi bộ', cost: 650000000, unlockLevel: 35, needsFame: 3000, customerPct: 50, touristPct: 50 },
 ];
+export const MAX_DISTRICTS = DISTRICTS.length; // a player can own this many districts; the first one is free
+
+// Public districts belong to the server, not to a player: anyone can sell there, there is no sidewalk fee, and
+// every stall slot is open. A crowded public district is split into numbered shards (see maxClients in StreetRoom).
+export const PUBLIC_DISTRICTS: { id: string; name: string; trafficPct: number; touristPct: number }[] = [
+  { id: 'public-market', name: 'Chợ trung tâm', trafficPct: 150, touristPct: 20 },
+  { id: 'public-plaza', name: 'Quảng trường', trafficPct: 100, touristPct: 40 },
+];
+export const getPublicDistrict = (id: string) => PUBLIC_DISTRICTS.find((d) => d.id === id);
 
 export const CROPS: Record<string, { name: string; unlockLevel: number; seedCost: number; seconds: number; yield: number }> = {
   banana: { name: 'Chuối', unlockLevel: 1, seedCost: 10000, seconds: 1800, yield: 5 },
@@ -235,7 +250,9 @@ export const BALANCE = {
   gardenerCutPct: 15,
   streetEventEverySeconds: 600,
   slotsPerStreet: 8,         // stall slots on one street
+  publicSlots: 12,           // stall slots in a public district (no owner, so none are reserved)
   ownerSlots: 2,             // slots 0..ownerSlots-1 are reserved for the street owner
+  roomShardClients: 24,      // a public district opens another shard once one holds this many players
   streetLength: 2000,        // world units
   firstSlotX: 220,
   lastSlotMargin: 220,
